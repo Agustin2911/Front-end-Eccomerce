@@ -48,8 +48,6 @@ function Signup() {
   useEffect(() => {
     const token = localStorage.getItem("Authorization");
     const refresh_token = localStorage.getItem("X_Refresh_Token");
-    console.log(token);
-    console.log(refresh_token);
     if (token && refresh_token) {
       fetch("http://127.0.0.1:5000/verify_token", {
         method: "POST",
@@ -62,16 +60,10 @@ function Signup() {
         .then((res) => res.json())
         .then((data) => {
           data = JSON.parse(data);
-
-          if (String(data.type) === "ok") {
-            console.log("ok");
-          } else if (data.type === "refresh_token") {
-            console.log("refresh");
-          } else if (data.type === "expired") {
-            console.log("expired");
-          } else {
-            console.log("failed");
-          }
+          if (data.type === "ok") console.log("ok");
+          else if (data.type === "refresh_token") console.log("refresh");
+          else if (data.type === "expired") console.log("expired");
+          else console.log("failed");
         });
     }
   }, []);
@@ -83,66 +75,91 @@ function Signup() {
   }, [data]);
 
   return (
-    <Box width={"100%"} height={"100%"}>
-      <Box className="w-full max-w-md text-center ">
-        <h2 className="text-xl font-semibold mb-4">Sign in to Apple Store</h2>
-        <div style={{ height: "125px" }}>
-          <input
-            type="text"
-            placeholder="Email or Phone Number"
-            className="form-control h-50"
-            value={user_email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <div style={{ height: "125px" }}>
-            <input
-              type="password"
-              placeholder="Password"
-              className="form-control h-50"
-              value={user_password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "5px",
-              }}
-            >
-              <button
-                className="p-3 h-10"
-                onClick={handleFetch}
-                disabled={loading}
-                style={{
-                  borderRadius: "100px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {loading ? "..." : "sign in"}
-              </button>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex justify-center items-center"
-          style={{ marginTop: "60px" }}
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh"
+      backgroundColor="#ffffff"
+    >
+      <Box textAlign="center" width="100%" maxWidth="400px" px="6">
+        <h2
+          style={{ fontSize: "24px", fontWeight: "500", marginBottom: "20px" }}
         >
-          <input type="checkbox" className="mr-2" />
-          <label htmlFor="remember" className="text-sm ml-2">
+          Sign in to Apple Store
+        </h2>
+
+        <input
+          className="form-control"
+          type="text"
+          placeholder="Email or Phone Number"
+          value={user_email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "12px",
+            marginBottom: "10px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
+        />
+
+        <input
+          className="form-control"
+          type="password"
+          placeholder="Password"
+          value={user_password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "12px",
+            marginBottom: "20px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
+        />
+
+        <button
+          className="btn btn-primary w-100"
+          onClick={handleFetch}
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: "12px",
+
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "6px",
+            fontSize: "16px",
+            marginBottom: "25px",
+          }}
+        >
+          {loading ? "..." : "sign in"}
+        </button>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "10px",
+          }}
+        >
+          <input type="checkbox" id="remember" style={{ marginRight: "6px" }} />
+          <label htmlFor="remember" style={{ fontSize: "14px" }}>
             Remember me
           </label>
         </div>
-        <div className="mt-4 text-sm">
-          <a href="#" className="text-blue-600">
+
+        <div style={{ marginBottom: "10px" }}>
+          <a href="#" style={{ textDecoration: "none" }}>
             Forgot password?
           </a>
         </div>
-        <div className="mt-2 text-sm">
+
+        <div style={{ fontSize: "14px" }}>
           Don’t have an Apple Account?{" "}
-          <Link to="/register" className="text-blue-600">
+          <Link to="/register" style={{ textDecoration: "none" }}>
             Create yours now.
           </Link>
         </div>
