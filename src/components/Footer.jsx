@@ -20,20 +20,16 @@ export default function Footer() {
   return (
     <Box as="footer" bg="gray.900" color="white" py={10}>
       <Container maxW="container.xl">
-        <SimpleGrid
-          columns={{ base: 1, md: 4 }}
-          spacing={10}
-          alignItems="start"
-        >
+        <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6} alignItems="start">
           {/* Left column: address */}
-          <Stack spacing={2}>
+          <Stack spacing={3}>
             <Text>137 rue d’Aguesseau</Text>
             <Text>92100 Boulogne-Billancourt</Text>
             <Text>France</Text>
           </Stack>
 
           {/* Solutions */}
-          <Stack spacing={2}>
+          <Stack spacing={2} marginTop={{ base: "10px" }}>
             <Heading as="h4" size="md" mb={2}>
               Solutions
             </Heading>
@@ -55,7 +51,7 @@ export default function Footer() {
           </Stack>
 
           {/* Contact / Join */}
-          <Stack spacing={2}>
+          <Stack spacing={2} marginTop={{ base: "10px" }}>
             <Link
               href="#"
               fontWeight="semibold"
@@ -77,6 +73,7 @@ export default function Footer() {
             direction="row"
             spacing={4}
             justify={{ base: "flex-start", md: "flex-end" }}
+            marginTop={{ base: "20px" }}
           >
             <Link href="#" isExternal aria-label="Facebook">
               <Icon as={FaFacebook} boxSize={6} />
@@ -95,8 +92,8 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <Flex justify="center" align="center" mt={10} fontSize="sm">
-          <Text>© 2018 CEGEDIM GROUP</Text>
-          <Link href="#" ml={4} _hover={{ textDecoration: "underline" }}>
+          <Text mt={4}>© 2018 CEGEDIM GROUP</Text>
+          <Link href="#" ml={6} _hover={{ textDecoration: "underline" }}>
             LEGACY POLICY
           </Link>
         </Flex>
