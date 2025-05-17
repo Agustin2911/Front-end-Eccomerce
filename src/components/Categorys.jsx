@@ -1,5 +1,6 @@
 // BuscarCategorias.jsx
-import { Box, Grid, Text, VStack, Image, Flex } from "@chakra-ui/react";
+import { Box, Grid, Text, VStack, Image, Flex, Center } from "@chakra-ui/react";
+import CategorysButtons from "./CategorysButtons";
 
 const categorias = [
   {
@@ -57,40 +58,23 @@ const categorias = [
 function Categorys() {
   return (
     <Flex width="full" justify={"center"}>
-      <Box w="full" py={6} px={{ base: 4, md: 4 }}>
-        <Text fontSize="xl" fontWeight="bold" mb={6}>
+      <Box py={6} px={{ base: 4, md: 4 }}>
+        <Text
+          fontSize="30px"
+          fontWeight="bold"
+          mb={6}
+          display={"flex"}
+          justifyContent={"center"}
+        >
           ¿Qué estás buscando?
         </Text>
         <Flex justify="center">
           <Grid
             templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(5, 1fr)" }}
             gap={0.4}
-            w="full"
           >
             {categorias.map((cat, i) => (
-              <VStack
-                key={i}
-                bg="white"
-                p={4}
-                boxSize={{ base: "200px", md: "100px" }}
-                border={"solid"}
-                borderWidth={"0.2px"}
-                borderColor={"gray.200"}
-                borderRadius={"2px"}
-                _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
-                cursor="pointer"
-                justifyContent={"center"}
-                alignItems={"center"}
-              >
-                <Image
-                  src={cat.icono}
-                  boxSize={{ base: "40px", md: "20px" }}
-                  alt={cat.nombre}
-                />
-                <Text fontSize="sm" textAlign="center" color="gray.700">
-                  {cat.nombre}
-                </Text>
-              </VStack>
+              <CategorysButtons cat={cat} i={i}></CategorysButtons>
             ))}
           </Grid>
         </Flex>
