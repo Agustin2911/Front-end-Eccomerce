@@ -112,7 +112,7 @@ function MainNavbar({ opacity }) {
 
         {/* Íconos de búsqueda y carrito a la derecha */}
         <FaSearch className="text-white" style={{ cursor: "pointer" }} />
-        <Link to={"/Card"}>
+        <Link to={"/cart"}>
           <FaShoppingCart
             className="text-white"
             style={{ cursor: "pointer" }}
