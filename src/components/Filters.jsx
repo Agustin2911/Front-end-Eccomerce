@@ -29,7 +29,7 @@ function Filters({ onApplyFilters }) {
         <Stack gap="5" width={{ base: "300px", md: "400px" }}>
           <Select.Root key={"md"} size={"md"} collection={frameworks}>
             <Select.HiddenSelect />
-            <Select.Label>size = {"md"}</Select.Label>
+            <Select.Label>Ordenar por:</Select.Label>
             <Select.Control>
               <Select.Trigger borderRadius={"15px"}>
                 <Select.ValueText placeholder="Select framework" />
