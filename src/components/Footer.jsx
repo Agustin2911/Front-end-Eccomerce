@@ -18,7 +18,7 @@ import {
 
 export default function Footer() {
   return (
-    <Box as="footer" bg="gray.900" color="white" py={10}>
+    <Box as="footer" bg="#170d10" color="#f1e6f7" py={10}>
       <Container maxW="container.xl">
         <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6} alignItems="start">
           {/* Left column: address */}
@@ -43,7 +43,9 @@ export default function Footer() {
               <Link
                 key={item}
                 href="#"
+                color={"#d3a5ee"}
                 _hover={{ textDecoration: "underline" }}
+                textDecoration={"none"}
               >
                 {item}
               </Link>
@@ -55,7 +57,9 @@ export default function Footer() {
             <Link
               href="#"
               fontWeight="semibold"
-              _hover={{ textDecoration: "underline" }}
+              _hover={{ textDecoration: "none" }}
+              textDecoration={"none"}
+              color={"white"}
             >
               Contact us
             </Link>
@@ -63,6 +67,8 @@ export default function Footer() {
               href="#"
               fontWeight="semibold"
               _hover={{ textDecoration: "underline" }}
+              textDecoration={"none"}
+              color={"#d3a5ee"}
             >
               Join us
             </Link>
@@ -76,16 +82,16 @@ export default function Footer() {
             marginTop={{ base: "20px" }}
           >
             <Link href="#" isExternal aria-label="Facebook">
-              <Icon as={FaFacebook} boxSize={6} />
+              <Icon as={FaFacebook} boxSize={6} color={"#ec1877"} />
             </Link>
             <Link href="#" isExternal aria-label="Twitter">
-              <Icon as={FaTwitter} boxSize={6} />
+              <Icon as={FaTwitter} boxSize={6} color={"#ec1877"} />
             </Link>
             <Link href="#" isExternal aria-label="LinkedIn">
-              <Icon as={FaLinkedin} boxSize={6} />
+              <Icon as={FaLinkedin} boxSize={6} color={"#ec1877"} />
             </Link>
             <Link href="#" isExternal aria-label="Google Plus">
-              <Icon as={FaGooglePlusG} boxSize={6} />
+              <Icon as={FaGooglePlusG} boxSize={6} color={"#ec1877"} />
             </Link>
           </Stack>
         </SimpleGrid>
@@ -93,7 +99,12 @@ export default function Footer() {
         {/* Bottom bar */}
         <Flex justify="center" align="center" mt={10} fontSize="sm">
           <Text mt={4}>© 2018 CEGEDIM GROUP</Text>
-          <Link href="#" ml={6} _hover={{ textDecoration: "underline" }}>
+          <Link
+            href="#"
+            ml={6}
+            _hover={{ textDecoration: "underline" }}
+            color={"#ec1877"}
+          >
             LEGACY POLICY
           </Link>
         </Flex>
