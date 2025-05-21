@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./LandingPage.jsx";
 import Signup from "./Signup";
 import Register from "./Register";
+import ShowProductsPage from "./ShowProductsPage";
 
 function App() {
   return (
@@ -11,7 +12,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/register" element={<Register />}></Route>  
+          <Route path="/register" element={<Register />}></Route>
+          <Route path="/products" element={<ShowProductsPage />}></Route>
         </Routes>
       </Router>
     </>

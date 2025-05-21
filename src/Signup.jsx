@@ -80,19 +80,24 @@ function Signup() {
       alignItems="center"
       justifyContent="center"
       height="100vh"
-      backgroundColor="#ffffff"
+      backgroundColor="#170d20"
     >
       <Box textAlign="center" width="100%" maxWidth="400px" px="6">
         <h2
-          style={{ fontSize: "24px", fontWeight: "500", marginBottom: "20px" }}
+          style={{
+            fontSize: "24px",
+            fontWeight: "500",
+            marginBottom: "20px",
+            color: "#f1e6f7",
+          }}
         >
-          Sign in to Apple Store
+          Iniciar sesión en GCCustoms
         </h2>
 
         <input
           className="form-control"
           type="text"
-          placeholder="Email or Phone Number"
+          placeholder="Email"
           value={user_email}
           onChange={(e) => setEmail(e.target.value)}
           style={{
@@ -107,7 +112,7 @@ function Signup() {
         <input
           className="form-control"
           type="password"
-          placeholder="Password"
+          placeholder="Constraseña"
           value={user_password}
           onChange={(e) => setPassword(e.target.value)}
           style={{
@@ -120,13 +125,13 @@ function Signup() {
         />
 
         <button
-          className="btn btn-primary w-100"
+          className=" w-100"
           onClick={handleFetch}
           disabled={loading}
           style={{
             width: "100%",
             padding: "12px",
-
+            background: "#ad5add",
             color: "#ffffff",
             border: "none",
             borderRadius: "6px",
@@ -134,7 +139,7 @@ function Signup() {
             marginBottom: "25px",
           }}
         >
-          {loading ? "..." : "sign in"}
+          {loading ? "..." : "Iniciar Sesión"}
         </button>
 
         <div
@@ -146,21 +151,27 @@ function Signup() {
           }}
         >
           <input type="checkbox" id="remember" style={{ marginRight: "6px" }} />
-          <label htmlFor="remember" style={{ fontSize: "14px" }}>
+          <label
+            htmlFor="remember"
+            style={{ fontSize: "14px", color: "#f1e6f7" }}
+          >
             Remember me
           </label>
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <a href="#" style={{ textDecoration: "none" }}>
-            Forgot password?
+          <a href="#" style={{ textDecoration: "none", color: "#ad5add" }}>
+            Te olvidaste la contraseña?
           </a>
         </div>
 
-        <div style={{ fontSize: "14px" }}>
-          Don’t have an Apple Account?{" "}
-          <Link to="/register" style={{ textDecoration: "none" }}>
-            Create yours now.
+        <div style={{ fontSize: "14px", color: "#f1e6f7" }}>
+          No tenes cuenta?{" "}
+          <Link
+            to="/register"
+            style={{ textDecoration: "none", color: "#ad5add" }}
+          >
+            Creala aca!
           </Link>
         </div>
       </Box>
