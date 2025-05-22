@@ -15,7 +15,7 @@ function ShowProductsPage() {
     console.log("Aplicando filtros:", filters);
   };
   return (
-    <Box bg={"#170d20"}>
+    <Box bg={"#170d20"}> 
       <MainNavbar></MainNavbar>
       <Stack mt={"30px"} ml={"50px"}>
         <Breadcrumb.Root>
@@ -43,7 +43,7 @@ function ShowProductsPage() {
             </Breadcrumb.Item>
             <Breadcrumb.Separator />
             <Breadcrumb.Item>
-              <Breadcrumb.CurrentLink fontSize="xl">
+              <Breadcrumb.CurrentLink fontSize="xl" color={"#EC1877"}>
                 Props
               </Breadcrumb.CurrentLink>
             </Breadcrumb.Item>
