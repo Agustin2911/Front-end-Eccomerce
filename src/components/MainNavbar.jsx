@@ -79,7 +79,7 @@ function MainNavbar({ opacity }) {
         <Link to="/">
           <FaApple
             className="text-white"
-            size={24}
+            size={20}
             style={{ cursor: "pointer" }}
           />
         </Link>
@@ -111,15 +111,20 @@ function MainNavbar({ opacity }) {
         </button>
 
         {/* Íconos de búsqueda y carrito a la derecha */}
-        <FaSearch className="text-white" style={{ cursor: "pointer" }} />
+        <FaSearch
+          className="text-white"
+          style={{ cursor: "pointer" }}
+          size={20}
+        />
         <Link to={"/Card"}>
           <FaShoppingCart
+            size={20}
             className="text-white"
             style={{ cursor: "pointer" }}
           />
         </Link>
         <Link to="/signup" style={{ color: "white" }}>
-          <FaUser />
+          <FaUser size={20} />
         </Link>
       </div>
 
