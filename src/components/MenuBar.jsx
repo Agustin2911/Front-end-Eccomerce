@@ -13,8 +13,12 @@ function MenuBar({ objeto, numero, lista }) {
         </MenuTrigger>
 
         <MenuContent
-          className="w-80"
-          style={{ background: "#333333", marginTop: "-6px" }}
+          className="w-20"
+          style={{
+            background: "#333333",
+            marginTop: "2px",
+            position: "absolute",
+          }}
         >
           {lista.map((iphone) => (
             <Link
