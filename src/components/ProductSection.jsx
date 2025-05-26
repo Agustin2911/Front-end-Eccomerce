@@ -3,7 +3,9 @@ import { useState } from "react"
 import { Box,SimpleGrid,Image,Text,Heading,Stack,HStack,VStack,Button,IconButton,Flex,Wrap,Badge,Input,Icon } from "@chakra-ui/react";
 import { FaPlus, FaMinus, FaShoppingCart, FaCheckCircle, FaTruck } from "react-icons/fa";
 import StockQuantity from "./StockQuantity";
-
+import Description from "./Description";
+import RelatedProducts from "./RelatedProducts";
+import ProductReviews from "./ProductReviews";
 
 export default function ProductSection() {
 
@@ -17,31 +19,98 @@ export default function ProductSection() {
     "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-2.jpg",
     "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-3.jpg",
 ];
-    
+  
+    const reviews = [
+    {
+      rating: 5,
+      text: "Todo ok muy buen producto.",
+      date: "14 sep. 2024",
+      helpful: 3,
+    },
+    {
+      rating: 4.5,
+      text: "Muy buena placa. Justo lo que necesitábamos para los chicos y el trabajo.",
+      date: "22 abr. 2025",
+      helpful: 2,
+    },
+    // …
+  ];
+
+    const related = [
+    {
+      id: 1,
+      url: "http://localhost:5173/product-desc/#",
+      image:
+        "https://fullh4rd.com.ar/img/productos/3/video-geforce-gt-210-msi-1gb-ddr3-0.jpg",
+      name: "VIDEO GEFORCE GT 210 MSI 1GB DDR3",
+      price: "$41.989,95",
+      oldPrice: "$46.188,95",
+    },
+    {
+      id: 2,
+        url: "http://localhost:5173/product-desc/#",
+      image:
+        "https://fullh4rd.com.ar/img/productos/3/video-geforce-gt-710-2gb-msi-lp-0.jpg",
+      name: "VIDEO GEFORCE GT 710 2GB MSI LP",
+      price: "$72.369,96",
+      oldPrice: "$79.606,91",
+    },
+    {
+      id: 3,
+        url: "http://localhost:5173/product-desc/#",
+      image:
+        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3060-12gb-msi-ventus-2x-oc-0.jpg",
+      name: "VIDEO GEFORCE RTX 3060 12GB MSI VENTUS 2X OC",
+      price: "$476.560,00",
+      oldPrice: "$524.216,00",
+    },
+    {
+      id: 4,
+        url: "http://localhost:5173/product-desc/#",
+      image:
+        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3060-12gb-asus-dual-v2-oc-edition-0.jpg",
+      name: "VIDEO GEFORCE RTX 3060 12GB ASUS DUAL V2 OC",
+      price: "$472.069,94",
+      oldPrice: "$519.276,98",
+    },
+  ];
+
     const product = {
         code: "VGA2339",
         name: "VIDEO GEFORCE RTX 3050 8GB MSI VENTUS 2X XS OC",
+        description: `Esta es una tarjeta gráfica de última generación,
+                      ideal para gaming en 1080p y 1440p. Cuenta con 8 GB de GDDR6,
+                      un bus de memoria de 128 bit y soporte para ray-tracing en
+                      tiempo real.
+
+                      Esta es una tarjeta gráfica de última generación,
+                      ideal para gaming en 1080p y 1440p. Cuenta con 8 GB de GDDR6,
+                      un bus de memoria de 128 bit y soporte para ray-tracing en
+                      tiempo real.`,     
     };
 
     return( 
-        
+       <> 
        <Box
         display="grid"
         gridTemplateColumns={{ base: "1fr", md: "3fr 2fr" }}
         gap={6}
         p={6}
+        borderBottom="1px solid" borderColor="gray.200"
+        
        >
-      {/** ─── GALERÍA ───────── */}
-            <Box>
-        {/* Imagen principal */}
+     
+            <Box borderBottom="1px solid" borderColor="gray.200">
+      
                 <Image
                     src={images[0]}
                     alt="Imagen principal" 
                     w="100%"
                     mb={4}
+                    
                 />
 
-        {/* Miniaturas */}
+       
                 <HStack spacing={2}>
                     {images.map((src, idx) => (
                         <Image
@@ -56,7 +125,7 @@ export default function ProductSection() {
                     ))}
                 </HStack>
 
-        {/* Pie de imagen */}
+       
                 <Text fontSize="xs" color="gray.500" mt={2}>
                     * Las imágenes son meramente ilustrativas y no son contractuales.
                 </Text>
@@ -64,14 +133,14 @@ export default function ProductSection() {
             
             
 
-            <Box borderLeft="1px solid" borderColor="gray.200" pl={6}>
+            <Box borderLeft="1px solid" borderBottom="1px solid" borderColor="gray.200" pl={6} >
                  <VStack align="stretch" spacing={4}>
-                    {/* Código y título */}
+                 
                          <Text fontSize="sm" color="gray.500">
                             Código del producto: {product.code}
                         </Text>
                     <Heading size="lg">{product.name}</Heading>
-                    {/* Cuotas */}
+                    
                     <Stack spacing={0}>
                         <Text fontWeight="bold" fontSize="20px">
                             12 cuotas sin interés de:{" "}
@@ -84,7 +153,7 @@ export default function ProductSection() {
                         </Text>
                     </Stack>
 
-                     {/* Precio especial */}
+                    
                     <Stack spacing={0}>
                         <Text fontWeight="bold" fontSize="17px">
                             Precio especial:{" "}
@@ -134,7 +203,7 @@ export default function ProductSection() {
                             <FaPlus/>
                          </IconButton>
                     </Flex>
-                    {/* Botones de acción */}
+                  
                     <Button bg="#AE5BDD" size="lg" w="100%" _hover={{bg: "#422A52"}}>
                         Comprar ahora
                     </Button>
@@ -152,7 +221,7 @@ export default function ProductSection() {
                             <FaShoppingCart/> Agregar
                         </Button>
                     </HStack>
-                   {/* Tags */}
+                  
                     <Wrap spacing={2}>
                             {[
                                 "msi",
@@ -171,9 +240,14 @@ export default function ProductSection() {
                     </Wrap>
                  </VStack>
             </Box>  
-            
+        
+            <Description description={product.description} /> 
+                
         </Box>
-       
+        <RelatedProducts  products={related}   />
+        <ProductReviews reviews={reviews}/>
+        
+       </>
     );
 }
 
