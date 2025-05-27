@@ -22,8 +22,8 @@ export default function ProductSection() {
   
     const reviews = [
     {
-      rating: 5,
-      text: "Todo ok muy buen producto.",
+      rating: 3,
+      text: "Regular, todo ok pero hasta ahi.",
       date: "14 sep. 2024",
       helpful: 3,
     },
