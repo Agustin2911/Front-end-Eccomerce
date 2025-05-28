@@ -12,17 +12,34 @@ export default function ProductPage() {
       <MainNavbar />
 
       {/* Contenido principal */}
-      <Box flex="1" pt="20px" px={{ base: 4, md: 12 }} mt="20px">
-      <Container maxW="1200px" mx="auto"  mb="70px">
-        <Stack direction="row" spacing={2} ml={-3} mb={-2}>
+      <Box flex="1" pt="20px" px={{ base: 0, md: 12 }} mt="20px">
+        <Box
+        as="main"
+        flex="1"
+        pt="20px"
+        px={{base: 0, md: 12}}
+        mt="20px"
+        mx="auto"
+        maxW={{ base: "100%", md: "1200px"}}
+        mb="70px"
+        >         
           <Breadcrumb.Root>
-            <Breadcrumb.List>
+            <Breadcrumb.List
+            display="flex"
+            flexWrap="wrap"
+            alignItems="center"
+            spacing={2}
+            
+            >
               <Breadcrumb.Item>
                 <Breadcrumb.Link
                   href="#"
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
+                  whiteSpace="nowrap"
+                  wordBreak="normal"
+                  overflowWrap="break-word"
                 >
                   HOME
                 </Breadcrumb.Link>
@@ -34,6 +51,9 @@ export default function ProductPage() {
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
+                  whiteSpace="nowrap"
+                  wordBreak="normal"
+                  overflowWrap="break-word"
                 >
                   PLACAS DE VIDEO
                 </Breadcrumb.Link>
@@ -45,6 +65,9 @@ export default function ProductPage() {
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
+                  whiteSpace="nowrap"
+                  wordBreak="normal"
+                  overflowWrap="break-word"                
                 >
                   NVIDIA
                 </Breadcrumb.Link>
@@ -54,27 +77,32 @@ export default function ProductPage() {
                 <Breadcrumb.CurrentLink
                   fontSize="sm"
                   color="#EC1877"
+                  wordBreak="normal"
+                  overflowWrap="break-word"
+                  maxW="100%"
+
                 >
                   VIDEO GEFORCE RTX 3050 8GB MSI VENTUS 2X XS OC
                 </Breadcrumb.CurrentLink>
               </Breadcrumb.Item>
             </Breadcrumb.List>
           </Breadcrumb.Root>
-        </Stack>
+       
 
         {/* DIV ENORME: aquí va toda la info de producto */}
         <Box
           id="product-container"
           bg="white" 
           borderWidth="0px"
+          mr="20px" 
+          ml="20px"
           p={6}
-          ml={{ base: 0, md:"20px"}}
         >
         
             <ProductSection></ProductSection> 
 
         </Box>
-      </Container>
+      </Box>
       </Box>
 
       {/* Footer */}

@@ -62,7 +62,7 @@ export default function ProductSection() {
         "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3060-12gb-msi-ventus-2x-oc-0.jpg",
       name: "VIDEO GEFORCE RTX 3060 12GB MSI VENTUS 2X OC",
       price: "$476.560,00",
-      oldPrice: "$524.216,00",
+      
     },
     {
       id: 4,
@@ -93,11 +93,14 @@ export default function ProductSection() {
        <> 
        <Box
         display="grid"
-        gridTemplateColumns={{ base: "1fr", md: "3fr 2fr" }}
+        gridTemplateColumns={{ base: "1fr", sm: "1fr", md: "1fr", lg: "1fr 2fr",  xl: "2fr 3fr" }}
         gap={6}
-        p={6}
-        borderBottom="1px solid" borderColor="gray.200"
-        
+        px={{ base: 5, lg: 6}}
+        py={6}
+        overflowX="hidden"
+        borderBottom="1px solid" 
+        borderColor="gray.200"
+               
        >
      
             <Box borderBottom="1px solid" borderColor="gray.200">
@@ -105,25 +108,29 @@ export default function ProductSection() {
                 <Image
                     src={images[0]}
                     alt="Imagen principal" 
-                    w="100%"
-                    mb={4}
+                    w="full"
+                    maxH={{ base: "200px", md: "400px"}}
+                    mb={{ base: 2, md: 4}}
+                    objectFit="contain"
                     
                 />
 
        
-                <HStack spacing={2}>
-                    {images.map((src, idx) => (
+               <Box overflowX="auto" w="full" mt={4}>
+                    <HStack spacing={2} minW="max-content"> 
+                        {images.map((src,idx)=>(
                         <Image
                         key={idx}
                         src={src}
-                        alt={`Miniatura ${idx + 1}`}
-                        boxSize="130px"
+                        boxSize={{ base: "60px", sm: "70px", md: "100px", lg: "130px" }}
                         objectFit="cover"
                         borderRadius="md"
                         cursor="pointer"
+                        flexShrink={0}
                         />
-                    ))}
-                </HStack>
+                        ))}
+                    </HStack>
+                </Box>
 
        
                 <Text fontSize="xs" color="gray.500" mt={2}>
@@ -133,29 +140,29 @@ export default function ProductSection() {
             
             
 
-            <Box borderLeft="1px solid" borderBottom="1px solid" borderColor="gray.200" pl={6} >
+            <Box borderLeft={{ base: "none", xl: "1px solid" }} borderBottom="1px solid" borderColor={{ base: "gray.200", xl: "gray.200"}} pl={{ base : 0, lg: 6}} >
                  <VStack align="stretch" spacing={4}>
                  
                          <Text fontSize="sm" color="gray.500">
                             Código del producto: {product.code}
                         </Text>
-                    <Heading size="lg">{product.name}</Heading>
+                    <Heading size={{ base: "sm", md: "lg" }}>{product.name}</Heading>
                     
                     <Stack spacing={0}>
-                        <Text fontWeight="bold" fontSize="20px">
+                        <Text fontWeight="bold" fontSize={{ base: "xs", md: "20px" }}>
                             12 cuotas sin interés de:{" "}
                             <Text as="span" color="#EC1877" fontWeight="bold">
                                 $34.980,83
                             </Text>
                         </Text>
-                        <Text fontSize="s" color="gray.500" mt="-20px">
+                        <Text fontSize="20px" color="gray.500" mt="-20px">
                             ** Sobre el precio de lista
                         </Text>
                     </Stack>
 
                     
                     <Stack spacing={0}>
-                        <Text fontWeight="bold" fontSize="17px">
+                        <Text fontWeight="bold" fontSize={{ base: "xs", md: "20px"}}>
                             Precio especial:{" "}
                             <Text as="span" color="green.500">
                                 $322.899,99
@@ -241,9 +248,10 @@ export default function ProductSection() {
                  </VStack>
             </Box>  
         
-            <Description description={product.description} /> 
+            
                 
         </Box>
+        <Description description={product.description} />
         <RelatedProducts  products={related}   />
         <ProductReviews reviews={reviews}/>
         
