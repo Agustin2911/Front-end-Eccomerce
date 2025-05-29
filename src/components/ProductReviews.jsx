@@ -59,7 +59,7 @@ import {
      <Box mt={10} bg="white" p={6} borderTop="1px solid" borderColor="gray.200">
         <Stack
         align="flex-start"
-        spacing={4}
+        spacing={1}
         maxW="400px"
         mb={6}
       >
@@ -69,12 +69,17 @@ import {
         Opiniones del producto
        </Text>
 
-       <HStack align="baseline" spacing={1} mb="-15px">
+       <HStack align="baseline" spacing={1} mb="-10px" flexWrap="wrap" rowGap="2px" columnGap="4px">
             <Text fontSize="5xl" fontWeight="bold" color="#D3A5EE">
                 {average.toFixed(1)}
             </Text>
             {renderStars(average)}
-            <Text fontSize="sm" color="gray.500">
+            <Text 
+            fontSize="sm" 
+            color="gray.500" 
+            flexBasis={{ base: "100%", sm: "auto" }}  // full-width en xs, auto en sm+
+            mt={{ base:-7, sm: 0 }}   
+            >
                 {total} calificaciones
             </Text>
         </HStack>

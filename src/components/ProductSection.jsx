@@ -93,9 +93,9 @@ export default function ProductSection() {
        <> 
        <Box
         display="grid"
-        gridTemplateColumns={{ base: "1fr", sm: "1fr", md: "1fr", lg: "1fr 2fr",  xl: "2fr 3fr" }}
+        gridTemplateColumns={{ base: "1fr", sm: "1fr", md: "1fr, 1fr", lg: "2fr 1fr",  xl: "3fr 2fr" }}
         gap={6}
-        px={{ base: 5, lg: 6}}
+        px={{ base: 4, lg: 6}}
         py={6}
         overflowX="hidden"
         borderBottom="1px solid" 
@@ -103,26 +103,45 @@ export default function ProductSection() {
                
        >
      
-            <Box borderBottom="1px solid" borderColor="gray.200">
+            <Box borderBottom="1px solid" borderColor="gray.200" overflowX="auto">
       
                 <Image
                     src={images[0]}
                     alt="Imagen principal" 
                     w="full"
-                    maxH={{ base: "200px", md: "400px"}}
+                    maxH={{ md: "400px", xl: "900px"}}
+                    css={{
+                        "@media screen and (min-width: 520px) and (max-width: 767px)": {
+                            maxH: "400px"
+                        },
+                        "@media screen and (min-width: 1055px) and (max-width: 1279px)": {
+                            maxH: "900px"
+                        },
+                        "@media screen and (max-width: 360px)": {
+                            maxH: "250px"
+                        }
+
+                    }}
                     mb={{ base: 2, md: 4}}
                     objectFit="contain"
+                    objectPosition={"left top"}
                     
                 />
 
        
-               <Box overflowX="auto" w="full" mt={4}>
+               <Box overflowX="auto" w="full" mt={4} css={{
+                           "&::webkit-scrollbar": {
+                           display: "none",
+                       },
+                           scrollbarWidth: "none",
+                           "-ms-overflow-style": "none",
+                    }}>
                     <HStack spacing={2} minW="max-content"> 
                         {images.map((src,idx)=>(
                         <Image
                         key={idx}
                         src={src}
-                        boxSize={{ base: "60px", sm: "70px", md: "100px", lg: "130px" }}
+                        boxSize={{ base: "90px", sm: "100px", md: "100px", lg: "130px" }}
                         objectFit="cover"
                         borderRadius="md"
                         cursor="pointer"
@@ -140,35 +159,35 @@ export default function ProductSection() {
             
             
 
-            <Box borderLeft={{ base: "none", xl: "1px solid" }} borderBottom="1px solid" borderColor={{ base: "gray.200", xl: "gray.200"}} pl={{ base : 0, lg: 6}} >
-                 <VStack align="stretch" spacing={4}>
+            <Box borderLeft={{ base: "none",lg: "1px solid" , xl: "1px solid" }} borderBottom="1px solid" borderColor={{ base: "gray.200", lg: "gray.200", xl: "gray.200"}} pl={{ base : 0, lg: 6}} >
+                 <VStack align="stretch" spacing={{base: "3", md: "4"}}>
                  
                          <Text fontSize="sm" color="gray.500">
                             Código del producto: {product.code}
                         </Text>
-                    <Heading size={{ base: "sm", md: "lg" }}>{product.name}</Heading>
+                    <Heading fontSize={{ base: "lg", md: "2xl" }} mt="-3">{product.name}</Heading>
                     
                     <Stack spacing={0}>
-                        <Text fontWeight="bold" fontSize={{ base: "xs", md: "20px" }}>
+                        <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
                             12 cuotas sin interés de:{" "}
                             <Text as="span" color="#EC1877" fontWeight="bold">
                                 $34.980,83
                             </Text>
                         </Text>
-                        <Text fontSize="20px" color="gray.500" mt="-20px">
+                        <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" mt="-20px">
                             ** Sobre el precio de lista
                         </Text>
                     </Stack>
 
                     
                     <Stack spacing={0}>
-                        <Text fontWeight="bold" fontSize={{ base: "xs", md: "20px"}}>
+                        <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
                             Precio especial:{" "}
                             <Text as="span" color="green.500">
                                 $322.899,99
                             </Text>
                         </Text>
-                        <Text fontSize="s" color="gray.500" mt="-20px">
+                        <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" mt="-20px" whiteSpace="normal" wordBreak="break-word">
                             ** Abonando con débito, transferencia o efectivo en el local
                         </Text>
                     </Stack>
@@ -183,7 +202,7 @@ export default function ProductSection() {
                     />
                    
 
-                    <Flex align="center" gap={2}>
+                    <Flex align="center" gap={{ base: 2, md: 4 }}>
                         <IconButton
                             aria-label="Disminuir cantidad"
                             colorPalette="#AE5BDD"
@@ -211,11 +230,29 @@ export default function ProductSection() {
                          </IconButton>
                     </Flex>
                   
-                    <Button bg="#AE5BDD" size="lg" w="100%" _hover={{bg: "#422A52"}}>
+                    <Button bg="#AE5BDD" size={{ base: "sm", md: "lg" }} w="100%" _hover={{bg: "#422A52"}} py={{ base: 2, md: 3 }} 
+                      css={{
+                          "@media screen and (max-width: 321px)": {
+                              w:"100%"
+                        },
+                      }}>
                         Comprar ahora
                     </Button>
                     <HStack spacing={4} w="100%">
-                        <Button borderWidth="2px" borderColor="#AE5BDD" variant="outline" flex="1" _hover={{bg: "#422A52",color: "white", borderColor:"#422A52"}}>
+                        <Button 
+                        borderWidth="2px" 
+                        borderColor="#AE5BDD" 
+                        variant="outline" 
+                        flex="1" 
+                        _hover={{bg: "#422A52",color: "white", borderColor:"#422A52"}}
+                        fontSize={{ base: "sm", md: "sm" }}
+                        css={{
+                          "@media screen and (max-width: 321px)": {
+                              maxW:"50%",
+                              fontSize: "xs"
+                            },
+                        }}
+                        >
                             <FaTruck /> Calcular envío
                         </Button>
                         <Button
@@ -224,12 +261,19 @@ export default function ProductSection() {
                             variant="outline"
                             flex="1"
                             _hover={{bg: "#422A52",color: "white", borderColor:"#422A52"}}
+                            fontSize={{ base: "sm", md: "sm" }}
+                             css={{
+                                "@media screen and (max-width: 321px)": {
+                                    maxW:"50%",
+                                    fontSize: "xs"
+                                },
+                             }}
                             >
                             <FaShoppingCart/> Agregar
                         </Button>
                     </HStack>
                   
-                    <Wrap spacing={2}>
+                    <Wrap spacing={2} mb="10px">
                             {[
                                 "msi",
                                 "geforce",
@@ -240,7 +284,7 @@ export default function ProductSection() {
                                 "max5",
                                 "promo",
                             ].map((tag) => (
-                                <Badge key={tag} size="sm" variant="subtle" bg="#F1E6F7" >
+                                <Badge key={tag} size={{ base: "xs", md: "sm" }} variant="subtle" bg="#F1E6F7" >
                                     {tag}
                                 </Badge>
                             ))}

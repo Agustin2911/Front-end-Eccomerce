@@ -94,8 +94,6 @@ export default function ProductPage() {
           id="product-container"
           bg="white" 
           borderWidth="0px"
-          mr="20px" 
-          ml="20px"
           p={6}
         >
         
