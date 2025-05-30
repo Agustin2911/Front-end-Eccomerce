@@ -1,12 +1,12 @@
 import { Stack, HStack, Text, Icon, Input, Flex, StackSeparator, Box, VStack, Wrap, WrapItem } from "@chakra-ui/react";
-import { FaCheckCircle } from "react-icons/fa";
-
+import { FaCheckCircle  } from "react-icons/fa";
+import { TiWarning } from "react-icons/ti";
 export default function StockQuantity({ stockLevel }) {
   return (
     <Box
       border="1.5px solid"
-      borderColor="green.400"
-      background="green.50"
+      borderColor= {stockLevel === "low" ? "yellow.400" : "green.400"}
+      background={stockLevel === "low" ? "yellow.50" : "green.50"}
       px={2}
       w={{ base: "100%", sm: "auto" }}
       maxW={{ base: "100%", sm: "400px" }}
@@ -14,7 +14,7 @@ export default function StockQuantity({ stockLevel }) {
     >
      <Wrap align="center" spacing={2} /* aquí permitimos wrap automático */>
         <WrapItem flexShrink={0}>
-          <Icon as={FaCheckCircle} boxSize={10} color="green.400" />
+          <Icon as={stockLevel === "low" ? TiWarning : FaCheckCircle} boxSize={10} color={stockLevel === "low" ? "yellow.400" : "green.400"} />
         </WrapItem>
 
         <WrapItem flex="1" minW={0} /* para que el texto pueda encoger y wrappear */>
@@ -22,17 +22,18 @@ export default function StockQuantity({ stockLevel }) {
             <Text
               fontWeight="bold"
               fontSize="md"
-              lineHeight="1.2"
-              color="green.600"
+              lineHeight="2"
+              color={stockLevel === "low" ? "yellow.600" : "green.600"}
               mt="5px"
+              mb="-1px"
             >
-              STOCK ALTO
+              STOCK {stockLevel === "low" ? "BAJO" : "ALTO"}
             </Text>
             <Text
               fontSize="sm"
-              color="green.500"
+              color={stockLevel === "low" ? "yellow.500" : "green.500"}
               lineHeight="1.2"
-              mt="2px"
+              mt="0px"
             >
               Disponible para venta WEB y presencial
             </Text>

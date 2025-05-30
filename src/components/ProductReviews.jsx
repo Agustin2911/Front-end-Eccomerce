@@ -1,6 +1,4 @@
 // src/components/ProductReviews.jsx
-
-
 import {
   Box,
   HStack,
@@ -14,12 +12,16 @@ import {
  import {
    FaStar,
    FaRegStar,
-   FaStarHalfAlt,
+   FaStarHalfAlt,   
    FaThumbsUp,
  } from "react-icons/fa";
+import { useState } from "react";
+import ReviewItem from "./ReviewItem";
 
  export default function ProductReviews({ reviews = [] }) {
-    // 1) total de reseñas
+    
+ 
+  // 1) total de reseñas
   const total = reviews.length;
   // 2) promedio
   const average =
@@ -122,26 +124,12 @@ import {
        {/* Listado de reviews */}
        <VStack align="stretch" spacing={6}>
          {reviews.map((r, i) => (
-           <Box key={i}>
-             <HStack justify="space-between">
-               {renderStars(r.rating)}
-               <Text fontSize="sm" color="gray.500">
-                 {r.date}
-               </Text>
-             </HStack>
-             <Text mt={2} color="gray.700">
-               {r.text}
-             </Text>
-             <Button
-               size="sm"
-               variant="ghost" 
-               colorScheme="gray"
-               mt={2}
-             >
-                <FaThumbsUp /> Es útil {r.helpful}
-             </Button>
-           </Box>
-         ))}
+            <ReviewItem
+                key={i}
+                renderStars={renderStars}
+                {...r}
+             />
+                    ))}
        </VStack>
      </Box>
    );

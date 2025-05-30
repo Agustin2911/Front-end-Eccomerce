@@ -7,88 +7,16 @@ import Description from "./Description";
 import RelatedProducts from "./RelatedProducts";
 import ProductReviews from "./ProductReviews";
 
-export default function ProductSection() {
+export default function ProductSection({images, reviews, related, product, stockLevel }) {
 
     const [quantity, setQuantity] = useState(1);
     const dec = () => setQuantity((q) => Math.max(q - 1, 1));
     const inc = () => setQuantity((q) => q + 1);
+    
+    const [selectedImage, setSelectedImage] = useState(0);
 
-    const images = [
-    "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-0.jpg",
-    "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-1.jpg",
-    "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-2.jpg",
-    "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-3.jpg",
-];
+ 
   
-    const reviews = [
-    {
-      rating: 3,
-      text: "Regular, todo ok pero hasta ahi.",
-      date: "14 sep. 2024",
-      helpful: 3,
-    },
-    {
-      rating: 4.5,
-      text: "Muy buena placa. Justo lo que necesitábamos para los chicos y el trabajo.",
-      date: "22 abr. 2025",
-      helpful: 2,
-    },
-    // …
-  ];
-
-    const related = [
-    {
-      id: 1,
-      url: "http://localhost:5173/product-desc/#",
-      image:
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-gt-210-msi-1gb-ddr3-0.jpg",
-      name: "VIDEO GEFORCE GT 210 MSI 1GB DDR3",
-      price: "$41.989,95",
-      oldPrice: "$46.188,95",
-    },
-    {
-      id: 2,
-        url: "http://localhost:5173/product-desc/#",
-      image:
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-gt-710-2gb-msi-lp-0.jpg",
-      name: "VIDEO GEFORCE GT 710 2GB MSI LP",
-      price: "$72.369,96",
-      oldPrice: "$79.606,91",
-    },
-    {
-      id: 3,
-        url: "http://localhost:5173/product-desc/#",
-      image:
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3060-12gb-msi-ventus-2x-oc-0.jpg",
-      name: "VIDEO GEFORCE RTX 3060 12GB MSI VENTUS 2X OC",
-      price: "$476.560,00",
-      
-    },
-    {
-      id: 4,
-        url: "http://localhost:5173/product-desc/#",
-      image:
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3060-12gb-asus-dual-v2-oc-edition-0.jpg",
-      name: "VIDEO GEFORCE RTX 3060 12GB ASUS DUAL V2 OC",
-      price: "$472.069,94",
-      oldPrice: "$519.276,98",
-    },
-  ];
-
-    const product = {
-        code: "VGA2339",
-        name: "VIDEO GEFORCE RTX 3050 8GB MSI VENTUS 2X XS OC",
-        description: `Esta es una tarjeta gráfica de última generación,
-                      ideal para gaming en 1080p y 1440p. Cuenta con 8 GB de GDDR6,
-                      un bus de memoria de 128 bit y soporte para ray-tracing en
-                      tiempo real.
-
-                      Esta es una tarjeta gráfica de última generación,
-                      ideal para gaming en 1080p y 1440p. Cuenta con 8 GB de GDDR6,
-                      un bus de memoria de 128 bit y soporte para ray-tracing en
-                      tiempo real.`,     
-    };
-
     return( 
        <> 
        <Box
@@ -106,7 +34,7 @@ export default function ProductSection() {
             <Box borderBottom="1px solid" borderColor="gray.200" overflowX="auto">
       
                 <Image
-                    src={images[0]}
+                    src={images[selectedImage]}
                     alt="Imagen principal" 
                     w="full"
                     maxH={{ md: "400px", xl: "900px"}}
@@ -146,8 +74,9 @@ export default function ProductSection() {
                         borderRadius="md"
                         cursor="pointer"
                         flexShrink={0}
+                        onClick={() => setSelectedImage(idx)}
                         />
-                        ))}
+                        ))}     
                     </HStack>
                 </Box>
 
@@ -190,11 +119,11 @@ export default function ProductSection() {
                         <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" mt="-20px" whiteSpace="normal" wordBreak="break-word">
                             ** Abonando con débito, transferencia o efectivo en el local
                         </Text>
-                    </Stack>
+                    </Stack >
 
-                    <StockQuantity />
+                    <StockQuantity stockLevel={stockLevel}/>
                      <Box
-                        maxW="400px"
+                        w="100%"
                         h="1px"
                         bg="gray.300"
                         mt="-5px"
@@ -202,7 +131,7 @@ export default function ProductSection() {
                     />
                    
 
-                    <Flex align="center" gap={{ base: 2, md: 4 }}>
+                    <Flex align="center" gap={{ base: 2, md: 4 }} justify="center">
                         <IconButton
                             aria-label="Disminuir cantidad"
                             colorPalette="#AE5BDD"
