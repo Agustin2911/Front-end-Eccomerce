@@ -103,7 +103,7 @@ export default function ProductPage() {
         maxW={{ base: "100%", md: "1200px"}}
         mb="70px"
         >         
-          <Breadcrumb.Root>
+          <Breadcrumb.Root mt={-14} >
             <Breadcrumb.List
             display="flex"
             flexWrap="wrap"

@@ -162,7 +162,7 @@ export default function ProductSection({images, reviews, related, product, stock
                     <Button bg="#AE5BDD" size={{ base: "sm", md: "lg" }} w="100%" _hover={{bg: "#422A52"}} py={{ base: 2, md: 3 }} 
                       css={{
                           "@media screen and (max-width: 321px)": {
-                              w:"100%"
+                              w:"98%"
                         },
                       }}>
                         Comprar ahora
@@ -177,7 +177,7 @@ export default function ProductSection({images, reviews, related, product, stock
                         fontSize={{ base: "sm", md: "sm" }}
                         css={{
                           "@media screen and (max-width: 321px)": {
-                              maxW:"50%",
+                              maxW:"47%",
                               fontSize: "xs"
                             },
                         }}
@@ -193,7 +193,7 @@ export default function ProductSection({images, reviews, related, product, stock
                             fontSize={{ base: "sm", md: "sm" }}
                              css={{
                                 "@media screen and (max-width: 321px)": {
-                                    maxW:"50%",
+                                    maxW:"47%",
                                     fontSize: "xs"
                                 },
                              }}

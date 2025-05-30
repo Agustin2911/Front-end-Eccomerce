@@ -9,7 +9,7 @@ export default function StockQuantity({ stockLevel }) {
       background={stockLevel === "low" ? "yellow.50" : "green.50"}
       px={2}
       w={{ base: "100%", sm: "auto" }}
-      maxW={{ base: "100%", sm: "400px" }}
+      maxW={{ base: "97%", sm: "400px" }}
       mb="15px"
     >
      <Wrap align="center" spacing={2} /* aquí permitimos wrap automático */>
