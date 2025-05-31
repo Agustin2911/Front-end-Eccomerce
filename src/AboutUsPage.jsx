@@ -6,10 +6,10 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Box, Text } from "@chakra-ui/react";
 import InfoAccordion from "./components/InfoAccordion";
 
-function AboutUsPage() {
+function AboutUsPage({ cart }) {
   return (
     <Box>
-      <MainNavbar opacity={true}></MainNavbar>
+      <MainNavbar opacity={true} cart={cart}></MainNavbar>
       <Box
         display={"flex"}
         justifyContent={"center"}

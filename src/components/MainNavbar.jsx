@@ -5,7 +5,7 @@ import { FaSearch, FaShoppingCart, FaApple } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-function MainNavbar({ opacity }) {
+function MainNavbar({ opacity, cart }) {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar el toggle menu
 
   const iphone_16 = [
@@ -116,12 +116,20 @@ function MainNavbar({ opacity }) {
           style={{ cursor: "pointer" }}
           size={20}
         />
-        <Link to={"/Card"}>
+        <Link to="/Cart" className="position-relative">
           <FaShoppingCart
             size={20}
             className="text-white"
             style={{ cursor: "pointer" }}
           />
+          {cart.length > 0 && (
+            <span
+              className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style={{ fontSize: "0.6rem", padding: "0.2em 0.4em" }}
+            >
+              {cart.length}
+            </span>
+          )}
         </Link>
         <Link to="/signup" style={{ color: "white" }}>
           <FaUser size={20} />
