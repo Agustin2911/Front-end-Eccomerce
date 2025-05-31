@@ -22,7 +22,7 @@ function MenuBar({ objeto, numero, lista }) {
         >
           {lista.map((iphone) => (
             <Link
-              style={{ textDecoration: "none", color: "white" }}
+              style={{ textDecoration: "none", color: "red" }}
               to={iphone.url}
             >
               <MenuItem value={iphone.name} key={iphone.name} fontSize={"xs"}>

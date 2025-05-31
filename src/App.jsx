@@ -4,10 +4,14 @@ import LandingPage from "./LandingPage.jsx";
 import Signup from "./Signup";
 import Register from "./Register";
 import ShowProductsPage from "./ShowProductsPage";
+
+import ProductPage from "./ProductPage";
+
 import AboutUsPage from "./AboutUsPage";
 import CartPage from "./CartPage";
 import PaymentPage from "./PaymentPage";
 import { useState, useEffect } from "react";
+
 
 function App() {
   const [Token_usuario, SetToken_usuario] = useState("");
@@ -48,6 +52,12 @@ function App() {
     <>
       <Router>
         <Routes>
+
+         
+          
+          
+          <Route path="/product-desc" element={<ProductPage />}></Route>
+
           <Route path="/" element={<LandingPage cart={Cart} />}></Route>
           <Route
             path="/cart"
@@ -72,8 +82,9 @@ function App() {
             element={<ShowProductsPage cart={Cart} />}
           ></Route>
           <Route path="/us" element={<AboutUsPage cart={Cart} />}></Route>
+
         </Routes>
-      </Router>
+      </Router> 
     </>
   );
 }
