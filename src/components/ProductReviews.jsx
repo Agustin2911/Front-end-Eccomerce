@@ -1,6 +1,4 @@
 // src/components/ProductReviews.jsx
-
-
 import {
   Box,
   HStack,
@@ -14,12 +12,16 @@ import {
  import {
    FaStar,
    FaRegStar,
-   FaStarHalfAlt,
+   FaStarHalfAlt,   
    FaThumbsUp,
  } from "react-icons/fa";
+import { useState } from "react";
+import ReviewItem from "./ReviewItem";
 
  export default function ProductReviews({ reviews = [] }) {
-    // 1) total de reseñas
+    
+ 
+  // 1) total de reseñas
   const total = reviews.length;
   // 2) promedio
   const average =
@@ -59,7 +61,7 @@ import {
      <Box mt={10} bg="white" p={6} borderTop="1px solid" borderColor="gray.200">
         <Stack
         align="flex-start"
-        spacing={4}
+        spacing={1}
         maxW="400px"
         mb={6}
       >
@@ -69,12 +71,17 @@ import {
         Opiniones del producto
        </Text>
 
-       <HStack align="baseline" spacing={1} mb="-15px">
+       <HStack align="baseline" spacing={1} mb="-10px" flexWrap="wrap" rowGap="2px" columnGap="4px">
             <Text fontSize="5xl" fontWeight="bold" color="#D3A5EE">
                 {average.toFixed(1)}
             </Text>
             {renderStars(average)}
-            <Text fontSize="sm" color="gray.500">
+            <Text 
+            fontSize="sm" 
+            color="gray.500" 
+            flexBasis={{ base: "100%", sm: "auto" }}  // full-width en xs, auto en sm+
+            mt={{ base:-7, sm: 0 }}   
+            >
                 {total} calificaciones
             </Text>
         </HStack>
@@ -117,26 +124,12 @@ import {
        {/* Listado de reviews */}
        <VStack align="stretch" spacing={6}>
          {reviews.map((r, i) => (
-           <Box key={i}>
-             <HStack justify="space-between">
-               {renderStars(r.rating)}
-               <Text fontSize="sm" color="gray.500">
-                 {r.date}
-               </Text>
-             </HStack>
-             <Text mt={2} color="gray.700">
-               {r.text}
-             </Text>
-             <Button
-               size="sm"
-               variant="ghost" 
-               colorScheme="gray"
-               mt={2}
-             >
-                <FaThumbsUp /> Es útil {r.helpful}
-             </Button>
-           </Box>
-         ))}
+            <ReviewItem
+                key={i}
+                renderStars={renderStars}
+                {...r}
+             />
+                    ))}
        </VStack>
      </Box>
    );
