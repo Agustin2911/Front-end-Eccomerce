@@ -7,6 +7,7 @@ import { Box } from "@chakra-ui/react";
 import CarouselShow from "./components/CarouselShow";
 import Categorys from "./components/Categorys";
 
+
 import BrandProductShowcase from "./components/BrandProductShowcase";
 import FeaturedProducts from "./components/FeaturedProducts";
 
@@ -214,7 +215,7 @@ const productsD = [{
 
 const images = [SlideOne, SlideTwo, SlideThree];
 
-function LandingPage() {
+function LandingPage({ cart }) {
   return (
     <Box
       w="100%"
@@ -260,6 +261,9 @@ function LandingPage() {
 
       <Box h={{ base: "600px", md: "800px" }} />
       <Footer />
+
+
+
     </Box>
   );
 }

@@ -9,14 +9,16 @@ import { Row } from "reactstrap";
 import Filters from "./components/Filters";
 import { Breadcrumb, For, Stack } from "@chakra-ui/react";
 
-function ShowProductsPage() {
+function ShowProductsPage({ cart }) {
   const handleApplyFilters = (filters) => {
     // Acá hacés el filtrado con los valores de filters (ej: sort, minPrice, maxPrice)
     console.log("Aplicando filtros:", filters);
   };
   return (
-    <Box bg={"#170d20"}> 
-      <MainNavbar></MainNavbar>
+
+    <Box bg={"#170d20"}>
+      <MainNavbar cart={cart}></MainNavbar>
+
       <Stack mt={"30px"} ml={"50px"}>
         <Breadcrumb.Root>
           <Breadcrumb.List>
