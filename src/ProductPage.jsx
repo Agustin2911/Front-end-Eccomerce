@@ -4,33 +4,61 @@ import Footer from "./components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import ProductSection from "./components/ProductSection";
+import {useState, useEffect} from "react";
 
 export default function ProductPage() {
 
+    
+     // 1. Creamos un estado para guardar los datos del producto y un loader opcional
+  const [productData, setProductData] = useState(null);
+  const [error, setError] = useState(null);
+    
+  // 2. Definimos useEffect para hacer el fetch una sola vez al montar el componente
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const res = await fetch("https://localhost:5173/product/1");
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}: ${res.statusText}`);
+        }
+        const data = await res.json();
+        // Aquí asumimos que la respuesta JSON tiene la forma:
+        // { name, description, images: [...], reviews: [...], related: [...] }
+        setProductData(data);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err.message);
+      }     
+    }
+
+    fetchProduct();
+  }, []); 
+
+
     const images = [
         "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-0.jpg",
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-1.jpg",
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-2.jpg",
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-3.jpg",
+        // "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-1.jpg",
+        // "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-2.jpg",
+        // "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-3.jpg",
     ];
 
     const reviews = [
     {
       rating: 3,    
       text: "Regular, todo ok pero hasta ahi.",
-      date: "14 sep. 2024",
-      helpful: 0,
+/*       date: "14 sep. 2024", */
+ /*      helpful: 0, */
     },
     {
       rating: 4.5,
       text: "Muy buena placa. Justo lo que necesitábamos para los chicos y el trabajo.",
-      date: "22 abr. 2025",
-      helpful: 0,
+      // date: "22 abr. 2025",
+      // helpful: 0,
     },
   ];
 
      const product = {
-        code: "VGA2339",
+       /*  code: "VGA2339", */
         name: "VIDEO GEFORCE RTX 3050 8GB MSI VENTUS 2X XS OC",
         description: `Esta es una tarjeta gráfica de última generación,
                       ideal para gaming en 1080p y 1440p. Cuenta con 8 GB de GDDR6,

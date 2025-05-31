@@ -10,18 +10,18 @@ import {
 import { useState } from "react";
 
 export default function ReviewItem ({renderStars, rating, date, text, helpful}){
-    const [helpfulCount, setHelpfulCount] = useState(helpful);
-    const [likeActive, setLikeActive] = useState(false);
-    
-    function handleClick(){
-        if(!likeActive){
-            setLikeActive(true);
-            setHelpfulCount(helpfulCount + 1);
-        }else{
-            setLikeActive(false);
-            setHelpfulCount(helpfulCount - 1);
-        }
-    };
+    // const [helpfulCount, setHelpfulCount] = useState(helpful);
+    // const [likeActive, setLikeActive] = useState(false);
+    // 
+    // function handleClick(){
+    //     if(!likeActive){
+    //         setLikeActive(true);
+    //         setHelpfulCount(helpfulCount + 1);
+    //     }else{
+    //         setLikeActive(false);
+    //         setHelpfulCount(helpfulCount - 1);
+    //     }
+    // };
 
     return (
         <Box>
@@ -34,16 +34,7 @@ export default function ReviewItem ({renderStars, rating, date, text, helpful}){
              <Text mt={2} color="gray.700">
                {text}
              </Text>
-             <Button
-               size="sm"
-               variant="ghost" 
-               colorScheme="gray"       
-               mt={2}
-               onClick={() => handleClick()}
-             >
-                <FaThumbsUp /> Es útil {helpfulCount === 0 ? "" : helpfulCount}
-             </Button>
-           </Box>
+        </Box>
 
     );
 }   
