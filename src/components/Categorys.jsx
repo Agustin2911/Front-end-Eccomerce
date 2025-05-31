@@ -1,86 +1,64 @@
 // BuscarCategorias.jsx
-import { Box, Grid, Text, VStack, Image, Flex, Center } from "@chakra-ui/react";
-import CategorysButtons from "./CategorysButtons";
+import { Box, Grid, Text } from "@chakra-ui/react";
+import CategoryButton from "./CategoryButton";
+
+import PlacasIcon       from "../assets/Grafica.svg";
+import MotherboardsIcon       from "../assets/motherboards.svg";
+import TecladosIcon       from "../assets/Teclados.svg";
+import ProcesadoresIcon from "../assets/Procesadores.svg";
+import AuricularesIcon  from "../assets/auriculares.svg";
+import MemoriasRAMIcon     from "../assets/RAM.svg";
+import MonitoresIcon    from "../assets/monitores.svg";
+import AlmacenamientosIcon          from "../assets/Almacenamientos.svg";
+import GabinetesIcon from "../assets/Gabinete.svg";
+import MousesIcon     from "../assets/Mouses.svg";
 
 const categorias = [
-  {
-    nombre: "Discos Rígidos",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Placas de video",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Mouses",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Procesadores",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Auriculares",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Memorias RAM",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Monitores",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "SSD",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Motherboards",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
-  {
-    nombre: "Teclados",
-    icono:
-      "https://imgs.search.brave.com/dJTU8zAtczoo7ahtR_nqUhYRmkcfc_1rdJ0kpe3K6DY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODQxMS8xODQx/MTUxNi5wbmc",
-  },
+  { nombre: "Placas de Video",    icono: PlacasIcon },
+  { nombre: "Motherboards",    icono: MotherboardsIcon },
+  { nombre: "Teclados",             icono: TecladosIcon },
+  { nombre: "Auriculares",       icono: AuricularesIcon },
+  { nombre: "Gabinetes",        icono: GabinetesIcon },
+  { nombre: "Monitores",       icono: MonitoresIcon },
+  { nombre: "Procesadores",          icono: ProcesadoresIcon },
+  { nombre: "Mouses",                icono: MousesIcon },
+  { nombre: "Almacenamientos",       icono: AlmacenamientosIcon },
+  { nombre: "Memorias RAM",           icono: MemoriasRAMIcon },
 ];
 
-function Categorys() {
+export default function Categorys() {
   return (
-    <Flex width="full" justify={"center"}>
-      <Box py={6} px={{ base: 4, md: 4 }}>
-        <Text
-          fontSize="30px"
-          fontWeight="bold"
-          mb={6}
-          display={"flex"}
-          justifyContent={"center"}
-        >
-          ¿Qué estás buscando?
-        </Text>
-        <Flex justify="center">
-          <Grid
-            templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(5, 1fr)" }}
-            gap={0.4}
-          >
-            {categorias.map((cat, i) => (
-              <CategorysButtons cat={cat} i={i}></CategorysButtons>
-            ))}
-          </Grid>
-        </Flex>
-      </Box>
-    </Flex>
+    <Box as="section" px={{ base: 4, md: 8 }} py={{ base: 6, md: 10 }}>
+      <Text
+        fontSize={{ base: "2xl", md: "3xl" }}
+        fontWeight="bold"
+        textAlign="center"
+        mb={8}
+        color = "#F1E6F7"
+      >
+        ¿Qué estás buscando?
+      </Text>
+
+      <Grid
+        templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(5, 1fr)" }}
+        gap={4}
+        _hover={{ 
+          "& > *:not(:hover)": {
+            filter: "blur(3px)",
+            transition: "filter 0.4s ease",
+          },
+        }}
+        
+      >
+        {categorias.map((cat) => (
+          <CategoryButton
+            key={cat.nombre}
+            name={cat.nombre}
+            image={cat.icono}
+            onClick={() => console.log("Clicked", cat.nombre)}
+          />
+        ))}
+      </Grid>
+    </Box>
   );
 }
-
-export default Categorys;

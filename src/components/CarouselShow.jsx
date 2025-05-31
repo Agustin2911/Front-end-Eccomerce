@@ -19,7 +19,7 @@ function CarouselShow({ images }) {
               src={image}
               className="d-block w-100"
               alt={`Slide ${index}`}
-              style={{ maxHeight: "700px", width: "auto" }}
+              style={{ maxHeight: "700px", width: "100%", objectFit: "cover" }}
             />
           </div>
         ))}
