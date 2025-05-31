@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 
-function Signup() {
+function Signup({ token, settoken }) {
   const [user_email, setEmail] = useState("");
   const [user_password, setPassword] = useState("");
   const [data, setData] = useState("");
@@ -12,32 +12,25 @@ function Signup() {
   const handleFetch = async () => {
     setLoading(true);
 
-    const user_data = { mail: user_email, password: user_password };
+    const user_data = { email: user_email, password: user_password };
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user_data),
-      });
+      const response = await fetch(
+        "http://localhost:1273/api/v1/auth/authenticate",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user_data),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
 
-      if (response.headers.has("Authorization")) {
-        localStorage.setItem(
-          "Authorization",
-          response.headers.get("Authorization")
-        );
-        localStorage.setItem(
-          "X_Refresh_Token",
-          response.headers.get("Refresh-Token")
-        );
-      }
-
       const result = await response.json();
-      setData(result);
+      settoken(result.access_token);
+      setData("success");
     } catch (error) {
       console.error("Error en la petición:", error);
     } finally {
@@ -46,30 +39,7 @@ function Signup() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("Authorization");
-    const refresh_token = localStorage.getItem("X_Refresh_Token");
-    if (token && refresh_token) {
-      fetch("http://127.0.0.1:5000/verify_token", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: "Bearer " + token,
-          X_Refresh_Token: refresh_token,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          data = JSON.parse(data);
-          if (data.type === "ok") console.log("ok");
-          else if (data.type === "refresh_token") console.log("refresh");
-          else if (data.type === "expired") console.log("expired");
-          else console.log("failed");
-        });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (data?.login === "success") {
+    if (data === "success") {
       navigate("/");
     }
   }, [data]);

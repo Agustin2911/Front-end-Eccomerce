@@ -2,8 +2,10 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ImageUploader from "./components/ImageUploader";
+import { Text } from "@chakra-ui/react";
 
-function Register() {
+function Register({ token, settoken }) {
   const [userType, setUserType] = useState("buyer"); // Nuevo: tipo de usuario
   const [user_name, setName] = useState("");
   const [user_LastName, setLastName] = useState("");
@@ -13,18 +15,26 @@ function Register() {
   const [dni, setDni] = useState(""); // DNI para ambos
   const [storeName, setStoreName] = useState(""); // Solo seller
   const [StoreDescription, setStoreDescription] = useState("");
-  const [cuit, setCuit] = useState(""); // Solo seller
+  const [cuit, setCuit] = useState(0); // Solo seller
+  const [image, setimage] = useState(null);
 
   const [data, setData] = useState({});
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleFetch = async (e) => {
-    e.preventDefault(); // prevenir recarga
-
+  const handleFetchSeller = async (e) => {
+    e.preventDefault();
     setLoading(true);
 
-    if (!user_name || !user_LastName || !user_email || !userPassword || !dni) {
+    if (
+      !user_name ||
+      !user_email ||
+      !userPassword ||
+      !userPassword2 ||
+      !storeName ||
+      !StoreDescription ||
+      !cuit
+    ) {
       alert("Complete los campos obligatorios");
       setLoading(false);
       return;
@@ -36,43 +46,109 @@ function Register() {
       return;
     }
 
-    const user_data = {
-      name: user_name,
-      last_name: user_LastName,
-      mail: user_email,
-      password: userPassword,
-      dni,
-      user_type: userType,
-    };
+    const formData = new FormData();
+    formData.append("firstname", user_name);
+    formData.append("email", user_email);
+    formData.append("password", userPassword);
+    formData.append("role", 2);
+    formData.append("cuit", cuit);
+    formData.append("companyName", storeName);
+    formData.append("description", StoreDescription);
+    formData.append("state", "false");
 
-    // Si es seller, agregar más campos
-    if (userType === "seller") {
-      if (!storeName || !cuit || !StoreDescription) {
-        alert("Complete los datos del vendedor");
-        setLoading(false);
-        return;
-      }
-      user_data.store_name = storeName;
-      user_data.cuit = cuit;
-      user_data.SttoreDescription = StoreDescription;
+    if (image && image !== "none") {
+      formData.append("file", image);
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/users_manager", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user_data),
-      });
+      const response = await fetch(
+        "http://localhost:1273/api/v1/auth/register/seller_user",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
-      setData(result);
+      if (result.access_token) {
+        settoken(result.access_token);
+        setLoading(false);
+        navigate("/");
+      } else {
+        alert("Compruebe que todos los datos sean correctos");
+        setLoading(false);
+      }
     } catch (error) {
       console.error("Error en la petición:", error);
-    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFetchBuyer = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (
+      !user_name ||
+      !user_LastName ||
+      !user_email ||
+      !userPassword ||
+      !userPassword2 ||
+      !dni
+    ) {
+      alert("Complete todos los campos obligatorios");
+      setLoading(false);
+      return;
+    }
+
+    if (userPassword !== userPassword2) {
+      alert("Las contraseñas no coinciden");
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("firstname", user_name);
+    formData.append("name", user_name);
+    formData.append("last_name", user_LastName);
+    formData.append("email", user_email);
+    formData.append("password", userPassword);
+    formData.append("dni", dni);
+    formData.append("role", 3);
+
+    if (image !== "none") {
+      formData.append("file", image);
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:1273/api/v1/auth/register/buyer_user",
+        {
+          method: "POST",
+          body: formData,
+          // NO pongas headers: { 'Content-Type': 'multipart/form-data' } → fetch lo setea automáticamente
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      if (result.access_token) {
+        settoken(result.access_token);
+        setLoading(false);
+        navigate("/");
+      } else {
+        alert("Revise los datos ingresados");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error en la petición:", error);
       setLoading(false);
     }
   };
@@ -96,7 +172,8 @@ function Register() {
         className="container"
         style={{
           maxWidth: "500px",
-          marginTop: userType === "seller" ? "50px" : "200px",
+          marginTop: userType === "seller" ? "100px" : "100px",
+          marginBottom: userType === "seller" ? "50px" : "50px",
         }}
       >
         <h2 className="text-center">Create Your Apple Account</h2>
@@ -112,40 +189,50 @@ function Register() {
           </Link>
         </p>
 
-        <form onSubmit={handleFetch}>
+        <form
+          onSubmit={
+            userType === "seller" ? handleFetchSeller : handleFetchBuyer
+          }
+        >
           {/* Tipo de usuario */}
           <div className="mb-3">
             <label className="form-label">Tipo de usuario:</label>
             <select
               className="form-select"
               value={userType}
-              style={{ background: "#d3a5ee", color: "#f1e6f7" }}
+              style={{
+                background: "#d3a5ee",
+                color: "#f1e6f7",
+              }}
               onChange={(e) => setUserType(e.target.value)}
             >
               <option value="buyer">comprador</option>
               <option value="seller">vendedor</option>
             </select>
-          </div>
 
-          <div className="row mb-3">
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Nombre"
-                value={user_name}
-                onChange={(e) => setName(e.target.value)}
-              />
+            <div className="row mb-3 mt-3">
+              <div className="col">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Nombre"
+                  value={user_name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Apellido"
-                value={user_LastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
+
+            {userType == "buyer" && (
+              <div className="col">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Apellido"
+                  value={user_LastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            )}
           </div>
 
           <div className="mb-3">
@@ -177,16 +264,17 @@ function Register() {
               onChange={(e) => setPassword2(e.target.value)}
             />
           </div>
-
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="DNI"
-              value={dni}
-              onChange={(e) => setDni(e.target.value)}
-            />
-          </div>
+          {userType == "buyer" && (
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="DNI"
+                value={dni}
+                onChange={(e) => setDni(e.target.value)}
+              />
+            </div>
+          )}
 
           {/* Mostrar campos extra si es seller */}
           {userType === "seller" && (
@@ -217,12 +305,14 @@ function Register() {
                   placeholder="Escriba una descripción..."
                   rows="6"
                   value={StoreDescription}
-                  onChange={(e) => setStoreDescripcion(e.target.value)}
+                  onChange={(e) => setStoreDescription(e.target.value)}
                 ></textarea>
               </div>
             </>
           )}
 
+          <Text>Ingrese una imagen para su usuario</Text>
+          <ImageUploader image={image} setimage={setimage}></ImageUploader>
           <button
             type="submit"
             className=" btn w-100"
