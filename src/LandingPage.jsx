@@ -222,7 +222,7 @@ function LandingPage({ cart }) {
       minH="100vh"
       backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar opacity={true} />
+      <MainNavbar opacity={true} cart={cart}/>
       <CarouselShow images={images} />
       <Categorys />
        {/* ====== FEATURED PRODUCTS ====== */}
