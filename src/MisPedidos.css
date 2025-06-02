@@ -1,0 +1,341 @@
+/* Contenedor principal */
+.mis-pedidos-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.header p {
+  color: #6b7280;
+  font-size: 18px;
+  margin: 0;
+}
+
+/* Secciones */
+.section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Grid de pedidos */
+.pedidos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* Tarjeta de pedido */
+.pedido-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+/* Header de la tarjeta */
+.pedido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.pedido-info h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.pedido-info p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.pedido-status {
+  text-align: right;
+}
+
+/* Badge de estado */
+.estado-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.estado-confirmado {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.estado-preparacion {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fcd34d;
+}
+
+.estado-camino {
+  background-color: #fed7aa;
+  color: #ea580c;
+  border: 1px solid #fdba74;
+}
+
+.estado-entregado {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+/* Rating de estrellas */
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.star {
+  font-size: 16px;
+}
+
+.star-filled {
+  color: #fbbf24;
+}
+
+.star-empty {
+  color: #d1d5db;
+}
+
+/* Divisor */
+.divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 16px 0;
+}
+
+/* Items del pedido */
+.pedido-items {
+  margin-bottom: 16px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.item-name {
+  font-weight: 500;
+  color: #374151;
+}
+
+.item-quantity {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.item-price {
+  color: #6b7280;
+}
+
+/* Total */
+.pedido-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.total-amount {
+  font-size: 20px;
+  font-weight: bold;
+  color: #059669;
+}
+
+/* Contenedor de historial */
+.historial-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+/* Botón de toggle historial */
+.historial-toggle {
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.historial-toggle:hover {
+  background-color: #f9fafb;
+}
+
+.historial-toggle-info {
+  text-align: left;
+}
+
+.historial-toggle-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.historial-toggle-info p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.historial-toggle-icon {
+  color: #9ca3af;
+  font-size: 20px;
+}
+
+/* Contenido del historial */
+.historial-content {
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Estadísticas */
+.estadisticas {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.estadisticas h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.estadistica-item {
+  text-align: center;
+}
+
+.estadistica-numero {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.estadistica-numero.azul {
+  color: #2563eb;
+}
+
+.estadistica-numero.verde {
+  color: #059669;
+}
+
+.estadistica-numero.morado {
+  color: #7c3aed;
+}
+
+.estadistica-numero.naranja {
+  color: #d97706;
+}
+
+.estadistica-label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Login required */
+.login-required {
+  background-color: white;
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  margin: 2rem auto;
+  max-width: 500px;
+}
+
+.login-required h2 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.login-required p {
+  color: #6b7280;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-login {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-login:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}

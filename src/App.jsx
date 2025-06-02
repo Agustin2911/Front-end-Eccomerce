@@ -4,6 +4,7 @@ import LandingPage from "./LandingPage.jsx";
 import Signup from "./Signup";
 import Register from "./Register";
 import ShowProductsPage from "./ShowProductsPage";
+import MisPedidos from "./MisPedidos";
 
 import ProductPage from "./ProductPage";
 
@@ -82,7 +83,10 @@ function App() {
             element={<ShowProductsPage cart={Cart} />}
           ></Route>
           <Route path="/us" element={<AboutUsPage cart={Cart} />}></Route>
-
+          <Route 
+            path="/mis-pedidos" 
+            element={<MisPedidos token={Token_usuario} />}
+          ></Route>
         </Routes>
       </Router> 
     </>
