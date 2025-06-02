@@ -234,7 +234,6 @@ function LandingPage({ cart }) {
       <Categorys />
       {/* ====== FEATURED PRODUCTS ====== */}
       <FeaturedProducts products={productsD} />
-
       {/* ====== PRODUCT SHOWCASES ====== */}
       <Box px={{ base: 4, md: 8 }} py={{ base: 4, md: 8 }}>
         <BrandProductShowcase
@@ -265,7 +264,6 @@ function LandingPage({ cart }) {
           exploreText="Explora Samsung"
         />
       </Box>
-
       <Box h={{ base: "600px", md: "800px" }} />
       <Footer />
     </Box>
