@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ImageUploader from "./components/ImageUploader";
 import { Text } from "@chakra-ui/react";
 
-function Register({ token, settoken }) {
+function Register({ token, settoken, setId_usuario, setImage_path }) {
   const [userType, setUserType] = useState("buyer"); // Nuevo: tipo de usuario
   const [user_name, setName] = useState("");
   const [user_LastName, setLastName] = useState("");
@@ -76,6 +76,8 @@ function Register({ token, settoken }) {
       const result = await response.json();
       if (result.access_token) {
         settoken(result.access_token);
+        setId_usuario(result.id_user);
+        setImage_path(result.photo_url);
         setLoading(false);
         navigate("/");
       } else {
@@ -130,7 +132,6 @@ function Register({ token, settoken }) {
         {
           method: "POST",
           body: formData,
-          // NO pongas headers: { 'Content-Type': 'multipart/form-data' } → fetch lo setea automáticamente
         }
       );
 
@@ -176,11 +177,11 @@ function Register({ token, settoken }) {
           marginBottom: userType === "seller" ? "50px" : "50px",
         }}
       >
-        <h2 className="text-center">Create Your Apple Account</h2>
+        <h2 className="text-center">Crea tu cuenta de GCCustoms</h2>
         <p className="text-center">
-          One Apple Account is all you need to access all Apple services.
+          Crea tu cuenta de vendedor o de comprador
           <br />
-          Already have an Apple Account?{" "}
+          Ya tenes cuentas? Inicia sesión acá{" "}
           <Link
             to="/signup"
             style={{ textDecoration: "none", color: "#ad5add" }}
@@ -319,7 +320,7 @@ function Register({ token, settoken }) {
             disabled={loading}
             style={{ background: "#ad5add", color: "#d3a5ee" }}
           >
-            Create Account
+            Crear cuenta
           </button>
         </form>
       </div>

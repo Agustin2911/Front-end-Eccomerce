@@ -1,21 +1,37 @@
-import { Box, Text, Input, Button, VStack, Select } from "@chakra-ui/react";
-import { createListCollection, Portal } from "@chakra-ui/react";
-import { For, Stack } from "@chakra-ui/react";
+"use client";
 
-const frameworks = createListCollection({
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  VStack,
+  Stack,
+  Portal,
+  Select,
+  createListCollection,
+} from "@chakra-ui/react";
+import { useState } from "react";
+
+// Opciones de orden
+const orderOptions = createListCollection({
   items: [
-    { label: "menor a mayor", value: "1" },
-    { label: "mayor a menor", value: "2" },
+    { label: "de menor a mayor", value: "asc" },
+    { label: "de mayor a menor", value: "desc" },
   ],
 });
 
 function Filters({ onApplyFilters }) {
+  const [order, setOrder] = useState(null);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
   return (
     <Box
       p={6}
       height={"800px"}
-      width={{ base: "350px", md: "600px" }}
-      ml={{ base: "20px", md: "50px" }}
+      width={{ base: "90%", md: "600px" }}
+      m={"20px"}
       bg={"white"}
       borderRadius={"20px"}
       mt={"25px"}
@@ -25,14 +41,19 @@ function Filters({ onApplyFilters }) {
       </Text>
 
       <VStack spacing={4} align="stretch">
-        {/* Precio mínimo */}
-        <Stack gap="5" width={{ base: "300px", md: "400px" }}>
-          <Select.Root key={"md"} size={"md"} collection={frameworks}>
+        {/* Ordenar por */}
+        <Stack gap={5} width={{ base: "250px", md: "400px" }}>
+          <Text fontWeight="medium">Ordenar por:</Text>
+
+          <Select.Root
+            collection={orderOptions}
+            selectedOption={order}
+            onValueChange={({ value, label }) => setOrder({ value, label })}
+          >
             <Select.HiddenSelect />
-            <Select.Label>Ordenar por:</Select.Label>
             <Select.Control>
-              <Select.Trigger borderRadius={"15px"}>
-                <Select.ValueText placeholder="Select framework" />
+              <Select.Trigger borderRadius="15px">
+                <Select.ValueText placeholder="Selecciona un orden" />
               </Select.Trigger>
               <Select.IndicatorGroup>
                 <Select.Indicator />
@@ -40,15 +61,15 @@ function Filters({ onApplyFilters }) {
             </Select.Control>
             <Portal>
               <Select.Positioner>
-                <Select.Content bg={"#d3a5ee"}>
-                  {frameworks.items.map((framework) => (
+                <Select.Content bg="#d3a5ee">
+                  {orderOptions.items.map((option) => (
                     <Select.Item
-                      item={framework}
-                      key={framework.value}
-                      bg={"#d3a5ee"}
+                      key={option.value}
+                      item={option}
+                      bg="#d3a5ee"
                       mb={3}
                     >
-                      {framework.label}
+                      {option.label}
                       <Select.ItemIndicator />
                     </Select.Item>
                   ))}
@@ -58,36 +79,42 @@ function Filters({ onApplyFilters }) {
           </Select.Root>
         </Stack>
 
+        {/* Precio mínimo y máximo */}
         <Box>
-          <Text>Precio mínimo-Precio máximo</Text>
-          <Box display={"flex"}>
+          <Text>Precio mínimo - Precio máximo</Text>
+          <Box display="flex">
             <Input
-              mr={"10px"}
+              mr="10px"
               type="number"
               placeholder="Ej: 100000"
-              borderRadius={"15px"}
-              onChange={(e) => onApplyFilters({ minPrice: e.target.value })}
+              borderRadius="15px"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
             />
-
             <Input
               type="number"
               placeholder="Ej: 500000"
-              borderRadius={"15px"}
-              onChange={(e) => onApplyFilters({ maxPrice: e.target.value })}
+              borderRadius="15px"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
             />
           </Box>
         </Box>
 
-        {/* Precio máximo */}
-
-        {/* Botón aplicar (si lo preferís manual) */}
+        {/* Botón aplicar */}
         <Button
-          bg={"#d3a5ee"}
-          width={{ base: "300px", md: "400px" }}
-          borderRadius={"10px"}
-          color={"#f1e6f7"}
+          bg="#d3a5ee"
+          width={{ base: "250px", md: "400px" }}
+          borderRadius="10px"
+          color="#f1e6f7"
           _hover={{ bg: "#ec1877" }}
-          onClick={() => onApplyFilters()}
+          onClick={() =>
+            onApplyFilters({
+              order: order?.value || "",
+              minPrice,
+              maxPrice,
+            })
+          }
         >
           Aplicar filtros
         </Button>
@@ -95,4 +122,5 @@ function Filters({ onApplyFilters }) {
     </Box>
   );
 }
+
 export default Filters;

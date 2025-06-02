@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 
-function Signup({ token, settoken }) {
+function Signup({ token, settoken, setImage_path, setId_usuario }) {
   const [user_email, setEmail] = useState("");
   const [user_password, setPassword] = useState("");
   const [data, setData] = useState("");
@@ -30,9 +30,14 @@ function Signup({ token, settoken }) {
 
       const result = await response.json();
       settoken(result.access_token);
+      setImage_path(result.photo_url);
+      setId_usuario(result.id_user);
       setData("success");
     } catch (error) {
       console.error("Error en la petición:", error);
+      alert(
+        "hubo un error en el proceso del sign up, verifique que sus datos sean correctos"
+      );
     } finally {
       setLoading(false);
     }
@@ -111,23 +116,6 @@ function Signup({ token, settoken }) {
         >
           {loading ? "..." : "Iniciar Sesión"}
         </button>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: "10px",
-          }}
-        >
-          <input type="checkbox" id="remember" style={{ marginRight: "6px" }} />
-          <label
-            htmlFor="remember"
-            style={{ fontSize: "14px", color: "#f1e6f7" }}
-          >
-            Remember me
-          </label>
-        </div>
 
         <div style={{ marginBottom: "10px" }}>
           <a href="#" style={{ textDecoration: "none", color: "#ad5add" }}>

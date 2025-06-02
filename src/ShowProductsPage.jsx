@@ -8,14 +8,31 @@ import ShowProducts from "./components/ShowProducts";
 import { Row } from "reactstrap";
 import Filters from "./components/Filters";
 import { Breadcrumb, For, Stack } from "@chakra-ui/react";
+import { useState } from "react";
 
 function ShowProductsPage({ cart }) {
-  const handleApplyFilters = (filters) => {
-    // Acá hacés el filtrado con los valores de filters (ej: sort, minPrice, maxPrice)
-    console.log("Aplicando filtros:", filters);
-  };
-  return (
+  const handleApplyFilters = ({ order, minPrice, maxPrice }) => {
+    let filtered = [...productos];
 
+    if (minPrice) {
+      filtered = filtered.filter((p) => p.price >= parseFloat(minPrice));
+    }
+    if (maxPrice) {
+      filtered = filtered.filter((p) => p.price <= parseFloat(maxPrice));
+    }
+
+    if (order[0] === "asc") {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (order[0] === "desc") {
+      filtered.sort((a, b) => b.price - a.price);
+    }
+    console.log(filtered);
+    setProductos(filtered);
+  };
+
+  const [productos, setProductos] = useState([]);
+
+  return (
     <Box bg={"#170d20"}>
       <MainNavbar cart={cart}></MainNavbar>
 
@@ -24,12 +41,12 @@ function ShowProductsPage({ cart }) {
           <Breadcrumb.List>
             <Breadcrumb.Item>
               <Breadcrumb.Link
-                href="#"
+                href="/"
                 fontSize="xl"
                 color={"white"}
                 textDecoration={"none"}
               >
-                Docs
+                Inicio
               </Breadcrumb.Link>
             </Breadcrumb.Item>
             <Breadcrumb.Separator />
@@ -43,18 +60,15 @@ function ShowProductsPage({ cart }) {
                 Components
               </Breadcrumb.Link>
             </Breadcrumb.Item>
-            <Breadcrumb.Separator />
-            <Breadcrumb.Item>
-              <Breadcrumb.CurrentLink fontSize="xl" color={"#EC1877"}>
-                Props
-              </Breadcrumb.CurrentLink>
-            </Breadcrumb.Item>
           </Breadcrumb.List>
         </Breadcrumb.Root>
       </Stack>
       <Box display={{ base: "block ", md: "flex" }}>
         <Filters onApplyFilters={handleApplyFilters}></Filters>
-        <ShowProducts></ShowProducts>
+        <ShowProducts
+          products={productos}
+          setProducts={setProductos}
+        ></ShowProducts>
       </Box>
       <Footer></Footer>
     </Box>
