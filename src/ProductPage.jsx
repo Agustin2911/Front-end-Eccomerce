@@ -7,71 +7,46 @@ import ProductSection from "./components/ProductSection";
 import {useState, useEffect} from "react";
 
 export default function ProductPage() {
-
-    
-     // 1. Creamos un estado para guardar los datos del producto y un loader opcional
+  
+  const [stockData, setStockData] = useState(null); 
   const [productData, setProductData] = useState(null);
   const [error, setError] = useState(null);
+  const [reviewsData, setReviewsData] = useState(null)
     
-  // 2. Definimos useEffect para hacer el fetch una sola vez al montar el componente
   useEffect(() => {
-    async function fetchProduct() {
+    async function fetchAll() {
       try {
-        const res = await fetch("https://localhost:5173/product/1");
+        const res = await fetch("http://localhost:1273/product/productById/1");
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
         const data = await res.json();
-        // Aquí asumimos que la respuesta JSON tiene la forma:
-        // { name, description, images: [...], reviews: [...], related: [...] }
         setProductData(data);
+
+        const resStock = await fetch(`http://localhost:1273/stock/${data.id_product}`);
+        if (!resStock.ok) {
+            throw new Error(`Error stock ${resStock.status}`);
+        }
+        const stockJson = await resStock.json();
+        setStockData(stockJson);
+        
+        const resReviews = await fetch(`http://localhost:1273/review/${data.id_product}`);
+        if (!resReviews.ok) {
+            throw new Error(`Error stock ${resReviews.status}`);
+        }
+        const reviewJson = await resReviews.json();
+        setReviewsData(reviewJson);
+
+
+
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message);
       }     
     }
-
-    fetchProduct();
+    
+    fetchAll();
   }, []); 
-
-
-    const images = [
-        "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-0.jpg",
-        // "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-1.jpg",
-        // "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-2.jpg",
-        // "https://fullh4rd.com.ar/img/productos/3/video-geforce-rtx-3050-8gb-msi-ventus-2x-xs-oc-3.jpg",
-    ];
-
-    const reviews = [
-    {
-      rating: 3,    
-      text: "Regular, todo ok pero hasta ahi.",
-/*       date: "14 sep. 2024", */
- /*      helpful: 0, */
-    },
-    {
-      rating: 4.5,
-      text: "Muy buena placa. Justo lo que necesitábamos para los chicos y el trabajo.",
-      // date: "22 abr. 2025",
-      // helpful: 0,
-    },
-  ];
-
-     const product = {
-       /*  code: "VGA2339", */
-        name: "VIDEO GEFORCE RTX 3050 8GB MSI VENTUS 2X XS OC",
-        description: `Esta es una tarjeta gráfica de última generación,
-                      ideal para gaming en 1080p y 1440p. Cuenta con 8 GB de GDDR6,
-                      un bus de memoria de 128 bit y soporte para ray-tracing en
-                      tiempo real.
-
-                      Esta es una tarjeta gráfica de última generación,
-                      ideal para gaming en 1080p y 1440p. Cuenta con 8 GB de GDDR6,
-                      un bus de memoria de 128 bit y soporte para ray-tracing en
-                      tiempo real.`,     
-    };
-
-
 
     const related = [
     {
@@ -112,7 +87,9 @@ export default function ProductPage() {
     },
   ];
 
-
+if (!productData || !stockData || !reviewsData) {
+  return <div>Cargando producto...</div>;
+}
 
   return (
     <Flex direction="column" minH="100vh" backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)">
@@ -141,10 +118,10 @@ export default function ProductPage() {
             >
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  href="#"
+                  href="http://localhost:5173/"
                   fontSize="sm"
                   color="#F1E6F7"
-                  textDecoration="none"
+                  textDecoration="none" 
                   whiteSpace="nowrap"
                   wordBreak="normal"
                   overflowWrap="break-word"
@@ -190,7 +167,7 @@ export default function ProductPage() {
                   maxW="100%"
 
                 >
-                  VIDEO GEFORCE RTX 3050 8GB MSI VENTUS 2X XS OC
+                {productData.product_name}
                 </Breadcrumb.CurrentLink>
               </Breadcrumb.Item>
             </Breadcrumb.List>
@@ -204,8 +181,8 @@ export default function ProductPage() {
           borderWidth="0px"
           p={6}
         >
-        
-            <ProductSection images={images} reviews={reviews} product={product} related={related} stockLevel="low" ></ProductSection> 
+       
+            <ProductSection reviews={reviewsData} name={productData.product_name} images={productData.photo_url} description={productData.description} price={productData.price} related={related} stock={stockData.stock} stockWarning={stockData.stock_warning} ></ProductSection> 
 
         </Box>
       </Box>

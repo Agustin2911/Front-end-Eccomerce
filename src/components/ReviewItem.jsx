@@ -9,7 +9,7 @@ import {
  } from "react-icons/fa";
 import { useState } from "react";
 
-export default function ReviewItem ({renderStars, rating, date, text, helpful}){
+export default function ReviewItem ({renderStars,stars,  date, text, helpful}){
     // const [helpfulCount, setHelpfulCount] = useState(helpful);
     // const [likeActive, setLikeActive] = useState(false);
     // 
@@ -26,7 +26,7 @@ export default function ReviewItem ({renderStars, rating, date, text, helpful}){
     return (
         <Box>
              <HStack justify="space-between">
-               {renderStars(rating)}
+               {renderStars(stars)}
                <Text fontSize="sm" color="gray.500">
                  {date}
                </Text>

@@ -7,7 +7,7 @@ import Description from "./Description";
 import RelatedProducts from "./RelatedProducts";
 import ProductReviews from "./ProductReviews";
 
-export default function ProductSection({images, reviews, related, product, stockLevel }) {
+export default function ProductSection({images, reviews, related, name, description, price, stock, stockWarning }) {
 
     const [quantity, setQuantity] = useState(1);
     const dec = () => setQuantity((q) => Math.max(q - 1, 1));
@@ -15,8 +15,13 @@ export default function ProductSection({images, reviews, related, product, stock
     
     const [selectedImage, setSelectedImage] = useState(0);
 
- 
-  
+    const cuotas = price / 12; 
+    const priceFormatted = price.toLocaleString("es-AR");
+    const cuotasFormatted = cuotas.toLocaleString("es-AR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+
     return( 
        <> 
        <Box
@@ -34,7 +39,7 @@ export default function ProductSection({images, reviews, related, product, stock
             <Box borderBottom="1px solid" borderColor="gray.200" overflowX="auto">
       
                 <Image
-                    src={images[selectedImage]}
+                    src={images}
                     alt="Imagen principal" 
                     w="full"
                     maxH={{ md: "400px", xl: "900px"}}
@@ -65,18 +70,17 @@ export default function ProductSection({images, reviews, related, product, stock
                            "-ms-overflow-style": "none",
                     }}>
                     <HStack spacing={2} minW="max-content"> 
-                        {images.map((src,idx)=>(
+                        
                         <Image
-                        key={idx}
-                        src={src}
+                        
+                        src={images}
                         boxSize={{ base: "90px", sm: "100px", md: "100px", lg: "130px" }}
                         objectFit="cover"
                         borderRadius="md"
                         cursor="pointer"
                         flexShrink={0}
-                        onClick={() => setSelectedImage(idx)}
                         />
-                        ))}     
+                            
                     </HStack>
                 </Box>
 
@@ -92,15 +96,14 @@ export default function ProductSection({images, reviews, related, product, stock
                  <VStack align="stretch" spacing={{base: "3", md: "4"}}>
                  
                          <Text fontSize="sm" color="gray.500">
-                            Código del producto: {product.code}
                         </Text>
-                    <Heading fontSize={{ base: "lg", md: "2xl" }} mt="-3">{product.name}</Heading>
+                    <Heading fontSize={{ base: "lg", md: "2xl" }} mt="-3">{name}</Heading>
                     
                     <Stack spacing={0}>
                         <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
                             12 cuotas sin interés de:{" "}
                             <Text as="span" color="#EC1877" fontWeight="bold">
-                                $34.980,83
+                                {cuotasFormatted}   
                             </Text>
                         </Text>
                         <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" mt="-20px">
@@ -113,7 +116,7 @@ export default function ProductSection({images, reviews, related, product, stock
                         <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
                             Precio especial:{" "}
                             <Text as="span" color="green.500">
-                                $322.899,99
+                                {priceFormatted}
                             </Text>
                         </Text>
                         <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" mt="-20px" whiteSpace="normal" wordBreak="break-word">
@@ -121,7 +124,8 @@ export default function ProductSection({images, reviews, related, product, stock
                         </Text>
                     </Stack >
 
-                    <StockQuantity stockLevel={stockLevel}/>
+                    <StockQuantity stock={stock} stockWarning={stockWarning}/>
+
                      <Box
                         w="100%"
                         h="1px"
@@ -224,7 +228,7 @@ export default function ProductSection({images, reviews, related, product, stock
             
                 
         </Box>
-        <Description description={product.description} />
+        <Description description={description} />
         <RelatedProducts  products={related}   />
         <ProductReviews reviews={reviews}/>
         

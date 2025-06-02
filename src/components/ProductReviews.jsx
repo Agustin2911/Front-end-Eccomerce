@@ -18,43 +18,38 @@ import {
 import { useState } from "react";
 import ReviewItem from "./ReviewItem";
 
- export default function ProductReviews({ reviews = [] }) {
+export default function ProductReviews({ reviews }) {
     
  
-  // 1) total de reseñas
   const total = reviews.length;
-  // 2) promedio
   const average =
     total > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / total
+      ? reviews.reduce((sum, r) => sum + r.stars, 0) / total
       : 0;
     
-    // 2.1) contar cuántas calificaciones hay de cada nivel
     const counts = reviews.reduce((acc, r) => {
-        const star = Math.ceil(r.rating);
+        const star = Math.ceil(r.stars);
         acc[star] = (acc[star] || 0) + 1;
         return acc;
     }, {});
 
-// 2.2) generar un array [5,4,3,2,1] con su porcentaje
     const distribution = [5, 4, 3, 2, 1].map((star) => ({
         star,
         pct: total > 0 ? (counts[star] || 0) / total : 0,
     }));
 
-   // helper: renderizar estrellas
    const renderStars = (rating) => {
-     const stars = [];
+     const starsList = [];
      for (let i = 1; i <= 5; i++) {
        if (rating >= i) {
-         stars.push(<Icon key={i} as={FaStar} color="#D3A5EE" mt="-2px"/>);
+         starsList.push(<Icon key={i} as={FaStar} color="#D3A5EE" mt="-2px"/>);
        } else if (rating > i - 1) {
-         stars.push(<Icon key={i} as={FaStarHalfAlt} color="#D3A5EE" mt="-2px"/>);
+         starsList.push(<Icon key={i} as={FaStarHalfAlt} color="#D3A5EE" mt="-2px"/>);
        } else {
-         stars.push(<Icon key={i} as={FaRegStar} color="#D3A5EE" mt="-2px"/>);
+         starsList.push(<Icon key={i} as={FaRegStar} color="#D3A5EE" mt="-2px"/>);
        }
      }
-     return <HStack spacing={1}>{stars}</HStack>;
+     return <HStack spacing={1}>{starsList}</HStack>;
    };
 
    return (

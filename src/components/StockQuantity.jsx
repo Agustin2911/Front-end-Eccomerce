@@ -1,8 +1,17 @@
 import { Stack, HStack, Text, Icon, Input, Flex, StackSeparator, Box, VStack, Wrap, WrapItem } from "@chakra-ui/react";
 import { FaCheckCircle  } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
-export default function StockQuantity({ stockLevel }) {
-  return (
+export default function StockQuantity({stock, stockWarning }) {
+    
+    let stockLevel;
+
+    if (stock <= stockWarning){
+         stockLevel = "low"
+    } else{
+        stockLevel = "high"
+    }
+
+    return (
     <Box
       border="1.5px solid"
       borderColor= {stockLevel === "low" ? "yellow.400" : "green.400"}
