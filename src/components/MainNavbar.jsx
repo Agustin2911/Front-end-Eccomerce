@@ -76,7 +76,7 @@ function MainNavbar({ opacity, cart }) {
     >
       {/* Logo de Apple alineado a la izquierda */}
       <div className="d-flex align-items-center">
-        <Link to="/">
+        <Link to="/mispedidos">
           <FaApple
             className="text-white"
             size={20}

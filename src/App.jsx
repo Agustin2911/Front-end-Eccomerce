@@ -84,7 +84,7 @@ function App() {
           ></Route>
           <Route path="/us" element={<AboutUsPage cart={Cart} />}></Route>
           <Route 
-            path="/mis-pedidos" 
+            path="/mispedidos" 
             element={<MisPedidos token={Token_usuario} />}
           ></Route>
         </Routes>
