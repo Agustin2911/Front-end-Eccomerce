@@ -28,7 +28,7 @@ function App() {
         product_name: "samsung 20 pulgadas",
         amount: 2,
         price: 1000,
-        url: "forro",
+        url: "urlrandom",
         condition: "new",
         description: "aaaaa",
         discount: 10,
@@ -36,20 +36,18 @@ function App() {
       },
     ]);
   }, []);
-  console.log(Token_usuario);
+
   return (
     <ChakraProvider value={system}>
       <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/products" element={<ShowProductsPage />}></Route>
 
-          <Route
-            path="/product-desc/:id_category/:id_product"
-            element={<ProductPage />}
-          ></Route>
+
+
+        <Routes>             
+
+          <Route path="/product-desc/:id_category/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
+
+
 
           <Route path="/" element={<LandingPage cart={Cart} />}></Route>
           <Route

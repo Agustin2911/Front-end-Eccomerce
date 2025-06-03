@@ -65,7 +65,7 @@ export default function ShowProducts({ products, setProducts }) {
                       <LandingProductCard
                         image={
                           product.photo_url
-                            ? "http://localhost:1273" + product.photo_url
+                            ? product.photo_url
                             : "https://www.freundferreteria.com/Productos/GetImagenProductoPrincipal?idProducto=125ecabc-5319-4317-b455-0f5c1aa634d1&width=250&height=250&qa=75&ext=.jpg"
                         }
                         price={product.price}
