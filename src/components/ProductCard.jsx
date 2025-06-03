@@ -1,35 +1,35 @@
 import React from "react";
 import { FaCartPlus } from "react-icons/fa";
-import { Box, Button, Text, Flex } from "@chakra-ui/react";
+import { Box, Button, Text, Flex, Image } from "@chakra-ui/react";
 const ProductCard = ({ image, name, price }) => {
   return (
     <Box
       className="border"
       height={"450px"}
-      width={{base: "100%", sm: "45%", md: "360px"}}
+      width={{ base: "100%", sm: "45%", md: "360px" }}
       justifyContent={"center"}
       borderRadius={"10px"}
       bg={"white"}
       p={4}
     >
- <Image
-   src={image}
-   alt={name}
-   mt={{ base: 4, md: 6 }}
-   mx="auto"
-   boxSize={{ base: "120px", sm: "150px", md: "200px" }}
-   objectFit="contain"
- />
+      <Image
+        src={image}
+        alt={name}
+        mt={{ base: 4, md: 6 }}
+        mx="auto"
+        boxSize={{ base: "120px", sm: "150px", md: "200px" }}
+        objectFit="contain"
+      />
 
       <Box mt={"2"}>
-        <Text 
-        width="100%" 
-        ml={"6"}
-        noOfLines={2}
-        px={{ base: 2, md: 4 }}
-        fontSize={{ base: "sm", md: "md", lg: "lg" }}
-        textAlign="center"
-        color={{base: "black", md: "red"}}
+        <Text
+          width="100%"
+          ml={"6"}
+          noOfLines={2}
+          px={{ base: 2, md: 4 }}
+          fontSize={{ base: "sm", md: "md", lg: "lg" }}
+          textAlign="center"
+          color={{ base: "black", md: "red" }}
         >
           {name}
         </Text>
@@ -38,13 +38,14 @@ const ProductCard = ({ image, name, price }) => {
           justifyContent={"center"}
           alignItems={"center"}
         >
-           <Text
-            fontSize={{ base: "sm", md: "md", lg: "lg" }}            fontWeight="bold"
+          <Text
+            fontSize={{ base: "sm", md: "md", lg: "lg" }}
+            fontWeight="bold"
             color="pink.500"
             textAlign="center"
-            >
-                {price}
-            </Text>          
+          >
+            {price}
+          </Text>
           <Button
             mt={"2"}
             bg={"#ae5bdd"}

@@ -1,11 +1,33 @@
-// src/components/ProductSection.jsx
-import { useState } from "react"
-import { Box,SimpleGrid,Image,Text,Heading,Stack,HStack,VStack,Button,IconButton,Flex,Wrap,Badge,Input,Icon } from "@chakra-ui/react";
-import { FaPlus, FaMinus, FaShoppingCart, FaCheckCircle, FaTruck } from "react-icons/fa";
+import { useState } from "react";
+import {
+  Box,
+  SimpleGrid,
+  Image,
+  Text,
+  Heading,
+  Stack,
+  HStack,
+  VStack,
+  Button,
+  IconButton,
+  Flex,
+  Wrap,
+  Badge,
+  Input,
+  Icon,
+} from "@chakra-ui/react";
+import {
+  FaPlus,
+  FaMinus,
+  FaShoppingCart,
+  FaCheckCircle,
+  FaTruck,
+} from "react-icons/fa";
 import StockQuantity from "./StockQuantity";
 import Description from "./Description";
 import RelatedProducts from "./RelatedProducts";
 import ProductReviews from "./ProductReviews";
+
 
 export default function ProductSection({images, reviews, related, name, description, price, stock, stockWarning, id, id_category}) {
 
@@ -22,9 +44,10 @@ export default function ProductSection({images, reviews, related, name, descript
         maximumFractionDigits: 2,
     });
 
-    return( 
-       <> 
-       <Box
+
+  return (
+    <>
+      <Box
         display="grid"
         gridTemplateColumns={{ base: "1fr", sm: "1fr", md: "1fr, 1fr", lg: "2fr 1fr",  xl: "3fr 2fr" }}
         gap={6}
@@ -236,3 +259,10 @@ export default function ProductSection({images, reviews, related, name, descript
     );
 }
 
+      <Description description={product.description} />
+      </Box>
+      <RelatedProducts products={related} />
+      <ProductReviews reviews={reviews} />
+    </>
+  );
+}

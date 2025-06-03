@@ -7,6 +7,7 @@ import ProductSection from "./components/ProductSection";
 import {useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 
+
 export default function ProductPage() {
   
   const { id_category, id_product } = useParams();
@@ -92,12 +93,18 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
 }
   const categoryUpper = catSubcatData[0].toUpperCase();
   const subCategoryUpper = catSubcatData[1].toUpperCase();
+
   return (
-    <Flex direction="column" minH="100vh" backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)">
+    <Flex
+      direction="column"
+      minH="100vh"
+      backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+    >
       {/* Navbar */}
-      <MainNavbar />
+      <MainNavbar cart={cart} />
 
       {/* Contenido principal */}
+
       <Box flex="1" pt="20px" px={{ base: 0, md: 12 }} mt="20px">
         <Box
         as="main"
@@ -187,6 +194,7 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
 
         </Box>
       </Box>
+
       </Box>
 
       {/* Footer */}
@@ -194,4 +202,3 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
     </Flex>
   );
 }
-
