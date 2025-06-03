@@ -1,70 +1,85 @@
-import React from "react";
-import ProductCard from "./ProductCard";
-import { Box, Grid, Flex } from "@chakra-ui/react";
-export default function ShowProducts() {
-  const products = [
-    {
-      id: 1,
-      name: "WEBCAM LOGITECH BRIO 300 GRAPHITE FHD 960-001413",
-      price: "$99.181,98",
-      image:
-        "https://th.bing.com/th/id/OIP.VKn1m2qRasK3g9UWy0i6UgHaHa?w=216&h=216&c=7&r=0&o=5&pid=1.7",
-    },
-    {
-      id: 2,
-      name: "TECLADO MECANICO DUCKY ONE 3 MINI RGB HOTSWAP CHERRY MX RED",
-      price: "$172.740,01",
+import React, { useEffect, useState } from "react";
+import { Box, Grid, Flex, Text } from "@chakra-ui/react";
+import LandingProductCard from "./LandingProductCard";
+import { useParams } from "react-router-dom";
 
-      image:
-        "https://th.bing.com/th/id/OIP.VKn1m2qRasK3g9UWy0i6UgHaHa?w=216&h=216&c=7&r=0&o=5&pid=1.7",
-    },
-    {
-      id: 3,
-      name: "MOUSE LOGITECH G PRO SUPERLIGHT 2 LIGHTSPEED MAGENTA 910-006796",
-      price: "$161.550,39",
-      image:
-        "https://th.bing.com/th/id/OIP.VKn1m2qRasK3g9UWy0i6UgHaHa?w=216&h=216&c=7&r=0&o=5&pid=1.7",
-    },
-    {
-      id: 3,
-      name: "MOUSE LOGITECH G PRO SUPERLIGHT 2 LIGHTSPEED MAGENTA 910-006796",
-      price: "$161.550,39",
-      image:
-        "https://th.bing.com/th/id/OIP.VKn1m2qRasK3g9UWy0i6UgHaHa?w=216&h=216&c=7&r=0&o=5&pid=1.7",
-    },
-    {
-      id: 3,
-      name: "MOUSE LOGITECH G PRO SUPERLIGHT 2 LIGHTSPEED MAGENTA 910-006796",
-      price: "$161.550,39",
-      image:
-        "https://th.bing.com/th/id/OIP.VKn1m2qRasK3g9UWy0i6UgHaHa?w=216&h=216&c=7&r=0&o=5&pid=1.7",
-    },
-    {
-      id: 3,
-      name: "MOUSE LOGITECH G PRO SUPERLIGHT 2 LIGHTSPEED MAGENTA 910-006796",
-      price: "$161.550,39",
-      image:
-        "https://th.bing.com/th/id/OIP.VKn1m2qRasK3g9UWy0i6UgHaHa?w=216&h=216&c=7&r=0&o=5&pid=1.7",
-    },
+export default function ShowProducts({ products, setProducts }) {
+  const { categoryId, subCategoryId } = useParams();
 
-    // Agrega más productos si querés
-  ];
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let endpoint = "";
+
+    if (subCategoryId) {
+      endpoint = `http://localhost:1273/product/bySubCategoryid/${subCategoryId}`;
+    } else if (categoryId) {
+      endpoint = `http://localhost:1273/product/byCategoryid/${categoryId}`;
+    } else {
+      return;
+    }
+
+    const fetchProductos = async () => {
+      try {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+          throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error al obtener productos:", err);
+      }
+    };
+
+    fetchProductos();
+  }, [categoryId, subCategoryId]);
 
   return (
-    <Flex width="full" justify={"center"}>
+    <Flex width="full" justify="center">
       <Box py={6} px={{ base: 4, md: 4 }}>
         <Flex justify="center">
           <Grid
             templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(3, 1fr)" }}
-            gap={3}
+            gap={6}
+            justifyContent="center"
           >
-            {products.map((product) => (
-              <ProductCard
-                image={product.image}
-                price={product.price}
-                name={product.name}
-              ></ProductCard>
-            ))}
+            {products.length > 0 ? (
+              products.map((product) => (
+                <Box
+                  ml={{ md: "80px", base: "0px" }}
+                  key={product.id}
+                  display="flex"
+                  justifyContent="center"
+                >
+                  <Box flex="0 0 250px" maxW="300px" h="400px" display="flex">
+                    <Box
+                      flex="1"
+                      display="flex"
+                      flexDir="column"
+                      justifyContent="space-between"
+                      transform="scaleX(1.3) scaleY(1.0)"
+                      transformOrigin="center center"
+                    >
+                      <LandingProductCard
+                        image={
+                          product.photo_url
+                            ? product.photo_url
+                            : "https://www.freundferreteria.com/Productos/GetImagenProductoPrincipal?idProducto=125ecabc-5319-4317-b455-0f5c1aa634d1&width=250&height=250&qa=75&ext=.jpg"
+                        }
+                        price={product.price}
+                        name={product.product_name}
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+              ))
+            ) : (
+              <Text color="white" fontSize={"3xl"}>
+                No hay productos para mostrar
+              </Text>
+            )}
           </Grid>
         </Flex>
       </Box>

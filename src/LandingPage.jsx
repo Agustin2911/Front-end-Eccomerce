@@ -8,21 +8,22 @@ import CarouselShow from "./components/CarouselShow";
 import Categorys from "./components/Categorys";
 import { useState, useEffect } from "react";
 
+
 import BrandProductShowcase from "./components/BrandProductShowcase";
 import FeaturedProducts from "./components/FeaturedProducts";
 import Loader from "./components/Loader";
 
-import SlideOne   from "./assets/carrusel.svg";
-import SlideTwo   from "./assets/carrusel1.svg";
+import SlideOne from "./assets/carrusel.svg";
+import SlideTwo from "./assets/carrusel1.svg";
 import SlideThree from "./assets/carrusel2.svg";
 
 // >>> Showcase assets <<<
 import VideoA from "./assets/asusRog.mp4";
-import BG_A   from "./assets/asusBG.png";
+import BG_A from "./assets/asusBG.png";
 import VideoB from "./assets/corsairGabo.mp4";
-import BG_B   from "./assets/corsairBG.svg";
+import BG_B from "./assets/corsairBG.svg";
 import VideoC from "./assets/samsungOddysey.mp4";
-import BG_C   from "./assets/samsungBG.svg";
+import BG_C from "./assets/samsungBG.svg";
 
 // >>> Sample product arrays <<<
 const productsA = [{

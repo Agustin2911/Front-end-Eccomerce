@@ -524,6 +524,7 @@ export default function MainNavbar({ cartCount = 0 }) {
         onMouseEnter={() => setOpenDropdown(openDropdown)}
         onMouseLeave={() => setOpenDropdown(null)}
       >
+        
         {MENU_DATA[openDropdown].sections.map((section) => (
           <div key={section.title} style={{ flex: "1 1 120px", minWidth: 120 }}>
             <span style={{

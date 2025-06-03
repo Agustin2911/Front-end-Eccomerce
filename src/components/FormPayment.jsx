@@ -1,7 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { useEffect } from "react";
-function FormPayment({ cart }) {
+import { useNavigate } from "react-router-dom";
+function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
   console.log(cart);
 
   const [address, setAddress] = useState("");
@@ -14,11 +15,11 @@ function FormPayment({ cart }) {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const [cardType, setCardType] = useState("");
-
+  const navigate = useNavigate();
   const stores = ["Sucursal Centro", "Sucursal Norte", "Sucursal Sur"];
 
   useEffect(() => {
-    let Total = cart.reduce((acc, item) => acc + item.price, 0);
+    let Total = cart.reduce((acc, item) => acc + item.price*item.amount, 0);
     Total += Total * 0.21;
     setTotal(Total);
   }, [cart]);
@@ -44,34 +45,65 @@ function FormPayment({ cart }) {
   async function generate_payment() {
     const result = await address_verification();
     if (!result) {
-      alert("la direccion ingresada no es valida");
+      alert("La dirección ingresada no es válida");
       return;
     }
 
-    if (
-      !takeawayType ||
-      !address ||
-      !selectedStore ||
-      !cardName ||
-      !expiry ||
-      !cvv ||
-      !cardType
-    ) {
-      alert("faltan campos por completar!");
+    if (!takeawayType || !cardName || !expiry || !cvv || !cardType) {
+      alert("Faltan campos por completar!");
       return;
     }
-    console.log({
-      takeawayType,
-      address,
-      selectedStore,
-      cardName,
-      cardNumber,
-      expiry,
-      cvv,
-      cardType,
-    });
 
-    alert("Pago procesado correctamente.");
+    // Mapear la sucursal a ID
+    const storeIdMap = {
+      "Sucursal Centro": 1,
+      "Sucursal Norte": 2,
+      "Sucursal Sur": 3,
+    };
+
+    const saleData = {
+      total_price: Math.round(total),
+      id_user: id_usuario,
+      sale_date: new Date().toISOString(),
+      items: cart.map((item) => ({
+        id_product: item.id_product,
+        amount: -item.amount,
+      })),
+      id_shop: 1,
+      delivery_type: takeawayType === "delivery" ? "Envio" : "Takeaway",
+      address:
+        takeawayType === "delivery"
+          ? address
+          : selectedStore === "Sucursal Centro"
+          ? "Av. Siempre Viva 123"
+          : selectedStore === "Sucursal Norte"
+          ? "Calle Norte 456"
+          : "Calle Sur 789",
+      delivery_status: "Pendiente",
+    };
+
+    try {
+      const response = await fetch("http://localhost:1273/sale", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saleData),
+      });
+
+      if (response.ok) {
+        alert("Pago procesado correctamente.");
+        setcart([]);
+        navigate("/");
+      } else {
+        const errorData = await response.json();
+        console.error("Error en el servidor:", errorData);
+        alert("Hubo un error al procesar el pago.");
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+      alert("Error al conectar con el servidor.");
+    }
   }
 
   return (
@@ -292,7 +324,7 @@ function FormPayment({ cart }) {
             {cart.map((element) => (
               <li className="list-group-item d-flex justify-content-between">
                 <span>{element.product_name}</span>
-                <strong>${element.price}</strong>
+                <strong>${element.price} x {element.amount}</strong>
               </li>
             ))}
 
