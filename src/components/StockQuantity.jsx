@@ -1,30 +1,54 @@
-import { Stack, HStack, Text, Icon, IconButton, Input, Flex, StackSeparator, Box, VStack } from "@chakra-ui/react";
-import { FaCheckCircle, FaMinus, FaPlus } from "react-icons/fa";
+import { Stack, HStack, Text, Icon, Input, Flex, StackSeparator, Box, VStack, Wrap, WrapItem } from "@chakra-ui/react";
+import { FaCheckCircle  } from "react-icons/fa";
+import { TiWarning } from "react-icons/ti";
+export default function StockQuantity({stock, stockWarning }) {
+    
+    let stockLevel;
 
-export default function StockQuantity({ stockLevel }) {
-  return (
+    if (stock <= stockWarning){
+         stockLevel = "low"
+    } else{
+        stockLevel = "high"
+    }
+
+    return (
     <Box
       border="1.5px solid"
-      borderColor="green.400"
-      background="green.50"
-      p={2}
-      maxW="400px"
+      borderColor= {stockLevel === "low" ? "yellow.400" : "green.400"}
+      background={stockLevel === "low" ? "yellow.50" : "green.50"}
+      px={2}
+      w={{ base: "100%", sm: "auto" }}
+      maxW={{ base: "97%", sm: "400px" }}
       mb="15px"
     >
-      <HStack align="center" spacing={1}>
-        {/* Icono grande */}
-        <Icon as={FaCheckCircle} boxSize={10} color="green.400" />
+     <Wrap align="center" spacing={2} /* aquí permitimos wrap automático */>
+        <WrapItem flexShrink={0}>
+          <Icon as={stockLevel === "low" ? TiWarning : FaCheckCircle} boxSize={10} color={stockLevel === "low" ? "yellow.400" : "green.400"} />
+        </WrapItem>
 
-        {/* Ambos textos en vertical */}
-        <VStack align="flex-start" spacing={0}>
-          <Text fontWeight="bold" fontSize="md" lineHeight="1.2" mb="-2px" color="green.600" mt="5px">
-            STOCK ALTO
-          </Text>
-          <Text fontSize="sm" color="green.500" lineHeight="1.2" mt="10px"  >
-            Disponible para venta WEB y presencial
-          </Text>
-        </VStack>
-      </HStack> 
+        <WrapItem flex="1" minW={0} /* para que el texto pueda encoger y wrappear */>
+          <VStack align="flex-start" spacing={0}>
+            <Text
+              fontWeight="bold"
+              fontSize="md"
+              lineHeight="2"
+              color={stockLevel === "low" ? "yellow.600" : "green.600"}
+              mt="5px"
+              mb="-1px"
+            >
+              STOCK {stockLevel === "low" ? "BAJO" : "ALTO"}
+            </Text>
+            <Text
+              fontSize="sm"
+              color={stockLevel === "low" ? "yellow.500" : "green.500"}
+              lineHeight="1.2"
+              mt="0px"
+            >
+              Disponible para venta WEB y presencial
+            </Text>
+          </VStack>
+        </WrapItem>
+      </Wrap>
 
     </Box>
   );
