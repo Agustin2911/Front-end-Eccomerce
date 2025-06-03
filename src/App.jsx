@@ -1,4 +1,4 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./LandingPage.jsx";
 import Signup from "./Signup";
@@ -6,13 +6,13 @@ import Register from "./Register";
 import ShowProductsPage from "./ShowProductsPage";
 
 import ProductPage from "./ProductPage";
-import { system } from './theme';
-
+import { system } from "./theme";
 
 import AboutUsPage from "./AboutUsPage";
 import CartPage from "./CartPage";
 import PaymentPage from "./PaymentPage";
 import { useState, useEffect } from "react";
+import MyOrders from "./MyOrders.jsx";
 
 function App() {
   const [Token_usuario, SetToken_usuario] = useState("");
@@ -38,19 +38,18 @@ function App() {
   }, []);
   console.log(Token_usuario);
   return (
-
-    <ChakraProvider value={system}>      
+    <ChakraProvider value={system}>
       <Router>
-
-
-        <Routes>    
+        <Routes>
           <Route path="/" element={<LandingPage />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/register" element={<Register />}></Route>
           <Route path="/products" element={<ShowProductsPage />}></Route>
 
-          <Route path="/product-desc/:id_category/:id_product" element={<ProductPage />}></Route>
-
+          <Route
+            path="/product-desc/:id_category/:id_product"
+            element={<ProductPage />}
+          ></Route>
 
           <Route path="/" element={<LandingPage cart={Cart} />}></Route>
           <Route
@@ -99,10 +98,10 @@ function App() {
             element={<ShowProductsPage cart={Cart} />}
           ></Route>
           <Route path="/us" element={<AboutUsPage cart={Cart} />}></Route>
+          <Route path="/myorders/:idUser" element={<MyOrders />}></Route>
         </Routes>
       </Router>
     </ChakraProvider>
-
   );
 }
 
