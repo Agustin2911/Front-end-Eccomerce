@@ -91,33 +91,31 @@ function Cardcart({
       </HStack>
 
       <HStack>
-        {condition === "new" && (
-          <HStack spacing={2} mt={4}>
-            <Button
-              size="sm"
-              background="#d3a5ee"
-              borderRadius="30px"
-              width="60px"
-              height="60px"
-              onClick={handleDecrement}
-            >
-              -
-            </Button>
-            <Button disabled width="60px" height="60px">
-              {amount_product}
-            </Button>
-            <Button
-              size="sm"
-              background="#d3a5ee"
-              borderRadius="30px"
-              width="60px"
-              height="60px"
-              onClick={handleIncrement}
-            >
-              +
-            </Button>
-          </HStack>
-        )}
+        <HStack spacing={2} mt={4}>
+          <Button
+            size="sm"
+            background="#d3a5ee"
+            borderRadius="30px"
+            width="60px"
+            height="60px"
+            onClick={handleDecrement}
+          >
+            -
+          </Button>
+          <Button disabled width="60px" height="60px">
+            {amount_product}
+          </Button>
+          <Button
+            size="sm"
+            background="#d3a5ee"
+            borderRadius="30px"
+            width="60px"
+            height="60px"
+            onClick={handleIncrement}
+          >
+            +
+          </Button>
+        </HStack>
       </HStack>
 
       {/* Estilo personalizado del botón delete */}
