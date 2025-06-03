@@ -6,10 +6,11 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Box } from "@chakra-ui/react";
 import CarouselShow from "./components/CarouselShow";
 import Categorys from "./components/Categorys";
-
+import { useState, useEffect } from "react";
 
 import BrandProductShowcase from "./components/BrandProductShowcase";
 import FeaturedProducts from "./components/FeaturedProducts";
+import Loader from "./components/Loader";
 
 import SlideOne   from "./assets/carrusel.svg";
 import SlideTwo   from "./assets/carrusel1.svg";
@@ -216,54 +217,70 @@ const productsD = [{
 const images = [SlideOne, SlideTwo, SlideThree];
 
 function LandingPage({ cart }) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Box
       w="100%"
       minH="100vh"
       backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+      position="relative"
     >
-      <MainNavbar opacity={true} cart={cart}/>
-      <CarouselShow images={images} />
-      <Categorys />
-       {/* ====== FEATURED PRODUCTS ====== */}
-      <FeaturedProducts products={productsD} />
+      {/* Loader with transition */}
+      <Loader isLoading={loading} />
+      
+      {/* Main content */}
+      <Box
+        opacity={loading ? 0 : 1}
+        transition="opacity 0.8s ease-in-out"
+        transitionDelay={loading ? "0s" : "0.3s"}
+        pointerEvents={loading ? "none" : "auto"}
+      >
+        <MainNavbar opacity={true} cart={cart}/>
+        <CarouselShow images={images} />
+        <Categorys />
+        
+        {/* ====== FEATURED PRODUCTS ====== */}
+        <FeaturedProducts products={productsD} />
 
-      {/* ====== PRODUCT SHOWCASES ====== */}
-      <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
-      <BrandProductShowcase
-        products={productsA}
-        videoSrc={VideoA}
-        bgImage={BG_A}
-        videoLeft={true}
-        exploreText = "Explora ROG"
-      />
+        {/* ====== PRODUCT SHOWCASES ====== */}
+        <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
+          <BrandProductShowcase
+            products={productsA}
+            videoSrc={VideoA}
+            bgImage={BG_A}
+            videoLeft={true}
+            exploreText="Explora ROG"
+          />
+        </Box>
+
+        <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
+          <BrandProductShowcase
+            products={productsB}
+            videoSrc={VideoB}
+            bgImage={BG_B}
+            videoLeft={false}
+            exploreText="Explora Corsair"
+          />
+        </Box>
+
+        <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
+          <BrandProductShowcase
+            products={productsC}
+            videoSrc={VideoC}
+            bgImage={BG_C}
+            videoLeft={true}
+            exploreText="Explora Samsung"
+          />
+        </Box>
+
+        <Footer />
       </Box>
-
-       <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
-        <BrandProductShowcase
-          products={productsB}
-          videoSrc={VideoB}
-          bgImage={BG_B}
-          videoLeft={false}
-          exploreText = "Explora Corsair"
-        />
-      </Box>
-
-      <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
-        <BrandProductShowcase
-          products={productsC}
-          videoSrc={VideoC}
-          bgImage={BG_C}
-          videoLeft={true}
-          exploreText = "Explora Samsung"
-        />
-      </Box>
-
-      <Box h={{ base: "600px", md: "800px" }} />
-      <Footer />
-
-
-
     </Box>
   );
 }

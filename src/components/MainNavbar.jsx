@@ -477,6 +477,15 @@ export default function MainNavbar({ cartCount = 0 }) {
     </div>
   </div>
 </nav>
+<div
+  style={{
+    height: isMobile
+      ? isMobileSearchOpen
+        ? 120
+        : 80
+      : 140,
+  }}
+/>
 
       {/* Dropdown de escritorio */}
       <AnimatePresence>
