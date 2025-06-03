@@ -13,6 +13,7 @@ import CartPage from "./CartPage";
 import PaymentPage from "./PaymentPage";
 import { useState, useEffect } from "react";
 import MyOrders from "./MyOrders.jsx";
+import PublishPage from "./PublishPage";
 
 function App() {
   const [Token_usuario, SetToken_usuario] = useState("");
@@ -47,7 +48,7 @@ function App() {
 
           <Route path="/product-desc/:id_category/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
 
-
+          <Route path="/publish" element={<PublishPage />}></Route>
 
           <Route path="/" element={<LandingPage cart={Cart} />}></Route>
           <Route
