@@ -43,13 +43,9 @@ function App() {
       <Router>
 
 
-        <Routes>    
-          <Route path="/" element={<LandingPage />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/products" element={<ShowProductsPage />}></Route>
+        <Routes>             
 
-          <Route path="/product-desc/:id_category/:id_product" element={<ProductPage />}></Route>
+          <Route path="/product-desc/:id_category/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
 
 
           <Route path="/" element={<LandingPage cart={Cart} />}></Route>
@@ -95,7 +91,7 @@ function App() {
             element={<ShowProductsPage cart={Cart} />}
           ></Route>
           <Route
-            path="/products/category/:subCategoryId"
+            path="/products/subCategory/:subCategoryId"
             element={<ShowProductsPage cart={Cart} />}
           ></Route>
           <Route path="/us" element={<AboutUsPage cart={Cart} />}></Route>

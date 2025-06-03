@@ -259,10 +259,4 @@ export default function ProductSection({images, reviews, related, name, descript
     );
 }
 
-      <Description description={product.description} />
-      </Box>
-      <RelatedProducts products={related} />
-      <ProductReviews reviews={reviews} />
-    </>
-  );
-}
+      

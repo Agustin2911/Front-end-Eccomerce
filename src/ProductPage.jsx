@@ -8,7 +8,7 @@ import {useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 
 
-export default function ProductPage() {
+export default function ProductPage({cart, setCart}) {
   
   const { id_category, id_product } = useParams();
     
@@ -93,6 +93,9 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
 }
   const categoryUpper = catSubcatData[0].toUpperCase();
   const subCategoryUpper = catSubcatData[1].toUpperCase();
+  const categoryLink = `http://localhost:5173/products/category/${catSubcatData[2]}`  
+  const subCategoryLink = `http://localhost:5173/products/subCategory/${catSubcatData[3]}`
+
 
   return (
     <Flex
@@ -140,7 +143,7 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
               <Breadcrumb.Separator />
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  href="#"
+                  href={categoryLink}
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
@@ -154,7 +157,7 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
               <Breadcrumb.Separator />
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  href="#"
+                  href={subCategoryLink}
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
