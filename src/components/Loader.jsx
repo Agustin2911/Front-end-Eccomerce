@@ -3,14 +3,18 @@ import React, { useState, useEffect } from "react";
 import { Box, Image } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 
+import BG_A from "../assets/Mouses.svg";
+
 const glow = keyframes`
   0%, 100% {
     filter: drop-shadow(0 0 8px #ec1877);
     transform: scale(1);
+    transition="opacity 1s ease-out, visibility 1s ease-out"
   }
   50% {
     filter: drop-shadow(0 0 20px #ec1877);
     transform: scale(1.05);
+    transition="opacity 1s ease-out, visibility 1s ease-out"
   }
 `;
 
@@ -48,7 +52,7 @@ export default function Loader({ isLoading = true, onLoadComplete }) {
       width="100vw"
       height="100vh"
       zIndex="9999"
-      bg="rgba(0, 0, 0, 0.7)"
+      bgImage={`linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url(${BG_A})`} 
       backdropFilter="blur(12px)"
       WebkitBackdropFilter="blur(12px)"
       display="flex"
