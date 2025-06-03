@@ -29,8 +29,8 @@ import RelatedProducts from "./RelatedProducts";
 import ProductReviews from "./ProductReviews";
 
 
-export default function ProductSection({images, reviews, related, name, description, price, stock, stockWarning, id, id_category}) {
-
+export default function ProductSection({images, reviews, related, name, description, price, stock, stockWarning, id, id_category, cart, setCart, discount, discount_state}) {
+    console.log(images);
     const [quantity, setQuantity] = useState(1);
     const dec = () => setQuantity((q) => Math.max(q - 1, 1));
     const inc = () => setQuantity((q) => q + 1);
@@ -43,7 +43,24 @@ export default function ProductSection({images, reviews, related, name, descript
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
+    const newCart = cart;
+    let newIndex = newCart.length + 1;
+    function handleClick(amount){
+        newCart.push({
+            index: newIndex,
+            id_product: id,
+            product_name: name,
+            amount: amount,
+            price: price,
+            url: images,
+            condition: "new",
+            description: description,
+            discount: discount,
+            discount_state: discount_state,
+        });
 
+        setCart(newCart);
+    }
 
   return (
     <>
@@ -221,9 +238,10 @@ export default function ProductSection({images, reviews, related, name, descript
                              css={{
                                 "@media screen and (max-width: 321px)": {
                                     maxW:"47%",
-                                    fontSize: "xs"
+                                    fontSize: "xs"  
                                 },
                              }}
+                            onClick={() => handleClick(quantity)}
                             >
                             <FaShoppingCart/> Agregar
                         </Button>

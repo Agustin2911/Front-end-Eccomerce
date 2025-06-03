@@ -193,7 +193,7 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
           p={6}
         >
        
-            <ProductSection reviews={reviewsData} name={productData.product_name} images={productData.photo_url} description={productData.description} price={productData.price} related={relatedData} stock={stockData.stock} stockWarning={stockData.stock_warning} id={productData.id_product} id_category={id_category}></ProductSection> 
+            <ProductSection reviews={reviewsData} name={productData.product_name} images={productData.photo_url} description={productData.description} price={productData.price} related={relatedData} stock={stockData.stock} stockWarning={stockData.stock_warning} id={productData.id_product} id_category={id_category} cart={cart} setCart={setCart} discount={productData.discount} discount_state={productData.discount_state}></ProductSection> 
 
         </Box>
       </Box>

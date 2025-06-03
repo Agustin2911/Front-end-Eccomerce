@@ -28,7 +28,7 @@ function App() {
         product_name: "samsung 20 pulgadas",
         amount: 2,
         price: 1000,
-        url: "forro",
+        url: "urlrandom",
         condition: "new",
         description: "aaaaa",
         discount: 10,
@@ -36,7 +36,7 @@ function App() {
       },
     ]);
   }, []);
-  console.log(Token_usuario);
+
   return (
 
     <ChakraProvider value={system}>      
