@@ -61,7 +61,7 @@ function App() {
           <Route path="/register" element={<Register />}></Route>
           <Route path="/products" element={<ShowProductsPage />}></Route>
 
-          <Route path="/product-desc" element={<ProductPage />}></Route>
+          <Route path="/product-desc/:id_category/:id_product" element={<ProductPage />}></Route>
 
           <Route path="/" element={<LandingPage cart={Cart} />}></Route>
           <Route

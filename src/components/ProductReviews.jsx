@@ -115,7 +115,13 @@ export default function ProductReviews({ reviews }) {
         ))}
        </VStack>
        </Stack>
-
+        
+       {reviews.length === 0 &&
+       (
+           <Text>
+                Este producto no tiene reseñas por el momento
+           </Text>
+       )}
        {/* Listado de reviews */}
        <VStack align="stretch" spacing={6}>
          {reviews.map((r, i) => (

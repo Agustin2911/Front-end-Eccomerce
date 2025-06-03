@@ -7,13 +7,13 @@ import Description from "./Description";
 import RelatedProducts from "./RelatedProducts";
 import ProductReviews from "./ProductReviews";
 
-export default function ProductSection({images, reviews, related, name, description, price, stock, stockWarning }) {
+export default function ProductSection({images, reviews, related, name, description, price, stock, stockWarning, id, id_category}) {
 
     const [quantity, setQuantity] = useState(1);
     const dec = () => setQuantity((q) => Math.max(q - 1, 1));
     const inc = () => setQuantity((q) => q + 1);
     
-    const [selectedImage, setSelectedImage] = useState(0);
+//    const [selectedImage, setSelectedImage] = useState(0);
 
     const cuotas = price / 12; 
     const priceFormatted = price.toLocaleString("es-AR");
@@ -229,7 +229,7 @@ export default function ProductSection({images, reviews, related, name, descript
                 
         </Box>
         <Description description={description} />
-        <RelatedProducts  products={related}   />
+        <RelatedProducts  products={related} id_product={id} id_category={id_category} />
         <ProductReviews reviews={reviews}/>
         
        </>
