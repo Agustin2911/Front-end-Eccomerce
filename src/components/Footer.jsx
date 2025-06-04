@@ -72,7 +72,7 @@ export default function Footer() {
   {/* Nosotros */}
   <Stack spacing={2}>
     <Link
-      href="#"
+      href="http://localhost:5173/"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"
@@ -81,7 +81,7 @@ export default function Footer() {
       Gordo Compu Customs
     </Link>
     <Link
-      href="#"
+      href="https://www.whatsapp.com/"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"
@@ -90,7 +90,7 @@ export default function Footer() {
       Contactanos
     </Link>
     <Link
-      href="#"
+      href="https://ar.indeed.com/"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"
@@ -99,7 +99,7 @@ export default function Footer() {
       Unete a GC Customs
     </Link>
     <Link
-      href="#"
+      href="http://localhost:5173/us"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"
@@ -131,7 +131,7 @@ export default function Footer() {
         <Flex justify="center" align="center" mt={1} fontSize="sm" color="#f1e6f7" gap={6}>
           <Text mt={4}>© 2025 GC CUSTOMS GROUP</Text>
           <Link
-            href="#"
+            href="https://www.argentina.gob.ar/normativa/constituciones/nacional"
             ml={6}
             _hover={{ textDecoration: "none" }}
             textDecoration="none"
@@ -150,6 +150,15 @@ export default function Footer() {
           </Link>
           <Link href="#" isExternal aria-label="Google Plus">
             <Icon as={FaGooglePlusG} boxSize={6} color="#ec1877" />
+          </Link>
+              <Link href="https://www.facebook.com/" isExternal aria-label="Facebook">
+            <Icon as={FaFacebook} boxSize={6}  ml={5} color="#ec1877" />
+          </Link>
+          <Link href="https://x.com/" isExternal aria-label="Twitter">
+            <Icon as={FaTwitter} boxSize={6} color="#ec1877" />
+          </Link>
+          <Link href="https://www.linkedin.com/" isExternal aria-label="LinkedIn">
+            <Icon as={FaLinkedin} boxSize={6} color="#ec1877" />
           </Link>
         </Flex>
       </Container>

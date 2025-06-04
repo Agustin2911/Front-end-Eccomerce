@@ -4,8 +4,11 @@ import Footer from "./components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import ProductSection from "./components/ProductSection";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+
+export default function ProductPage({ cart, setCart, type, id_usuario }) {
+  const { id_product } = useParams();
 
 
 export default function ProductPage({cart, setCart}) {
@@ -19,7 +22,7 @@ export default function ProductPage({cart, setCart}) {
   }, [ id_product ]);
 
 
-  const [stockData, setStockData] = useState(null); 
+  const [stockData, setStockData] = useState(null);
   const [productData, setProductData] = useState(null);
   const [error, setError] = useState(null);
   const [reviewsData, setReviewsData] = useState(null)
@@ -49,22 +52,27 @@ export default function ProductPage({cart, setCart}) {
 
   useEffect(() => {
     if (!id_product) return;
+
     async function fetchAll() {
       try {
-        const res = await fetch(`http://localhost:1273/product/productById/${id_product}`);
+        const res = await fetch(
+          `http://localhost:1273/product/productById/${id_product}`
+        );
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
         const data = await res.json();
         setProductData(data);
 
-        const resStock = await fetch(`http://localhost:1273/stock/${id_product}`);
+        const resStock = await fetch(
+          `http://localhost:1273/stock/${id_product}`
+        );
         if (!resStock.ok) {
-            throw new Error(`Error stock ${resStock.status}`);
+          throw new Error(`Error stock ${resStock.status}`);
         }
         const stockJson = await resStock.json();
         setStockData(stockJson);
-        
+
         let reviewJson = [];
         try {
           const resReviews = await fetch(
@@ -84,31 +92,39 @@ export default function ProductPage({cart, setCart}) {
         }
         setReviewsData(reviewJson);
 
+
         const resRelated = await fetch(`http://localhost:1273/product/byCategoryid/${catSubcatData[2]}`);
+
         if (!resRelated.ok) {
-            throw new Error(`Error related ${resRelated.status}`);
+          throw new Error(`Error related ${resRelated.status}`);
         }
         const relatedJson = await resRelated.json();
         setRelatedData(relatedJson);
-
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message);
-      }     
+      }
     }
-    
     fetchAll();
   }, [catSubcatData, id_product]); 
 
-    
-if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData) {
-  return <div>Cargando producto...</div>;
-}
+
+    fetchAll();
+  }, [catSubcatData, id_product]);
+
+  if (
+    !productData ||
+    !stockData ||
+    !reviewsData ||
+    !relatedData ||
+    !catSubcatData
+  ) {
+    return <div>Cargando producto...</div>;
+  }
   const categoryUpper = catSubcatData[0].toUpperCase();
   const subCategoryUpper = catSubcatData[1].toUpperCase();
-  const categoryLink = `http://localhost:5173/products/category/${catSubcatData[2]}`  
-  const subCategoryLink = `http://localhost:5173/products/subCategory/${catSubcatData[3]}`
-
+  const categoryLink = `http://localhost:5173/products/category/${catSubcatData[2]}`;
+  const subCategoryLink = `http://localhost:5173/products/subCategory/${catSubcatData[3]}`;
 
   return (
     <Flex
@@ -117,35 +133,34 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
       backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
       {/* Navbar */}
-      <MainNavbar cart={cart} />
+      <MainNavbar cart={cart} type={type} id_user={id_usuario} />
 
       {/* Contenido principal */}
 
       <Box flex="1" pt="20px" px={{ base: 0, md: 12 }} mt="20px">
         <Box
-        as="main"
-        flex="1"
-        pt="20px"
-        px={{base: 0, md: 12}}
-        mt="20px"
-        mx="auto"
-        maxW={{ base: "100%", md: "1200px"}}
-        mb="70px"
-        >         
-          <Breadcrumb.Root mt={-14} >
+          as="main"
+          flex="1"
+          pt="20px"
+          px={{ base: 0, md: 12 }}
+          mt="20px"
+          mx="auto"
+          maxW={{ base: "100%", md: "1200px" }}
+          mb="70px"
+        >
+          <Breadcrumb.Root mt={-14}>
             <Breadcrumb.List
-            display="flex"
-            flexWrap="wrap"
-            alignItems="center"
-            spacing={2}
-            
+              display="flex"
+              flexWrap="wrap"
+              alignItems="center"
+              spacing={2}
             >
               <Breadcrumb.Item>
                 <Breadcrumb.Link
                   href="http://localhost:5173/"
                   fontSize="sm"
                   color="#F1E6F7"
-                  textDecoration="none" 
+                  textDecoration="none"
                   whiteSpace="nowrap"
                   wordBreak="normal"
                   overflowWrap="break-word"
@@ -164,7 +179,7 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
                   wordBreak="normal"
                   overflowWrap="break-word"
                 >
-                    {categoryUpper}
+                  {categoryUpper}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
               <Breadcrumb.Separator />
@@ -176,9 +191,9 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
                   textDecoration="none"
                   whiteSpace="nowrap"
                   wordBreak="normal"
-                  overflowWrap="break-word"                
+                  overflowWrap="break-word"
                 >
-                     {subCategoryUpper}
+                  {subCategoryUpper}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
               <Breadcrumb.Separator />
@@ -189,13 +204,13 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
                   wordBreak="normal"
                   overflowWrap="break-word"
                   maxW="100%"
-
                 >
-                {productData.product_name}
+                  {productData.product_name}
                 </Breadcrumb.CurrentLink>
               </Breadcrumb.Item>
             </Breadcrumb.List>
           </Breadcrumb.Root>
+
        
 
         {/* DIV ENORME: aquí va toda la info de producto */}
@@ -208,9 +223,27 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
        
             <ProductSection reviews={reviewsData} name={productData.product_name} images={productData.photo_url} description={productData.description} price={productData.price} related={relatedData} stock={stockData.stock} stockWarning={stockData.stock_warning} id={productData.id_product} id_category={catSubcatData[2]} cart={cart} setCart={setCart} discount={productData.discount} discount_state={productData.discount_state}></ProductSection> 
 
-        </Box>
-      </Box>
 
+          {/* DIV ENORME: aquí va toda la info de producto */}
+          <Box id="product-container" bg="white" borderWidth="0px" p={6}>
+            <ProductSection
+              reviews={reviewsData}
+              name={productData.product_name}
+              images={productData.photo_url}
+              description={productData.description}
+              price={productData.price}
+              related={relatedData}
+              stock={stockData.stock}
+              stockWarning={stockData.stock_warning}
+              id={productData.id_product}
+              id_category={catSubcatData[2]}
+              cart={cart}
+              setCart={setCart}
+              discount={productData.discount}
+              discount_state={productData.discount_state}
+            ></ProductSection>
+          </Box>
+        </Box>
       </Box>
 
       {/* Footer */}

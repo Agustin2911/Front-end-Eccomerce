@@ -1,5 +1,6 @@
 // BuscarCategorias.jsx
-import { Box, Grid, Text } from "@chakra-ui/react";
+import { Box, Grid, Text,} from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import CategoryButton from "./CategoryButton";
 
 import PlacasIcon       from "../assets/Grafica.svg";
@@ -14,16 +15,16 @@ import GabinetesIcon from "../assets/Gabinete.svg";
 import MousesIcon     from "../assets/Mouses.svg";
 
 const categorias = [
-  { nombre: "Placas de Video",    icono: PlacasIcon },
-  { nombre: "Motherboards",    icono: MotherboardsIcon },
-  { nombre: "Teclados",             icono: TecladosIcon },
-  { nombre: "Auriculares",       icono: AuricularesIcon },
-  { nombre: "Gabinetes",        icono: GabinetesIcon },
-  { nombre: "Monitores",       icono: MonitoresIcon },
-  { nombre: "Procesadores",          icono: ProcesadoresIcon },
-  { nombre: "Mouses",                icono: MousesIcon },
-  { nombre: "Almacenamientos",       icono: AlmacenamientosIcon },
-  { nombre: "Memorias RAM",           icono: MemoriasRAMIcon },
+  { nombre: "Placas de Video",    icono: PlacasIcon, categoryId: 2 },
+  { nombre: "Motherboards",    icono: MotherboardsIcon, categoryId: 4 },
+  { nombre: "Teclados",             icono: TecladosIcon, categoryId: 7 },
+  { nombre: "Auriculares",       icono: AuricularesIcon, categoryId: 9 },
+  { nombre: "Gabinetes",        icono: GabinetesIcon, categoryId: 4, subCategoryId: 11, },
+  { nombre: "Monitores",       icono: MonitoresIcon, categoryId: 14 },
+  { nombre: "Procesadores",          icono: ProcesadoresIcon, categoryId: 3 },
+  { nombre: "Mouses",                icono: MousesIcon, categoryId: 8 },
+  { nombre: "Almacenamientos",       icono: AlmacenamientosIcon, categoryId: 5  },
+  { nombre: "Memorias RAM",           icono: MemoriasRAMIcon, categoryId: 6 },
 ];
 
 export default function Categorys() {
@@ -50,14 +51,27 @@ export default function Categorys() {
         }}
         
       >
-        {categorias.map((cat) => (
-          <CategoryButton
-            key={cat.nombre}
-            name={cat.nombre}
-            image={cat.icono}
-            onClick={() => console.log("Clicked", cat.nombre)}
-          />
-        ))}
+        {categorias.map((cat) => {
+          // Armamos la URL según tenga subCategoryId o no:
+          const to = cat.subCategoryId
+            ? `/products/subCategory/${cat.subCategoryId}`
+            : `/products/category/${cat.categoryId}`;
+
+          return (
+            <Link
+              key={cat.nombre}
+              to={to}
+              style={{ textDecoration: "none" }}
+              onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "none")}
+              onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+            >
+              <CategoryButton
+                name={cat.nombre}
+                image={cat.icono}
+              />
+            </Link>
+          );
+        })}
       </Grid>
     </Box>
   );
