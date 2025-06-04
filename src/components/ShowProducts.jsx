@@ -70,6 +70,9 @@ export default function ShowProducts({ products, setProducts }) {
                         }
                         price={product.price}
                         name={product.product_name}
+                        discount={product.discount}
+                        discountState={product.discount_state}
+                        id={product.id_product}
                       />
                     </Box>
                   </Box>
