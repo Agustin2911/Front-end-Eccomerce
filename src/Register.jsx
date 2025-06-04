@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ImageUploader from "./components/ImageUploader";
 import { Text } from "@chakra-ui/react";
 
-function Register({ token, settoken, setId_usuario, setImage_path }) {
+function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
   const [userType, setUserType] = useState("buyer"); // Nuevo: tipo de usuario
   const [user_name, setName] = useState("");
   const [user_LastName, setLastName] = useState("");
@@ -58,6 +58,11 @@ function Register({ token, settoken, setId_usuario, setImage_path }) {
 
     if (image && image !== "none") {
       formData.append("file", image);
+    } else {
+      formData.append("file", null);
+      setLoading(false);
+      alert("falta poner una foto");
+      return;
     }
 
     try {
@@ -78,6 +83,7 @@ function Register({ token, settoken, setId_usuario, setImage_path }) {
         settoken(result.access_token);
         setId_usuario(result.id_user);
         setImage_path(result.photo_url);
+        setType(result.type);
         setLoading(false);
         navigate("/");
       } else {
@@ -124,6 +130,11 @@ function Register({ token, settoken, setId_usuario, setImage_path }) {
 
     if (image !== "none") {
       formData.append("file", image);
+    } else {
+      formData.append("file", null);
+      setLoading(false);
+      alert("falta poner una foto");
+      return;
     }
 
     try {
@@ -142,6 +153,9 @@ function Register({ token, settoken, setId_usuario, setImage_path }) {
       const result = await response.json();
       if (result.access_token) {
         settoken(result.access_token);
+        setId_usuario(result.id_user);
+        setImage_path(result.photo_url);
+        setType(result.type);
         setLoading(false);
         navigate("/");
       } else {

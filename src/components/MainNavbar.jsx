@@ -1,6 +1,12 @@
 // src/components/MainNavbar.jsx
 import React, { useState, useEffect } from "react";
-import { FaShoppingCart, FaUser, FaBars, FaSearch, FaTimes } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaUser,
+  FaBars,
+  FaSearch,
+  FaTimes,
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -14,11 +20,11 @@ const MENU_DATA = [
         url: "/products/category/1",
         links: [
           // id_sub_category = 1
-          { name: "PC Gamer",      url: "/products/subCategory/1" },
+          { name: "PC Gamer", url: "/products/subCategory/1" },
           // id_sub_category = 2
-          { name: "PC Oficina",    url: "/products/subCategory/2" },
+          { name: "PC Oficina", url: "/products/subCategory/2" },
           // id_sub_category = 3
-          { name: "PC Workstation",url: "/products/subCategory/3" },
+          { name: "PC Workstation", url: "/products/subCategory/3" },
         ],
       },
     ],
@@ -32,7 +38,7 @@ const MENU_DATA = [
         url: "/products/category/2",
         links: [
           // id_sub_category = 4
-          { name: "AMD Radeon",     url: "/products/subCategory/4" },
+          { name: "AMD Radeon", url: "/products/subCategory/4" },
           // id_sub_category = 5
           { name: "NVIDIA Geforce", url: "/products/subCategory/5" },
         ],
@@ -43,7 +49,7 @@ const MENU_DATA = [
         url: "/products/category/3",
         links: [
           // id_sub_category = 6
-          { name: "AMD",   url: "/products/subCategory/6" },
+          { name: "AMD", url: "/products/subCategory/6" },
           // id_sub_category = 7
           { name: "Intel", url: "/products/subCategory/7" },
         ],
@@ -54,15 +60,15 @@ const MENU_DATA = [
         url: "/products/category/4",
         links: [
           // id_sub_category = 8
-          { name: "Motherboards",        url: "/products/subCategory/8"  },
+          { name: "Motherboards", url: "/products/subCategory/8" },
           // id_sub_category = 9
-          { name: "Fuentes",             url: "/products/subCategory/9"  },
+          { name: "Fuentes", url: "/products/subCategory/9" },
           // id_sub_category = 10
-          { name: "Refrigeración",       url: "/products/subCategory/10" },
+          { name: "Refrigeración", url: "/products/subCategory/10" },
           // id_sub_category = 11
-          { name: "Gabinetes",           url: "/products/subCategory/11" },
+          { name: "Gabinetes", url: "/products/subCategory/11" },
           // id_sub_category = 12
-          { name: "Conectividad y Redes",url: "/products/subCategory/12" },
+          { name: "Conectividad y Redes", url: "/products/subCategory/12" },
         ],
       },
       {
@@ -71,11 +77,11 @@ const MENU_DATA = [
         url: "/products/category/5",
         links: [
           // id_sub_category = 13
-          { name: "Discos SATA",     url: "/products/subCategory/13" },
+          { name: "Discos SATA", url: "/products/subCategory/13" },
           // id_sub_category = 14
           { name: "Discos Externos", url: "/products/subCategory/14" },
           // id_sub_category = 15
-          { name: "Discos SSD",      url: "/products/subCategory/15" },
+          { name: "Discos SSD", url: "/products/subCategory/15" },
         ],
       },
       {
@@ -84,15 +90,15 @@ const MENU_DATA = [
         url: "/products/category/6",
         links: [
           // id_sub_category = 16
-          { name: "DDR3",          url: "/products/subCategory/16" },
+          { name: "DDR3", url: "/products/subCategory/16" },
           // id_sub_category = 17
-          { name: "DDR4",          url: "/products/subCategory/17" },
+          { name: "DDR4", url: "/products/subCategory/17" },
           // id_sub_category = 18
-          { name: "DDR5",          url: "/products/subCategory/18" },
+          { name: "DDR5", url: "/products/subCategory/18" },
           // id_sub_category = 19
-          { name: "SODIMM DDR4",   url: "/products/subCategory/19" },
+          { name: "SODIMM DDR4", url: "/products/subCategory/19" },
           // id_sub_category = 20
-          { name: "SODIMM DDR5",   url: "/products/subCategory/20" },
+          { name: "SODIMM DDR5", url: "/products/subCategory/20" },
         ],
       },
     ],
@@ -108,9 +114,9 @@ const MENU_DATA = [
           // id_sub_category = 21
           { name: "Teclados Inalámbricos", url: "/products/subCategory/21" },
           // id_sub_category = 22
-          { name: "Teclados Gamer",        url: "/products/subCategory/22" },
+          { name: "Teclados Gamer", url: "/products/subCategory/22" },
           // id_sub_category = 23
-          { name: "Teclados USB",          url: "/products/subCategory/23" },
+          { name: "Teclados USB", url: "/products/subCategory/23" },
         ],
       },
       {
@@ -121,9 +127,9 @@ const MENU_DATA = [
           // id_sub_category = 24
           { name: "Mouses Inalámbricos", url: "/products/subCategory/24" },
           // id_sub_category = 25
-          { name: "Mouses Gamer",        url: "/products/subCategory/25" },
+          { name: "Mouses Gamer", url: "/products/subCategory/25" },
           // id_sub_category = 26
-          { name: "Mouses USB",          url: "/products/subCategory/26" },
+          { name: "Mouses USB", url: "/products/subCategory/26" },
         ],
       },
       {
@@ -134,9 +140,12 @@ const MENU_DATA = [
           // id_sub_category = 27
           { name: "Auriculares Inalámbricos", url: "/products/subCategory/27" },
           // id_sub_category = 28
-          { name: "Auriculares Gamer",        url: "/products/subCategory/28" },
+          { name: "Auriculares Gamer", url: "/products/subCategory/28" },
           // id_sub_category = 29
-          { name: "Auriculares con Micrófono",url: "/products/subCategory/29" },
+          {
+            name: "Auriculares con Micrófono",
+            url: "/products/subCategory/29",
+          },
         ],
       },
       {
@@ -156,13 +165,13 @@ const MENU_DATA = [
         url: "/products/category/11",
         links: [
           // id_sub_category = 32
-          { name: "Webcams",              url: "/products/subCategory/32" },
+          { name: "Webcams", url: "/products/subCategory/32" },
           // id_sub_category = 33
-          { name: "Micrófonos",           url: "/products/subCategory/33" },
+          { name: "Micrófonos", url: "/products/subCategory/33" },
           // id_sub_category = 34
-          { name: "Capturadoras de Video",url: "/products/subCategory/34" },
+          { name: "Capturadoras de Video", url: "/products/subCategory/34" },
           // id_sub_category = 35
-          { name: "Stream Decks",         url: "/products/subCategory/35" },
+          { name: "Stream Decks", url: "/products/subCategory/35" },
         ],
       },
       {
@@ -171,13 +180,13 @@ const MENU_DATA = [
         url: "/products/category/12",
         links: [
           // id_sub_category = 36
-          { name: "Pendrives",        url: "/products/subCategory/36" },
+          { name: "Pendrives", url: "/products/subCategory/36" },
           // id_sub_category = 37
-          { name: "Sillas Gamer",     url: "/products/subCategory/37" },
+          { name: "Sillas Gamer", url: "/products/subCategory/37" },
           // id_sub_category = 38
-          { name: "Impresoras",       url: "/products/subCategory/38" },
+          { name: "Impresoras", url: "/products/subCategory/38" },
           // id_sub_category para “Proyectores” aún no asignado
-          { name: "Proyectores",      url: "" },
+          { name: "Proyectores", url: "" },
         ],
       },
     ],
@@ -200,7 +209,7 @@ const MENU_DATA = [
   },
 ];
 
-export default function MainNavbar({ cartCount = 0 }) {
+export default function MainNavbar({ cartCount = 0, type, id_user }) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
@@ -426,8 +435,16 @@ export default function MainNavbar({ cartCount = 0 }) {
                 <FaSearch />
               </div>
 
-              {/* Personita */}
-              <Link to="/signup" style={iconStyle}>
+              <Link
+                to={
+                  type === "buyer"
+                    ? `/myorders/${id_user}`
+                    : type === "seller"
+                    ? `/mysales/${id_user}` // futuro link para seller
+                    : "/signup"
+                }
+                style={iconStyle}
+              >
                 <FaUser />
               </Link>
 
@@ -436,7 +453,9 @@ export default function MainNavbar({ cartCount = 0 }) {
                 <Link to="/cart" style={iconStyle}>
                   <FaShoppingCart />
                 </Link>
-                {cartCount > 0 && <span style={cartBadgeStyle}>{cartCount}</span>}
+                {cartCount > 0 && (
+                  <span style={cartBadgeStyle}>{cartCount}</span>
+                )}
               </div>
             </div>
           </>
@@ -455,14 +474,25 @@ export default function MainNavbar({ cartCount = 0 }) {
             </div>
 
             <div style={rightIconsContainer}>
-              <Link to="/signup" style={iconStyle}>
+              <Link
+                to={
+                  type === "buyer"
+                    ? `/myorders/${id_user}`
+                    : type === "seller"
+                    ? `/mysales/${id_user}` // futuro link para seller
+                    : "/signup"
+                }
+                style={iconStyle}
+              >
                 <FaUser />
               </Link>
               <div style={{ position: "relative" }}>
                 <Link to="/cart" style={iconStyle}>
                   <FaShoppingCart />
                 </Link>
-                {cartCount > 0 && <span style={cartBadgeStyle}>{cartCount}</span>}
+                {cartCount > 0 && (
+                  <span style={cartBadgeStyle}>{cartCount}</span>
+                )}
               </div>
             </div>
           </>
@@ -542,11 +572,7 @@ export default function MainNavbar({ cartCount = 0 }) {
       </nav>
       <div
         style={{
-          height: isMobile
-            ? isMobileSearchOpen
-              ? 120
-              : 80
-            : 140,
+          height: isMobile ? (isMobileSearchOpen ? 120 : 80) : 140,
         }}
       />
 
@@ -588,7 +614,10 @@ export default function MainNavbar({ cartCount = 0 }) {
               onMouseLeave={() => setOpenDropdown(null)}
             >
               {MENU_DATA[openDropdown].sections.map((section) => (
-                <div key={section.title} style={{ flex: "1 1 120px", minWidth: 120 }}>
+                <div
+                  key={section.title}
+                  style={{ flex: "1 1 120px", minWidth: 120 }}
+                >
                   {/* Ahora el título es un <Link> clickeable */}
                   {section.url ? (
                     <Link
@@ -654,13 +683,15 @@ export default function MainNavbar({ cartCount = 0 }) {
                   <>
                     <div
                       onClick={() =>
-                        setOpenMobileDropdown(openMobileDropdown === idx ? null : idx)
+                        setOpenMobileDropdown(
+                          openMobileDropdown === idx ? null : idx
+                        )
                       }
                       style={{
                         color: "#fff",
                         fontWeight: 600,
                         fontSize: 16,
-                        cursor: "pointer", 
+                        cursor: "pointer",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
@@ -671,7 +702,10 @@ export default function MainNavbar({ cartCount = 0 }) {
                         style={{
                           display: "inline-block",
                           transition: "transform 0.3s ease",
-                          transform: openMobileDropdown === idx ? "rotate(180deg)" : "rotate(0deg)",
+                          transform:
+                            openMobileDropdown === idx
+                              ? "rotate(180deg)"
+                              : "rotate(0deg)",
                           fontSize: 14,
                         }}
                       >
@@ -694,7 +728,10 @@ export default function MainNavbar({ cartCount = 0 }) {
                           }}
                         >
                           {item.sections.map((section) => (
-                            <div key={section.title} style={{ marginBottom: 10 }}>
+                            <div
+                              key={section.title}
+                              style={{ marginBottom: 10 }}
+                            >
                               {/* Aquí también hacemos clickeable el title usando section.url */}
                               {section.url ? (
                                 <Link
@@ -714,7 +751,13 @@ export default function MainNavbar({ cartCount = 0 }) {
                                   {section.title}
                                 </Link>
                               ) : (
-                                <div style={{ color: "#EC1877", fontWeight: 500, fontSize: 14 }}>
+                                <div
+                                  style={{
+                                    color: "#EC1877",
+                                    fontWeight: 500,
+                                    fontSize: 14,
+                                  }}
+                                >
                                   {section.title}
                                 </div>
                               )}
@@ -729,7 +772,8 @@ export default function MainNavbar({ cartCount = 0 }) {
                                     display: "block",
                                     marginTop: 4,
                                     fontSize: 14,
-                                    transition: "color 0.2s ease, padding-left 0.2s ease",
+                                    transition:
+                                      "color 0.2s ease, padding-left 0.2s ease",
                                     paddingLeft: 0,
                                   }}
                                   onMouseEnter={(e) => {

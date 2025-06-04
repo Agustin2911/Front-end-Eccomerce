@@ -3,11 +3,10 @@ import MainNavbar from "src/components/MainNavbar";
 import Footer from "./components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { Box } from "@chakra-ui/react";
+import { Box, Image } from "@chakra-ui/react";
 import CarouselShow from "./components/CarouselShow";
 import Categorys from "./components/Categorys";
 import { useState, useEffect } from "react";
-
 
 import BrandProductShowcase from "./components/BrandProductShowcase";
 import FeaturedProducts from "./components/FeaturedProducts";
@@ -25,10 +24,9 @@ import BG_B from "./assets/corsairBG.svg";
 import VideoC from "./assets/samsungOddysey.mp4";
 import BG_C from "./assets/samsungBG.svg";
 
-
 const images = [SlideOne, SlideTwo, SlideThree];
 
-function LandingPage({ cart }) {
+function LandingPage({ cart, type, id_usuario }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,7 +43,7 @@ function LandingPage({ cart }) {
     >
       {/* Loader with transition */}
       <Loader isLoading={loading} />
-      
+
       {/* Main content */}
       <Box
         opacity={loading ? 0 : 1}
@@ -53,15 +51,22 @@ function LandingPage({ cart }) {
         transitionDelay={loading ? "0s" : "0.3s"}
         pointerEvents={loading ? "none" : "auto"}
       >
-        <MainNavbar opacity={true} cart={cart}/>
+        <MainNavbar
+          opacity={true}
+          cart={cart}
+          type={type}
+          id_user={id_usuario}
+        />
         <CarouselShow images={images} />
         <Categorys />
-        
+
         {/* ====== FEATURED PRODUCTS ====== */}
-        <FeaturedProducts productIds={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]} />
+        <FeaturedProducts
+          productIds={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+        />
 
         {/* ====== PRODUCT SHOWCASES ====== */}
-        <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
+        <Box px={{ base: 4, md: 8 }} py={{ base: 4, md: 8 }}>
           <BrandProductShowcase
             productIds={[1, 2, 3, 4]}
             videoSrc={VideoA}
@@ -71,7 +76,7 @@ function LandingPage({ cart }) {
           />
         </Box>
 
-        <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
+        <Box px={{ base: 4, md: 8 }} py={{ base: 4, md: 8 }}>
           <BrandProductShowcase
             productIds={[5, 6, 7, 8]}
             videoSrc={VideoB}
@@ -81,7 +86,7 @@ function LandingPage({ cart }) {
           />
         </Box>
 
-        <Box px={{ base:4, md:8 }} py={{ base:4, md:8 }}>
+        <Box px={{ base: 4, md: 8 }} py={{ base: 4, md: 8 }}>
           <BrandProductShowcase
             productIds={[9, 10, 11, 12]}
             videoSrc={VideoC}

@@ -19,8 +19,10 @@ function App() {
   const [Cart, SetCart] = useState([]);
   const [id_usuario, setId_usuario] = useState(0);
   const [image_path, setImage_path] = useState(null);
+  const [type, SetType] = useState(null);
 
   useEffect(() => {
+    console.log("imagen:" + image_path);
     SetCart([
       {
         index: 1,
@@ -40,15 +42,35 @@ function App() {
   return (
     <ChakraProvider value={system}>
       <Router>
+        <Routes>
+          <Route
+            path="/product-desc/:id_product"
+            element={
+              <ProductPage
+                cart={Cart}
+                setCart={SetCart}
+                type={type}
+                id_usuario={id_usuario}
+              />
+            }
+          ></Route>
 
-        <Routes>             
-
-          <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
-
-          <Route path="/" element={<LandingPage cart={Cart} />}></Route>
+          <Route
+            path="/"
+            element={
+              <LandingPage cart={Cart} type={type} id_usuario={id_usuario} />
+            }
+          ></Route>
           <Route
             path="/cart"
-            element={<CartPage carrito={Cart} setcarrito={SetCart} />}
+            element={
+              <CartPage
+                carrito={Cart}
+                setcarrito={SetCart}
+                type={type}
+                id_usuario={id_usuario}
+              />
+            }
           ></Route>
           <Route
             path="/signup"
@@ -58,6 +80,7 @@ function App() {
                 settoken={SetToken_usuario}
                 setId_usuario={setId_usuario}
                 setImage_path={setImage_path}
+                SetType={SetType}
               />
             }
           ></Route>
@@ -69,6 +92,7 @@ function App() {
                 settoken={SetToken_usuario}
                 setId_usuario={setId_usuario}
                 setImage_path={setImage_path}
+                setType={SetType}
               />
             }
           ></Route>
@@ -80,20 +104,43 @@ function App() {
                 id_usuario={id_usuario}
                 Token_usuario={Token_usuario}
                 setcart={SetCart}
+                type={type}
               />
             }
           ></Route>
 
           <Route
             path="/products/category/:categoryId"
-            element={<ShowProductsPage cart={Cart} />}
+            element={
+              <ShowProductsPage
+                cart={Cart}
+                type={type}
+                id_usuario={id_usuario}
+              />
+            }
           ></Route>
           <Route
             path="/products/subCategory/:subCategoryId"
-            element={<ShowProductsPage cart={Cart} />}
+            element={
+              <ShowProductsPage
+                cart={Cart}
+                type={type}
+                id_usuario={id_usuario}
+              />
+            }
           ></Route>
-          <Route path="/us" element={<AboutUsPage cart={Cart} />}></Route>
-          <Route path="/myorders/:idUser" element={<MyOrders />}></Route>
+          <Route
+            path="/us"
+            element={
+              <AboutUsPage cart={Cart} type={type} id_usuario={id_usuario} />
+            }
+          ></Route>
+          <Route
+            path="/myorders/:idUser"
+            element={
+              <MyOrders cart={Cart} type={type} id_usuario={id_usuario} />
+            }
+          ></Route>
         </Routes>
       </Router>
     </ChakraProvider>
