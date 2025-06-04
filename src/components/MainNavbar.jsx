@@ -10,6 +10,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const MENU_DATA = [
   {
     label: "PCs Armadas",
@@ -33,6 +34,8 @@ const MENU_DATA = [
     label: "Hardware",
     sections: [
       {
+
+
         // Category ID = 2
         title: "Placas de Video",
         url: "/products/category/2",
@@ -99,6 +102,7 @@ const MENU_DATA = [
           { name: "SODIMM DDR4", url: "/products/subCategory/19" },
           // id_sub_category = 20
           { name: "SODIMM DDR5", url: "/products/subCategory/20" },
+
         ],
       },
     ],
@@ -107,6 +111,7 @@ const MENU_DATA = [
     label: "Periféricos",
     sections: [
       {
+
         // Category ID = 7
         title: "Teclados",
         url: "/products/category/7",
@@ -189,6 +194,7 @@ const MENU_DATA = [
           // id_sub_category = 39
           { name: "Proyectores",      url: "/products/subCategory/39" },
 
+
         ],
       },
     ],
@@ -197,6 +203,7 @@ const MENU_DATA = [
   // ----------------------
   // CATEGORÍAS SIN DROPDOWN (solo link directo)
   // ----------------------
+
   {
     label: "Notebooks",
     url: "/products/category/13",
@@ -212,11 +219,13 @@ const MENU_DATA = [
 ];
 
 export default function MainNavbar({ cartCount = 0, type, id_user }) {
+
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 858);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
@@ -229,6 +238,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
       setIsMobileSearchOpen(false);
     }
   };
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -362,6 +372,8 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
     whiteSpace: "nowrap",
   };
 
+
+
   const sectionTitleStyle = {
     color: "#EC1877",
     fontSize: 16,
@@ -387,14 +399,17 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
         {isMobile ? (
           <>
             {/* Botón hamburguesa */}
+
             <div
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               style={iconStyle}
             >
+
               {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
             </div>
 
             {/* Logo centrado */}
+
             <Link
               to="/"
               style={{
@@ -404,11 +419,13 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                 zIndex: 1,
               }}
             >
+
               <img src="/longlogo.svg" alt="GcCustoms" style={logoStyle} />
             </Link>
 
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               {/* Icono de búsqueda */}
+
               <div
                 onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
                 style={iconStyle}
@@ -426,6 +443,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                 }
                 style={iconStyle}
               >
+
                 <FaUser />
               </Link>
 
@@ -434,9 +452,11 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                 <Link to="/cart" style={iconStyle}>
                   <FaShoppingCart />
                 </Link>
+
                 {cartCount > 0 && (
                   <span style={cartBadgeStyle}>{cartCount}</span>
                 )}
+
               </div>
             </div>
           </>
@@ -446,11 +466,14 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
               <img src="/longlogo.svg" alt="GcCustoms" style={logoStyle} />
             </Link>
 
+
             <form onSubmit={handleSearchSubmit} style={searchInputContainer}>
+
               <input
                 type="text"
                 placeholder="¿Qué buscas hoy?"
                 style={searchInputStyle}
+
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -467,15 +490,18 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                 }
                 style={iconStyle}
               >
+
                 <FaUser />
               </Link>
               <div style={{ position: "relative" }}>
                 <Link to="/cart" style={iconStyle}>
                   <FaShoppingCart />
                 </Link>
+
                 {cartCount > 0 && (
                   <span style={cartBadgeStyle}>{cartCount}</span>
                 )}
+
               </div>
             </div>
           </>
@@ -484,6 +510,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
 
       {/* Barra de búsqueda emergente en mobile */}
       {isMobile && isMobileSearchOpen && (
+
         <div
           style={{
             position: "fixed",
@@ -512,11 +539,13 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </form>
+
         </div>
       )}
 
       {/* Menú desktop */}
       <nav style={menuBarStyle}>
+
         <div style={containerStyle}>
           <div style={menuStyle}>
             {MENU_DATA.map((menu, idx) => {

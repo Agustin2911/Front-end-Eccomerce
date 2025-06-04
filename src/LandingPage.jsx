@@ -24,6 +24,7 @@ import BG_B from "./assets/corsairBG.svg";
 import VideoC from "./assets/samsungOddysey.mp4";
 import BG_C from "./assets/samsungBG.svg";
 
+
 const images = [SlideOne, SlideTwo, SlideThree];
 
 function LandingPage({ cart, type, id_usuario }) {
@@ -43,6 +44,7 @@ function LandingPage({ cart, type, id_usuario }) {
     >
       {/* Loader with transition */}
       <Loader isLoading={loading} />
+
 
       {/* Main content */}
       <Box
