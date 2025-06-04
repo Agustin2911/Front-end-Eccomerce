@@ -10,7 +10,7 @@ import Filters from "./components/Filters";
 import { Breadcrumb, For, Stack } from "@chakra-ui/react";
 import { useState } from "react";
 
-function ShowProductsPage({ cart }) {
+function ShowProductsPage({ cart, type, id_usuario }) {
   const handleApplyFilters = ({ order, minPrice, maxPrice }) => {
     let filtered = [...productos];
 
@@ -34,7 +34,7 @@ function ShowProductsPage({ cart }) {
 
   return (
     <Box bg={"#170d20"}>
-      <MainNavbar cart={cart}></MainNavbar>
+      <MainNavbar cart={cart} type={type} id_user={id_usuario}></MainNavbar>
 
       <Stack mt={"30px"} ml={"50px"}>
         <Breadcrumb.Root>

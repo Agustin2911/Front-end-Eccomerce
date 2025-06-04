@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import MainNavbar from "./components/MainNavbar";
 
-const MyOrders = () => {
+const MyOrders = ({ cart, type, id_usuario }) => {
   const { idUser } = useParams();
   const [showHistorial, setShowHistorial] = useState(false);
   const [delivered, setDelivered] = useState([]);
@@ -236,7 +236,7 @@ const MyOrders = () => {
 
   return (
     <Box bg={"#170D20"}>
-      <MainNavbar></MainNavbar>
+      <MainNavbar cart={cart} type={type} id_user={id_usuario}></MainNavbar>
       {/* Header */}
       <VStack spacing={8} m={8}>
         <Box textAlign="center">

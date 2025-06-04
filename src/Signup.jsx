@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 
-function Signup({ token, settoken, setImage_path, setId_usuario }) {
+function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
   const [user_email, setEmail] = useState("");
   const [user_password, setPassword] = useState("");
   const [data, setData] = useState("");
@@ -29,10 +29,12 @@ function Signup({ token, settoken, setImage_path, setId_usuario }) {
       }
 
       const result = await response.json();
+
+      SetType(result.type);
       settoken(result.access_token);
       setImage_path(result.photo_url);
       setId_usuario(result.id_user);
-      console.log(result.id_user);
+
       setData("success");
     } catch (error) {
       console.error("Error en la petición:", error);
