@@ -1,22 +1,35 @@
+// src/components/ShowProducts.jsx
+
 import React, { useEffect, useState } from "react";
 import { Box, Grid, Flex, Text } from "@chakra-ui/react";
 import LandingProductCard from "./LandingProductCard";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 export default function ShowProducts({ products, setProducts }) {
   const { categoryId, subCategoryId } = useParams();
+  const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get("search") || "";
 
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let endpoint = "";
 
-    if (subCategoryId) {
+    // 1) Si hay un término de búsqueda, pedimos todos los productos
+    if (searchTerm.trim()) {
+      endpoint = `http://localhost:1273/product`;
+
+    // 2) Si no buscamos, pero hay subCategoryId, usamos ese endpoint
+    } else if (subCategoryId) {
       endpoint = `http://localhost:1273/product/bySubCategoryid/${subCategoryId}`;
+
+    // 3) Si no hay subCategoryId pero sí categoryId, usamos el endpoint de categoría
     } else if (categoryId) {
       endpoint = `http://localhost:1273/product/byCategoryid/${categoryId}`;
+
+    // 4) Si no hay nada, pedimos todos
     } else {
-      return;
+      endpoint = `http://localhost:1273/product`;
     }
 
     const fetchProductos = async () => {
@@ -26,7 +39,19 @@ export default function ShowProducts({ products, setProducts }) {
           throw new Error(`Error en la solicitud: ${response.status}`);
         }
         const data = await response.json();
-        setProducts(data);
+
+        // 5) Si estamos en modo “search”, filtramos localmente por product_name
+        if (searchTerm.trim()) {
+          const termLower = searchTerm.toLowerCase();
+          const filtrados = data.filter((p) =>
+            p.product_name.toLowerCase().includes(termLower)
+          );
+          setProducts(filtrados);
+
+        // 6) Si no hay búsqueda, simplemente guardamos todo lo que venga
+        } else {
+          setProducts(data);
+        }
       } catch (err) {
         setError(err.message);
         console.error("Error al obtener productos:", err);
@@ -34,7 +59,7 @@ export default function ShowProducts({ products, setProducts }) {
     };
 
     fetchProductos();
-  }, [categoryId, subCategoryId]);
+  }, [categoryId, subCategoryId, searchTerm, setProducts]);
 
   return (
     <Flex width="full" justify="center">
@@ -53,7 +78,12 @@ export default function ShowProducts({ products, setProducts }) {
                   display="flex"
                   justifyContent="center"
                 >
-                  <Box flex="0 0 250px" maxW="300px" h="400px" display="flex">
+                  <Box
+                    flex="0 0 250px"
+                    maxW="300px"
+                    h="400px"
+                    display="flex"
+                  >
                     <Box
                       flex="1"
                       display="flex"
@@ -70,9 +100,9 @@ export default function ShowProducts({ products, setProducts }) {
                         }
                         price={product.price}
                         name={product.product_name}
+                        id={product.id_product}
                         discount={product.discount}
                         discountState={product.discount_state}
-                        id={product.id_product}
                       />
                     </Box>
                   </Box>
@@ -85,6 +115,11 @@ export default function ShowProducts({ products, setProducts }) {
             )}
           </Grid>
         </Flex>
+        {error && (
+          <Text color="red.300" textAlign="center" mt={4}>
+            {error}
+          </Text>
+        )}
       </Box>
     </Flex>
   );

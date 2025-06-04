@@ -20,7 +20,7 @@ function AboutUsPage({ cart }) {
         backgroundColor="#170d20"
         color={"#f1e6f7"}
       >
-        <h1 style={{ marginTop: "100px" }}>
+        <h1>
           <Text>Mas sobre nosotros</Text>
         </h1>
         <InfoAccordion></InfoAccordion>

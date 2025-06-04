@@ -88,9 +88,15 @@ function App() {
           ></Route>
 
           <Route
-            path="/products/category/:categoryId"
+            path="/products"
             element={<ShowProductsPage cart={Cart} />}
           ></Route>
+          
+          <Route
+            path="/products/category/:categoryId"
+            element={<ShowProductsPage cart={Cart} />}
+          >
+          </Route>
           <Route
             path="/products/subCategory/:subCategoryId"
             element={<ShowProductsPage cart={Cart} />}
