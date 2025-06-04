@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Image, Text, Button, Link } from "@chakra-ui/react";
 import { FaShoppingCart } from "react-icons/fa";
+import { Link as RouterLink } from "react-router-dom";  // <-- import React Router
 
 /**
  * LandingProductCard
@@ -24,7 +25,7 @@ export default function LandingProductCard({
   discount,
   discountState,
 }) {
-  const link = `http://localhost:5173/product-desc/${id}`;
+  const linkTo = `/product-desc/${id}`;
 
   // Verificamos si discountState es "true"
   const isOnSale = discountState === "true";
@@ -78,7 +79,7 @@ export default function LandingProductCard({
         borderTopLeftRadius="lg"
         borderTopRightRadius="lg"
       >
-        <Link href={link} textDecoration="none">
+        <RouterLink to={linkTo} textDecoration="none">
           <Image
             src={image}
             alt={name}
@@ -89,7 +90,7 @@ export default function LandingProductCard({
             transition="transform 0.2s ease"
             _hover={{ transform: "scale(1.1)" }}
           />
-        </Link>
+        </RouterLink>
       </Box>
 
       <Box
@@ -100,7 +101,8 @@ export default function LandingProductCard({
         justifyContent="space-between"
       >
         <Box flex="1" overflow="hidden" mb={2}>
-          <Link href={link} textDecoration="none" _hover={{ textDecoration: "none" }}>
+          <RouterLink to={linkTo} style={{ textDecoration: "none" }} onMouseOver={(e) => (e.currentTarget.style.textDecoration = "none")}
+                                                                     onMouseOut={(e) => (e.currentTarget.style.textDecoration = "none")}>
             <Text
               fontSize="clamp(0.75rem, 2vw, 1rem)"
               fontWeight="semibold"
@@ -111,7 +113,7 @@ export default function LandingProductCard({
             >
               {name}
             </Text>
-          </Link>
+          </RouterLink>
         </Box>
       </Box>
 

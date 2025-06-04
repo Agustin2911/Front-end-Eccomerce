@@ -8,7 +8,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MENU_DATA = [
   {
@@ -184,9 +184,11 @@ const MENU_DATA = [
           // id_sub_category = 37
           { name: "Sillas Gamer", url: "/products/subCategory/37" },
           // id_sub_category = 38
-          { name: "Impresoras", url: "/products/subCategory/38" },
-          // id_sub_category para “Proyectores” aún no asignado
-          { name: "Proyectores", url: "" },
+
+          { name: "Impresoras",       url: "/products/subCategory/38" },
+          // id_sub_category = 39
+          { name: "Proyectores",      url: "/products/subCategory/39" },
+
         ],
       },
     ],
@@ -205,7 +207,7 @@ const MENU_DATA = [
   },
   {
     label: "Ver Todo",
-    url: "/products/subCategory/",
+    url: "/products",
   },
 ];
 
@@ -215,6 +217,18 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
   const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 858);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = searchTerm.trim();
+    if (trimmed.length > 0) {
+      navigate(`/products?search=${encodeURIComponent(trimmed)}`);
+      setSearchTerm("");
+      setIsMobileSearchOpen(false);
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -348,39 +362,6 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
     whiteSpace: "nowrap",
   };
 
-  const dropdownContainerStyle = {
-    position: "fixed",
-    top: 130,
-    left: "50%",
-    transform: "translateX(-50%)",
-    maxWidth: 1180,
-    width: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    backdropFilter: "blur(10px)",
-    WebkitBackdropFilter: "blur(10px)",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
-    borderLeft: "1px solid rgba(255, 255, 255, 0.2)",
-    borderRight: "1px solid rgba(255, 255, 255, 0.2)",
-    zIndex: 1000,
-    overflow: "hidden",
-  };
-
-  const dropdownInnerStyle = {
-    maxWidth: 1180,
-    margin: "0 auto",
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    gap: 30,
-    padding: "20px",
-    boxSizing: "border-box",
-  };
-
-  const columnStyle = {
-    flex: "1 1 120px",
-    minWidth: 120,
-  };
-
   const sectionTitleStyle = {
     color: "#EC1877",
     fontSize: 16,
@@ -465,13 +446,15 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
               <img src="/longlogo.svg" alt="GcCustoms" style={logoStyle} />
             </Link>
 
-            <div style={searchInputContainer}>
+            <form onSubmit={handleSearchSubmit} style={searchInputContainer}>
               <input
                 type="text"
                 placeholder="¿Qué buscas hoy?"
                 style={searchInputStyle}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
+            </form>
 
             <div style={rightIconsContainer}>
               <Link
@@ -508,21 +491,27 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
             left: 0,
             width: "100%",
             padding: "10px 20px",
-            backgroundColor: "#111",
-            zIndex: 1001,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            zIndex: 1005,
           }}
         >
-          <input
-            type="text"
-            placeholder="¿Qué buscas hoy?"
-            style={{
-              ...searchInputStyle,
-              width: "100%",
-              maxWidth: 500,
-              display: "block",
-              margin: "0 auto",
-            }}
-          />
+          <form onSubmit={handleSearchSubmit}>
+            <input
+              type="text"
+              placeholder="¿Qué buscas hoy?"
+              style={{
+                ...searchInputStyle,
+                width: "100%",
+                maxWidth: 500,
+                display: "block",
+                margin: "0 auto",
+              }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </form>
         </div>
       )}
 

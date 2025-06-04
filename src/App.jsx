@@ -110,15 +110,17 @@ function App() {
           ></Route>
 
           <Route
-            path="/products/category/:categoryId"
-            element={
-              <ShowProductsPage
-                cart={Cart}
-                type={type}
-                id_usuario={id_usuario}
-              />
-            }
+
+            path="/products"
+            element={<ShowProductsPage cart={Cart} />}
+
           ></Route>
+          
+          <Route
+            path="/products/category/:categoryId"
+            element={<ShowProductsPage cart={Cart} />}
+          >
+          </Route>
           <Route
             path="/products/subCategory/:subCategoryId"
             element={
