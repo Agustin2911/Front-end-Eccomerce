@@ -187,87 +187,6 @@ export default function ProductSection({images, reviews, related, name, descript
 
             <Box w="100%" h="1px" bg="gray.300" mt="-5px" mb="10px" />
 
-            <Flex align="center" gap={{ base: 2, md: 4 }} justify="center">
-              <IconButton
-                aria-label="Disminuir cantidad"
-                colorPalette="#AE5BDD"
-                variant="unstyled"
-                color="#AE5BDD"
-                onClick={dec}
-                _hover={{ color: "#422A52" }}
-              >
-                <FaMinus />
-              </IconButton>
-              <Input value={quantity} readOnly w="60px" textAlign="center" />
-              <IconButton
-                aria-label="Aumentar cantidad"
-                color="#AE5BDD"
-                variant="unstyled"
-                onClick={inc}
-                _hover={{ color: "#422A52" }}
-              >
-                <FaPlus />
-              </IconButton>
-            </Flex>
-
-            <Button
-              bg="#AE5BDD"
-              size={{ base: "sm", md: "lg" }}
-              w="100%"
-              _hover={{ bg: "#422A52" }}
-              py={{ base: 2, md: 3 }}
-              css={{
-                "@media screen and (max-width: 321px)": {
-                  w: "98%",
-                },
-              }}
-            >
-              Comprar ahora
-            </Button>
-            <HStack spacing={4} w="100%">
-              <Button
-                borderWidth="2px"
-                borderColor="#AE5BDD"
-                variant="outline"
-                flex="1"
-                _hover={{
-                  bg: "#422A52",
-                  color: "white",
-                  borderColor: "#422A52",
-                }}
-                fontSize={{ base: "sm", md: "sm" }}
-                css={{
-                  "@media screen and (max-width: 321px)": {
-                    maxW: "47%",
-                    fontSize: "xs",
-                  },
-                }}
-              >
-                <FaTruck /> Calcular envío
-              </Button>
-              <Button
-                borderWidth="2px"
-                borderColor="#AE5BDD"
-                variant="outline"
-                flex="1"
-                _hover={{
-                  bg: "#422A52",
-                  color: "white",
-                  borderColor: "#422A52",
-                }}
-                fontSize={{ base: "sm", md: "sm" }}
-                css={{
-                  "@media screen and (max-width: 321px)": {
-                    maxW: "47%",
-                    fontSize: "xs",
-                  },
-                }}
-              >
-                <FaShoppingCart /> Agregar
-              </Button>
-            </HStack>
-
-
                     <Flex align="center" gap={{ base: 2, md: 4 }} justify="center">
                         <IconButton
                             aria-label="Disminuir cantidad"
@@ -340,22 +259,7 @@ export default function ProductSection({images, reviews, related, name, descript
                         </Button>
                     </HStack>
                   
-                    <Wrap spacing={2} mb="10px">
-                            {[
-                                "msi",
-                                "geforce",
-                                "rtx",
-                                "rtx 3050",
-                                "8gb",
-                                "gddr6",
-                                "max5",
-                                "promo",
-                            ].map((tag) => (
-                                <Badge key={tag} size={{ base: "xs", md: "sm" }} variant="subtle" bg="#F1E6F7" >
-                                    {tag}
-                                </Badge>
-                            ))}
-                    </Wrap>
+                    
                  </VStack>
             </Box>  
         

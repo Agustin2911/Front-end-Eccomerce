@@ -10,13 +10,13 @@ import { useParams } from "react-router-dom";
 
 export default function ProductPage({cart, setCart}) {
   
-  const { id_category, id_product } = useParams();
+  const { id_product } = useParams();
     
   useEffect(() => {
-  if (id_category && id_product) {
+  if ( id_product ) {
     window.scrollTo(0,0);
     }
-  }, [id_category, id_product]);
+  }, [ id_product ]);
 
 
   const [stockData, setStockData] = useState(null); 
@@ -25,9 +25,30 @@ export default function ProductPage({cart, setCart}) {
   const [reviewsData, setReviewsData] = useState(null)
   const [relatedData, setRelatedData] = useState(null)  
   const [catSubcatData, setCatSubcatData] = useState(null)
+  
+  useEffect(() => {
+    if (!id_product) return;
+
+    const fetchCatSubcat = async () => {
+      try {
+        const resCatSubcat = await fetch(`http://localhost:1273/product/category-subCategory/${id_product}`);
+        if (!resCatSubcat.ok) {
+          throw new Error(`Error categoría y subcategoría: ${resCatSubcat.status}`);
+        }
+        const jsonCatSubcat = await resCatSubcat.json();
+        setCatSubcatData(jsonCatSubcat); 
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      }
+    };
+
+    fetchCatSubcat();
+  }, [id_product]);
+
 
   useEffect(() => {
-    if (!id_product || !id_category) return;
+    if (!id_product) return;
     async function fetchAll() {
       try {
         const res = await fetch(`http://localhost:1273/product/productById/${id_product}`);
@@ -63,20 +84,12 @@ export default function ProductPage({cart, setCart}) {
         }
         setReviewsData(reviewJson);
 
-        const resRelated = await fetch(`http://localhost:1273/product/byCategoryid/${id_category}`);
+        const resRelated = await fetch(`http://localhost:1273/product/byCategoryid/${catSubcatData[2]}`);
         if (!resRelated.ok) {
             throw new Error(`Error related ${resRelated.status}`);
         }
         const relatedJson = await resRelated.json();
         setRelatedData(relatedJson);
-
-        const resCatSubcat = await fetch(`http://localhost:1273/product/category-subCategory/${id_product}`);
-        if (!resCatSubcat.ok) {
-            throw new Error(`Error categoria y subcategoria ${resCatSubcat.status}`);
-        }
-        const catSubcatJson = await resCatSubcat.json();
-        setCatSubcatData(catSubcatJson);
-
 
       } catch (err) {
         console.error("Fetch error:", err);
@@ -85,7 +98,7 @@ export default function ProductPage({cart, setCart}) {
     }
     
     fetchAll();
-  }, [id_category, id_product]); 
+  }, [catSubcatData, id_product]); 
 
     
 if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData) {
@@ -193,7 +206,7 @@ if (!productData || !stockData || !reviewsData || !relatedData || !catSubcatData
           p={6}
         >
        
-            <ProductSection reviews={reviewsData} name={productData.product_name} images={productData.photo_url} description={productData.description} price={productData.price} related={relatedData} stock={stockData.stock} stockWarning={stockData.stock_warning} id={productData.id_product} id_category={id_category} cart={cart} setCart={setCart} discount={productData.discount} discount_state={productData.discount_state}></ProductSection> 
+            <ProductSection reviews={reviewsData} name={productData.product_name} images={productData.photo_url} description={productData.description} price={productData.price} related={relatedData} stock={stockData.stock} stockWarning={stockData.stock_warning} id={productData.id_product} id_category={catSubcatData[2]} cart={cart} setCart={setCart} discount={productData.discount} discount_state={productData.discount_state}></ProductSection> 
 
         </Box>
       </Box>

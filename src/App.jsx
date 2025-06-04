@@ -14,11 +14,12 @@ import PaymentPage from "./PaymentPage";
 import { useState, useEffect } from "react";
 import MyOrders from "./MyOrders.jsx";
 import PublishPage from "./PublishPage";
+import NewShopPage from "./NewShopPage";
 
 function App() {
   const [Token_usuario, SetToken_usuario] = useState("");
   const [Cart, SetCart] = useState([]);
-  const [id_usuario, setId_usuario] = useState(0);
+  const [id_usuario, setId_usuario] = useState(1);
   const [image_path, setImage_path] = useState(null);
 
   useEffect(() => {
@@ -46,10 +47,11 @@ function App() {
 
         <Routes>             
 
-          <Route path="/product-desc/:id_category/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
+          <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
 
-          <Route path="/publish" element={<PublishPage />}></Route>
-
+          <Route path="/publish" element={<PublishPage cart={Cart} id_user={id_usuario}/>}></Route>
+            
+          <Route path="new-shop" element={<NewShopPage cart={Cart} id_user={id_usuario}/>}></Route>
           <Route path="/" element={<LandingPage cart={Cart} />}></Route>
           <Route
             path="/cart"
