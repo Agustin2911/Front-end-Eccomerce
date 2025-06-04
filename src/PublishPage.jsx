@@ -20,7 +20,7 @@ import Footer from "./components/Footer";
 export default function PublishPage({ cart, id_user }) {
 
     const [sellerShopData, setSellerShopData] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     if (!id_user) return;
@@ -35,15 +35,86 @@ export default function PublishPage({ cart, id_user }) {
         setSellerShopData(jsonSellerShop); 
       } catch (err) {
         console.error(err);
-      } finally {
-          setIsLoading(false);
       } 
     };
 
     fetchCatSubcat();
   }, [id_user]);
 
+    const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
+    const [subcategoria, setSubcategoria] = useState("");
 
+   const handleRegisterProduct = async () => {
+    if (isButtonDisabled) return;
+
+    // Evitamos doble envío
+    setIsSubmittingProduct(true);
+
+    try {
+            const encodedSubcat = encodeURIComponent(subcategoria.trim());
+    const resSub = await fetch(
+      `http://localhost:1273/sub_categories/name/${encodedSubcat}`
+    );
+    if (!resSub.ok) {
+      throw new Error(`No se pudo obtener ID de subcategoría (${resSub.status})`);
+    }
+    // Como la respuesta es un número crudo, resSub.json() nos dará directamente ese número
+    // (p. ej. 1). Alternativamente podrías usar resSub.text() y luego Number(...)
+    const id_sub_category = await resSub.json(); // <-- aquí id_sub_category será un número, p.ej. 1
+    if (id_sub_category == null) {
+      throw new Error("El endpoint de subcategoría devolvió un valor inválido.");
+    }
+    const imageName = imageFile.name;
+    const photoUrl = `http://localhost:1273/images/products/${imageName}`;
+
+     const payload = {
+      product_name: nombre.trim(),
+      photo_url: photoUrl,
+      price: precio,
+      description: descripcion.trim(),
+      discount_state: "false",            discount: 0,
+      id_sub_category: id_sub_category,
+           };
+
+      const response = await fetch("http://localhost:1273/product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+        body: JSON.stringify(payload)
+        });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error al registrar el producto:", errorText);
+        alert(
+          "Ocurrió un error al crear el producto. Revisa la consola para más detalles."
+        );
+        setIsSubmittingProduct(false);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Producto creado con éxito:", data);
+
+      alert("¡El producto se creó con éxito!");
+      // Limpio el formulario
+      setNombre("");
+      setDescripcion("");
+      setPrecio("");
+      setStockAct("");
+      setStockMin("");
+      setImageFile(null);
+      setPreviewUrl(null);
+      setCategoria("");
+      setSubcategoria("");
+    } catch (err) {
+      console.error("Error en fetch crear producto:", err);
+      alert("Hubo un problema de conexión al intentar crear el producto.");
+    } finally {
+      setIsSubmittingProduct(false);
+    }
+  };
 
 
 
@@ -118,9 +189,9 @@ export default function PublishPage({ cart, id_user }) {
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef();
-
+ console.log(imageFile);
   const [categoria, setCategoria] = useState("");
-  const [subcategoria, setSubcategoria] = useState("");
+  
 
   // Estado para saber si el cursor está encima del botón deshabilitado
   const [isHoveringDisabled, setIsHoveringDisabled] = useState(false);
@@ -522,6 +593,7 @@ export default function PublishPage({ cart, id_user }) {
                   bgColor={isButtonDisabled ? "#D3A5EE" : "#AE5BDD"}
                   w="100%"
                   disabled={isButtonDisabled}
+                  onClick={handleRegisterProduct}
                 >
                  Registrar producto
                 </Button>
