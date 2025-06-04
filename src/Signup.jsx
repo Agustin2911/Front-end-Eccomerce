@@ -32,6 +32,7 @@ function Signup({ token, settoken, setImage_path, setId_usuario }) {
       settoken(result.access_token);
       setImage_path(result.photo_url);
       setId_usuario(result.id_user);
+      console.log(result.id_user);
       setData("success");
     } catch (error) {
       console.error("Error en la petición:", error);
