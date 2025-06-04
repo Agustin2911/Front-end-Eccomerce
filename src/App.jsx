@@ -41,11 +41,6 @@ function App() {
     <ChakraProvider value={system}>
       <Router>
         <Routes>
-          <Route path="/" element={<LandingPage />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/products" element={<ShowProductsPage />}></Route>
-
           <Route
             path="/product-desc/:id_category/:id_product"
             element={<ProductPage />}
@@ -85,6 +80,7 @@ function App() {
                 cart={Cart}
                 id_usuario={id_usuario}
                 Token_usuario={Token_usuario}
+                setcart={SetCart}
               />
             }
           ></Route>
