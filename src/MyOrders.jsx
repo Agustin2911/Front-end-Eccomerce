@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
+import Footer from "./components/Footer";
 import {
   Box,
   Container,
@@ -15,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import MainNavbar from "./components/MainNavbar";
 
-const MyOrders = () => {
+const MyOrders = ({ cart, type, id_usuario }) => {
   const { idUser } = useParams();
   const [showHistorial, setShowHistorial] = useState(false);
   const [delivered, setDelivered] = useState([]);
@@ -93,7 +94,7 @@ const MyOrders = () => {
   const getEstadoProps = (estado) => {
     const props = {
       Confirmado: { colorScheme: "blue" },
-      "En preparación": { colorScheme: "yellow" },
+      pendiente: { colorScheme: "yellow" },
       "En camino": { colorScheme: "orange" },
       Entregado: { colorScheme: "green" },
     };
@@ -142,9 +143,9 @@ const MyOrders = () => {
   };
 
   const PedidoCard = ({ pedido, showRating = false }) => {
-    const cardBg = "gray.50";
-    const borderColor = "gray.900";
-    const textColor = "purple.600";
+    const cardBg = "#170D20";
+    const borderColor = "#AE5BDD";
+    const textColor = "#F1E6F7";
 
     // Extraemos info común
     const idSale = pedido[0]?.id_sale;
@@ -173,13 +174,16 @@ const MyOrders = () => {
         width={{ base: "360px", md: "600px" }}
         ml={3}
         height="100%"
+        boxShadow={
+          "0 8px 12px rgba(0, 0, 0, 0.15), 0 16px 35px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
+        }
       >
         <Flex direction="column" justify="space-between" height="100%">
           <Box>
             {/* Header del pedido */}
             <Flex justify="space-between" align="flex-start" mb={4}>
               <VStack align="start" spacing={1}>
-                <Heading size="md" color="gray.800">
+                <Heading size="md" color={"#F1E6F7"}>
                   Pedido #{idSale}
                 </Heading>
                 <Text color={textColor} fontSize="sm">
@@ -202,10 +206,10 @@ const MyOrders = () => {
                 mb={2}
                 px={2}
               >
-                <Text fontWeight="medium" color="gray.700">
+                <Text fontWeight="medium" color={"#F1E6F7"}>
                   {item.product_name} × {item.amount}
                 </Text>
-                <Text fontWeight="medium" color="gray.800">
+                <Text fontWeight="medium" color={"#F1E6F7"}>
                   {formatPrice(item.price * item.amount)}
                 </Text>
               </Flex>
@@ -216,10 +220,10 @@ const MyOrders = () => {
 
           {/* Total */}
           <Flex justify="space-between" align="center" mt={4}>
-            <Text fontSize="lg" fontWeight="bold" color="gray.800">
+            <Text fontSize="lg" fontWeight="bold" color={"#F1E6F7"}>
               Total:
             </Text>
-            <Text fontSize="xl" fontWeight="bold" color="green.600">
+            <Text fontSize="xl" fontWeight="bold" color={"#F1E6F7"}>
               {formatPrice(total)}
             </Text>
           </Flex>
@@ -231,8 +235,8 @@ const MyOrders = () => {
   // Si no hay token, mostrar mensaje de login
 
   return (
-    <Box>
-      <MainNavbar></MainNavbar>
+    <Box bg={"#170D20"}>
+      <MainNavbar cart={cart} type={type} id_user={id_usuario}></MainNavbar>
       {/* Header */}
       <VStack spacing={8} m={8}>
         <Box textAlign="center">
@@ -308,7 +312,7 @@ const MyOrders = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: "white",
+                    backgroundColor: "#170d20",
                     marginTop: "50px",
                   }
                 : {}
@@ -320,7 +324,7 @@ const MyOrders = () => {
                 <PedidoCard key={index} pedido={pedido} />
               ))
             ) : (
-              <Text>no se hay pedidos pendientes</Text>
+              <Text color={"#F1E6F7"}>no se hay pedidos pendientes</Text>
             )}
           </Grid>
         </Box>
@@ -449,7 +453,7 @@ const MyOrders = () => {
             alignItems={"center"}
           >
             <Box textAlign="center">
-              <Text fontSize="3xl" color="blue.500" fontWeight="bold">
+              <Text fontSize="3xl" color="#AE5BDD" fontWeight="bold">
                 {inProgress.length}
               </Text>
               <Text color={textColor} fontSize="sm">
@@ -458,7 +462,7 @@ const MyOrders = () => {
             </Box>
 
             <Box textAlign="center">
-              <Text fontSize="3xl" color="green.500" fontWeight="bold">
+              <Text fontSize="3xl" color="#AE5BDD" fontWeight="bold">
                 {delivered.length}
               </Text>
               <Text color={textColor} fontSize="sm">
@@ -467,7 +471,7 @@ const MyOrders = () => {
             </Box>
 
             <Box textAlign="center">
-              <Text fontSize="3xl" color="purple.500" fontWeight="bold">
+              <Text fontSize="3xl" color="#AE5BDD" fontWeight="bold">
                 {formatPrice(calcularTotalGastado())}
               </Text>
               <Text color={textColor} fontSize="sm">
@@ -477,6 +481,7 @@ const MyOrders = () => {
           </SimpleGrid>
         </Box>
       </VStack>
+      <Footer />
     </Box>
   );
 };

@@ -19,7 +19,7 @@ function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
   const stores = ["Sucursal Centro", "Sucursal Norte", "Sucursal Sur"];
 
   useEffect(() => {
-    let Total = cart.reduce((acc, item) => acc + item.price*item.amount, 0);
+    let Total = cart.reduce((acc, item) => acc + item.price * item.amount, 0);
     Total += Total * 0.21;
     setTotal(Total);
   }, [cart]);
@@ -87,6 +87,7 @@ function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${Token_usuario}`,
         },
         body: JSON.stringify(saleData),
       });
@@ -324,7 +325,9 @@ function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
             {cart.map((element) => (
               <li className="list-group-item d-flex justify-content-between">
                 <span>{element.product_name}</span>
-                <strong>${element.price} x {element.amount}</strong>
+                <strong>
+                  ${element.price} x {element.amount}
+                </strong>
               </li>
             ))}
 

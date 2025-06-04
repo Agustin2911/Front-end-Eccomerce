@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import ShowProducts from "./components/ShowProducts";
 import Filters from "./components/Filters";
 
+
 export default function ShowProductsPage({ cart }) {
   const { categoryId, subCategoryId } = useParams();
   const [productos, setProductos] = useState([]);
@@ -106,6 +107,7 @@ export default function ShowProductsPage({ cart }) {
   return (
     <Box bg={"#170d20"}>
       <MainNavbar cart={cart} />
+
 
       {/* Breadcrumb */}
       <Stack mt={"30px"} ml={"50px"}>
