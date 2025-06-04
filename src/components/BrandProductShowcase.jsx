@@ -1,6 +1,6 @@
 // src/components/BrandProductShowcase.jsx
-import React from "react";
 import { Box, Flex, SimpleGrid, useMediaQuery, Button } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import LandingProductCard from "./LandingProductCard";
 
 /**
@@ -15,18 +15,74 @@ import LandingProductCard from "./LandingProductCard";
  *  - videoLeft: boolean (true => video on left, false => video on right)
  */
 export default function BrandProductShowcase({
-  products = [],
+  productIds = [],
   videoSrc,
   bgImage,
   videoLeft = true,
   exploreText = "Explora",
 }) {
-  // true when viewport is *at most* 1368px wide
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const [isSmallDesktop] = useMediaQuery("(max-width: 1368px)");
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const total = products.length;
 
   // pick your card scale
   const cardScale = isSmallDesktop ? 0.80 : 0.85;
+
+  useEffect(() => {
+      const fetchProductos = async () => {
+        if (!productIds || productIds.length === 0) {
+          setError("No product IDs provided");
+          setLoading(false);
+          return;
+        }
+  
+        try {
+          setLoading(true);
+          setError(null);
+          
+          console.log("Fetching products for IDs:", productIds);
+          
+          const requests = productIds.map((id) => {
+            const url = `http://localhost:1273/product/productById/${id}`;
+            console.log("Fetching:", url);
+            return fetch(url);
+          });
+  
+          const responses = await Promise.all(requests);
+          
+          // Check each response individually
+          const data = await Promise.all(
+            responses.map(async (res, index) => {
+              if (!res.ok) {
+                console.error(`Error fetching product ${productIds[index]}:`, res.status, res.statusText);
+                throw new Error(`Error ${res.status}: ${res.statusText} for product ${productIds[index]}`);
+              }
+              const productData = await res.json();
+              console.log(`Product ${productIds[index]} data:`, productData);
+              return productData;
+            })
+          );
+  
+          const validProducts = data.filter(p => p && p.id_product);
+          console.log("Valid products:", validProducts);
+          setProducts(validProducts);
+          
+          if (validProducts.length === 0) {
+            setError("No valid products found");
+          }
+        } catch (err) {
+          setError(err.message);
+          console.error("Error al obtener productos:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchProductos();
+    }, [productIds]);
   return (
     <Box
       as="section"
@@ -118,10 +174,13 @@ export default function BrandProductShowcase({
                   w="100%"
                 >
                   <LandingProductCard
-                    image={prod.image}
-                    name={prod.name}
+                    image={prod.photo_url || 
+                               "https://www.freundferreteria.com/Productos/GetImagenProductoPrincipal?idProducto=default"}
+                    name={prod.product_name}
                     price={prod.price}
-                    oldPrice={prod.oldPrice}
+                    id={prod.id_product}
+                    discount={prod.discount}
+                    discountState={prod.discount_state}
                   />
                 </Box>
               </Box>

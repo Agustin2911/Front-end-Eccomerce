@@ -30,7 +30,7 @@ export default function RelatedProducts({ products, id_product, id_category }) {
       >
         {mostrar.map((prod) => {
         const discounted = (prod.price - (prod.price * prod.discount / 100)).toLocaleString("es-AR");
-        const url = `/product-desc/${id_category}/${prod.id_product}`
+        const url = `/product-desc/${prod.id_product}`
         const priceFormatted = (prod.price).toLocaleString("es-AR");
         return (
         <Box

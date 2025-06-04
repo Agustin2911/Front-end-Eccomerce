@@ -1,29 +1,50 @@
 // src/components/LandingProductCard.jsx
 
 import React from "react";
-import { Box, Image, Text, Button, VStack } from "@chakra-ui/react";
+import { Box, Image, Text, Button, Link } from "@chakra-ui/react";
 import { FaShoppingCart } from "react-icons/fa";
 
 /**
- * ProductCard
- * Displays a single product with image, name, price, and action button.
+ * LandingProductCard
+ * Displays a single product with image, name, price (with discount logic), old price if on sale, and action button.
+ *
  * Props:
  *  - image: string URL of product image
  *  - name: string product name
- *  - price: string current price
- *  - oldPrice?: string optional old price to strike-through
+ *  - price: number original price (sin formato)
+ *  - id:        product ID (para el enlace)
+ *  - discount: number porcentaje a descontar (por ejemplo 20 para 20%)
+ *  - discountState: string "true" o "false"; si es "true", muestra badge, precio con descuento y precio anterior tachado
  */
-export default function LandingProductCard({ image, name, price, oldPrice }) {
+export default function LandingProductCard({
+  image,
+  name,
+  price,
+  id,
+  discount,
+  discountState,
+}) {
+  const link = `http://localhost:5173/product-desc/${id}`;
+
+  // Verificamos si discountState es "true"
+  const isOnSale = discountState === "true";
+  // Calculamos precio con descuento
+  const discountedPrice = isOnSale
+    ? (price - (price * discount) / 100).toLocaleString("es-AR")
+    : null;
+  // Formateamos precio original
+  const originalPrice = price.toLocaleString("es-AR");
+
   return (
     <Box
       position="relative"
       borderRadius="lg"
       bg="rgba(0, 0, 0, 0.1)"
       backdropFilter="blur(8px)"
-      border="1px solid rgba(94, 84, 84, 0.2)" // subtle outline
+      border="1px solid rgba(94, 84, 84, 0.2)"
       transition="box-shadow 0.2s ease"
       _hover={{
-        boxShadow: "0 0 8px 2px #EC1877", // pink glow
+        boxShadow: "0 0 8px 2px #EC1877",
       }}
       p={0}
       textAlign="center"
@@ -33,7 +54,7 @@ export default function LandingProductCard({ image, name, price, oldPrice }) {
       height="100%"
     >
       {/* OFERTA badge */}
-      {oldPrice && (
+      {isOnSale && (
         <Box
           position="absolute"
           top="2"
@@ -49,6 +70,7 @@ export default function LandingProductCard({ image, name, price, oldPrice }) {
           OFERTA
         </Box>
       )}
+
       <Box
         bg="white"
         py={3}
@@ -56,17 +78,20 @@ export default function LandingProductCard({ image, name, price, oldPrice }) {
         borderTopLeftRadius="lg"
         borderTopRightRadius="lg"
       >
-        <Image
-          src={image}
-          alt={name}
-          mx="auto"
-          mb={2}
-          maxH="120px"
-          objectFit="contain"
-          transition="transform 0.2s ease"
-          _hover={{ transform: "scale(1.1)" }}
-        />
+        <Link href={link} textDecoration="none">
+          <Image
+            src={image}
+            alt={name}
+            mx="auto"
+            mb={2}
+            maxH="120px"
+            objectFit="contain"
+            transition="transform 0.2s ease"
+            _hover={{ transform: "scale(1.1)" }}
+          />
+        </Link>
       </Box>
+
       <Box
         p={3}
         flex="1"
@@ -75,31 +100,39 @@ export default function LandingProductCard({ image, name, price, oldPrice }) {
         justifyContent="space-between"
       >
         <Box flex="1" overflow="hidden" mb={2}>
-          <Text
-            fontSize="clamp(0.75rem, 2vw, 1rem)"
-            fontWeight="semibold"
-            mb={2}
-            noOfLines={4}
-            lineHeight="1"
-            color="#F1E6F7"
-          >
-            {name}
-          </Text>
+          <Link href={link} textDecoration="none" _hover={{ textDecoration: "none" }}>
+            <Text
+              fontSize="clamp(0.75rem, 2vw, 1rem)"
+              fontWeight="semibold"
+              mb={2}
+              noOfLines={4}
+              lineHeight="1"
+              color="#F1E6F7"
+            >
+              {name}
+            </Text>
+          </Link>
         </Box>
       </Box>
 
       <Box mb={2} textAlign="center">
-        <Text fontSize="md" fontWeight="bold" color="#F1E6F7" lineHeight="1">
-          ${price}
-        </Text>
-        {oldPrice && (
-          <Text
-            fontSize="xs"
-            color="gray.500"
-            textDecoration="line-through"
-            lineHeight="0"
-          >
-            {oldPrice}
+        {isOnSale ? (
+          <>
+            <Text fontSize="md" fontWeight="bold" color="#F1E6F7" lineHeight="1">
+              ${discountedPrice}
+            </Text>
+            <Text
+              fontSize="xs"
+              color="gray.500"
+              textDecoration="line-through"
+              lineHeight="1"
+            >
+              ${originalPrice}
+            </Text>
+          </>
+        ) : (
+          <Text fontSize="md" fontWeight="bold" color="#F1E6F7" lineHeight="1">
+            ${originalPrice}
           </Text>
         )}
       </Box>
