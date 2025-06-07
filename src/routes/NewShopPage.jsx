@@ -13,8 +13,8 @@ import {
   Image,
 } from "@chakra-ui/react";
 
-import MainNavbar from "./components/MainNavbar";
-import Footer from "./components/Footer";
+import MainNavbar from "../components/allPages/MainNavbar";
+import Footer from "../components/allPages/Footer";
 
 export default function PublishPage({ cart, id_user }) {
 

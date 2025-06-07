@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Image } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 
-import BG_A from "../assets/Mouses.svg";
+import BG_A from "../../assets/Mouses.svg";
 
 const glow = keyframes`
   0%, 100% {

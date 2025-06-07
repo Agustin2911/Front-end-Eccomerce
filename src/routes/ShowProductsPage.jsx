@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import { Box, Stack, Breadcrumb, Text, Link } from "@chakra-ui/react";
-import MainNavbar from "src/components/MainNavbar";
-import Footer from "./components/Footer";
-import ShowProducts from "./components/ShowProducts";
-import Filters from "./components/Filters";
+import MainNavbar from "src/components/allPages/MainNavbar";
+import Footer from "../components/allPages/Footer";
+import ShowProducts from "../components/showProductsPage/ShowProducts";
+import Filters from "../components/showProductsPage/Filters";
 
 
 export default function ShowProductsPage({ cart }) {

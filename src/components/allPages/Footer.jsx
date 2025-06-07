@@ -15,7 +15,7 @@ import {
   FaGooglePlusG,
 } from "react-icons/fa";
 
-import BG_A from "../assets/Grafica.svg";
+import BG_A from "../../assets/Grafica.svg";
 
 export default function Footer() {
   return (

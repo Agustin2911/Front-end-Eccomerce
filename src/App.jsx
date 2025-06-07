@@ -1,20 +1,19 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./LandingPage.jsx";
-import Signup from "./Signup";
-import Register from "./Register";
-import ShowProductsPage from "./ShowProductsPage";
-
-import ProductPage from "./ProductPage";
 import { system } from "./theme";
-
-import AboutUsPage from "./AboutUsPage";
-import CartPage from "./CartPage";
-import PaymentPage from "./PaymentPage";
 import { useState, useEffect } from "react";
-import MyOrders from "./MyOrders.jsx";
-import PublishPage from "./PublishPage";
-import NewShopPage from "./NewShopPage";
+
+import LandingPage from "./routes/LandingPage.jsx";
+import Signup from "./routes/Signup.jsx";
+import Register from "./routes/Register.jsx";
+import ShowProductsPage from "./routes/ShowProductsPage.jsx";
+import ProductPage from "./routes/ProductPage";
+import AboutUsPage from "./routes/AboutUsPage.jsx";
+import CartPage from "./routes/CartPage";
+import PaymentPage from "./routes/PaymentPage";
+import MyOrders from "./routes/MyOrders.jsx";
+import PublishPage from "./routes/PublishPage";
+import NewShopPage from "./routes/NewShopPage";
 
 function App() {
   const [Token_usuario, SetToken_usuario] = useState("");

@@ -1,28 +1,28 @@
-import "./App.css";
-import MainNavbar from "src/components/MainNavbar";
-import Footer from "./components/Footer";
+import "../App.css";
+import MainNavbar from "../components/allPages/MainNavbar";
+import Footer from "../components/allPages/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Box, Image } from "@chakra-ui/react";
-import CarouselShow from "./components/CarouselShow";
-import Categorys from "./components/Categorys";
+import CarouselShow from "../components/landingPage/CarouselShow";
+import Categorys from "../components/landingPage/Categorys";
 import { useState, useEffect } from "react";
 
-import BrandProductShowcase from "./components/BrandProductShowcase";
-import FeaturedProducts from "./components/FeaturedProducts";
-import Loader from "./components/Loader";
+import BrandProductShowcase from "../components/landingPage/BrandProductShowcase";
+import FeaturedProducts from "../components/landingPage/FeaturedProducts";
+import Loader from "../components/landingPage/Loader";
 
-import SlideOne from "./assets/carrusel.svg";
-import SlideTwo from "./assets/carrusel1.svg";
-import SlideThree from "./assets/carrusel2.svg";
+import SlideOne from "../assets/carrusel.svg";
+import SlideTwo from "../assets/carrusel1.svg";
+import SlideThree from "../assets/carrusel2.svg";
 
 // >>> Showcase assets <<<
-import VideoA from "./assets/asusRog.mp4";
-import BG_A from "./assets/asusBG.png";
-import VideoB from "./assets/corsairGabo.mp4";
-import BG_B from "./assets/corsairBG.svg";
-import VideoC from "./assets/samsungOddysey.mp4";
-import BG_C from "./assets/samsungBG.svg";
+import VideoA from "../assets/asusRog.mp4";
+import BG_A from "../assets/asusBG.png";
+import VideoB from "../assets/corsairGabo.mp4";
+import BG_B from "../assets/corsairBG.svg";
+import VideoC from "../assets/samsungOddysey.mp4";
+import BG_C from "../assets/samsungBG.svg";
 
 
 const images = [SlideOne, SlideTwo, SlideThree];

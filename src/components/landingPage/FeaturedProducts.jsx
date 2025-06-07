@@ -11,7 +11,7 @@ import {
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import LandingProductCard from "./LandingProductCard";
-import BG_A from "../assets/productShowcase.svg";
+import BG_A from "../../assets/productShowcase.svg";
 
 export default function FeaturedProducts({ productIds = [] }) {
   const [products, setProducts] = useState([]);

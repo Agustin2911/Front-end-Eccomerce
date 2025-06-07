@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ImageUploader from "./components/ImageUploader";
+import ImageUploader from "../components/register/ImageUploader";
 import { Text } from "@chakra-ui/react";
 
 function Register({ token, settoken, setId_usuario, setImage_path, setType }) {

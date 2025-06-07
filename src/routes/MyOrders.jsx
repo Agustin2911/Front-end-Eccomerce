@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import Footer from "./components/Footer";
+import Footer from "../components/allPages/Footer";
 import {
   Box,
   Container,
@@ -14,7 +14,7 @@ import {
   Flex,
   SimpleGrid,
 } from "@chakra-ui/react";
-import MainNavbar from "./components/MainNavbar";
+import MainNavbar from "../components/allPages/MainNavbar";
 
 const MyOrders = ({ cart, type, id_usuario }) => {
   const { idUser } = useParams();

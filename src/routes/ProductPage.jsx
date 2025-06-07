@@ -1,9 +1,9 @@
-import MainNavbar from "./components/MainNavbar";
+import MainNavbar from "../components/allPages/MainNavbar";
 import { Breadcrumb, Stack, Box, Flex, Container } from "@chakra-ui/react";
-import Footer from "./components/Footer";
+import Footer from "../components/allPages/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import ProductSection from "./components/ProductSection";
+import ProductSection from "../components/productPage/ProductSection";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Box, Grid, Flex, Text } from "@chakra-ui/react";
-import LandingProductCard from "./LandingProductCard";
+import LandingProductCard from "../landingPage/LandingProductCard";
 import { useParams, useSearchParams } from "react-router-dom";
 
 export default function ShowProducts({ products, setProducts }) {

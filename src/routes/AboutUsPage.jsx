@@ -1,10 +1,10 @@
-import "./App.css";
-import MainNavbar from "src/components/MainNavbar";
-import Footer from "./components/Footer";
+import "../App.css";
+import MainNavbar from "../components/allPages/MainNavbar";
+import Footer from "../components/allPages/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Box, Text } from "@chakra-ui/react";
-import InfoAccordion from "./components/InfoAccordion";
+import InfoAccordion from "../components/allPages/InfoAccordion";
 
 function AboutUsPage({ cart, type, id_usuario }) {
   return (
