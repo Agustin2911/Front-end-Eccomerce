@@ -7,11 +7,10 @@ import ProductSection from "./components/ProductSection";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-export default function ProductPage({ cart, setCart, type, id_usuario }) {
-  const { id_product } = useParams();
 
 
-export default function ProductPage({cart, setCart}) {
+
+export default function ProductPage({cart, setCart, type, id_usuario}) {
   
   const { id_product } = useParams();
     
@@ -108,9 +107,6 @@ export default function ProductPage({cart, setCart}) {
     fetchAll();
   }, [catSubcatData, id_product]); 
 
-
-    fetchAll();
-  }, [catSubcatData, id_product]);
 
   if (
     !productData ||
@@ -244,6 +240,7 @@ export default function ProductPage({cart, setCart}) {
             ></ProductSection>
           </Box>
         </Box>
+      </Box>
       </Box>
 
       {/* Footer */}

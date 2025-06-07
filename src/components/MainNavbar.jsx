@@ -485,7 +485,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                   type === "buyer"
                     ? `/myorders/${id_user}`
                     : type === "seller"
-                    ? `/mysales/${id_user}` // futuro link para seller
+                    ? `/publish/${id_user}` // futuro link para seller
                     : "/signup"
                 }
                 style={iconStyle}

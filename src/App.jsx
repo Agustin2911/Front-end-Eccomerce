@@ -58,7 +58,7 @@ function App() {
           ></Route>
 
 
-        <Routes>             
+                    
 
           <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
 
