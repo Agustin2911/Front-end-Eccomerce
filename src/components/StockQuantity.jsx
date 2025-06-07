@@ -2,7 +2,6 @@ import { Stack, HStack, Text, Icon, Input, Flex, StackSeparator, Box, VStack, Wr
 import { FaCheckCircle  } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
 export default function StockQuantity({stock, stockWarning }) {
-    
     let stockLevel;
 
     if (stock <= stockWarning){
@@ -21,6 +20,7 @@ export default function StockQuantity({stock, stockWarning }) {
       maxW={{ base: "97%", sm: "400px" }}
       mb="15px"
     >
+        {stock != 0 ? (
      <Wrap align="center" spacing={2} /* aquí permitimos wrap automático */>
         <WrapItem flexShrink={0}>
           <Icon as={stockLevel === "low" ? TiWarning : FaCheckCircle} boxSize={10} color={stockLevel === "low" ? "yellow.400" : "green.400"} />
@@ -49,7 +49,9 @@ export default function StockQuantity({stock, stockWarning }) {
           </VStack>
         </WrapItem>
       </Wrap>
-
+    ):(  
+        <Text mt="15px"> Ha ocurrido un error de nuestra parte. Stock no disponible </Text>
+    )}
     </Box>
   );
 }

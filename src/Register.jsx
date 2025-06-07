@@ -50,12 +50,12 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
     formData.append("firstname", user_name);
     formData.append("email", user_email);
     formData.append("password", userPassword);
-    formData.append("role", 2);
+    formData.append("role", 1);
     formData.append("cuit", cuit);
     formData.append("companyName", storeName);
     formData.append("description", StoreDescription);
     formData.append("state", "false");
-
+    
     if (image && image !== "none") {
       formData.append("file", image);
     } else {
@@ -64,7 +64,6 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
       alert("falta poner una foto");
       return;
     }
-
     try {
       const response = await fetch(
         "http://localhost:1273/api/v1/auth/register/seller_user",
@@ -75,8 +74,14 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
       );
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
+      // lee el texto de error que devuelve el servidor
+      const errorText = await response.text();
+      console.error("Error del servidor:", errorText);
+      // opcional: muestra el texto en un alert o guardarlo en estado
+      alert("Error en el servidor: " + errorText);
+      setLoading(false);
+      return;   // salimos para no seguir con result = await response.json()
+    }
 
       const result = await response.json();
       if (result.access_token) {
@@ -126,7 +131,7 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
     formData.append("email", user_email);
     formData.append("password", userPassword);
     formData.append("dni", dni);
-    formData.append("role", 3);
+    formData.append("role", 2);
 
     if (image !== "none") {
       formData.append("file", image);
@@ -172,7 +177,7 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
     if (data.response === "user created") {
       navigate("/");
     }
-  }, [data]);
+  }, [data, navigate]);
 
   return (
     <div
@@ -204,10 +209,8 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
           </Link>
         </p>
 
-        <form
-          onSubmit={
-            userType === "seller" ? handleFetchSeller : handleFetchBuyer
-          }
+        <div
+          
         >
           {/* Tipo de usuario */}
           <div className="mb-3">
@@ -329,14 +332,17 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
           <Text>Ingrese una imagen para su usuario</Text>
           <ImageUploader image={image} setimage={setimage}></ImageUploader>
           <button
-            type="submit"
+            onClick={
+                userType === "seller" ? handleFetchSeller : handleFetchBuyer
+            }
+            
             className=" btn w-100"
             disabled={loading}
             style={{ background: "#ad5add", color: "#d3a5ee" }}
           >
             Crear cuenta
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
