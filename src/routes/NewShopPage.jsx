@@ -1,6 +1,6 @@
 // src/pages/PublishPage.jsx
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Flex,
   Box,
@@ -15,8 +15,17 @@ import {
 
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
+import { useNavigate } from "react-router";
 
-export default function PublishPage({ cart, id_user }) {
+export default function PublishPage({ cart, type, id_user, token }) {
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token || type !== "seller") {
+      navigate("/signup", { replace: true });
+    }
+  }, [token, type, navigate]);
 
   const [ciudad, setCiudad] = useState("");
   const [street, setStreet] = useState("");

@@ -5,13 +5,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import ProductSection from "../components/productPage/ProductSection";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link as RouterLink } from "react-router-dom";
 
 
 
 
-export default function ProductPage({cart, setCart, type, id_usuario}) {
-  
+export default function ProductPage({cart, setCart, type, id_user}) {
+ console.log("🔍 ShowProductsPage: id_user =", id_user); 
   const { id_product } = useParams();
     
   useEffect(() => {
@@ -118,8 +118,6 @@ export default function ProductPage({cart, setCart, type, id_usuario}) {
   const subCategoryUpper = catSubcatData?.[1]?.toUpperCase() ?? "ERROR"
   const categoryId = catSubcatData?.[2] ?? ''
   const subCategoryId = catSubcatData?.[3] ?? ''
-  const categoryLink = `http://localhost:5173/products/category/${categoryId}`
-  const subCategoryLink = `http://localhost:5173/products/subCategory/${subCategoryId}`
   return (
     <Flex
       direction="column"
@@ -127,7 +125,7 @@ export default function ProductPage({cart, setCart, type, id_usuario}) {
       backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
       {/* Navbar */}
-      <MainNavbar cart={cart} type={type} id_user={id_usuario} />
+      <MainNavbar cart={cart} type={type} id_user={id_user} />
 
       {/* Contenido principal */}
 
@@ -151,7 +149,8 @@ export default function ProductPage({cart, setCart, type, id_usuario}) {
             >
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  href="http://localhost:5173/"
+                  as={RouterLink} 
+                  to="/"
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
@@ -165,7 +164,8 @@ export default function ProductPage({cart, setCart, type, id_usuario}) {
               <Breadcrumb.Separator />
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  href={categoryId != "" ? categoryLink : "#" }
+                  as={RouterLink}            
+                  to={categoryId != "" ? `/products/category/${categoryId}` : "#" }
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
@@ -179,7 +179,8 @@ export default function ProductPage({cart, setCart, type, id_usuario}) {
               <Breadcrumb.Separator />
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  href={subCategoryId != "" ? categoryLink : "#" }
+                  as={RouterLink}
+                  to={subCategoryId != "" ? `/products/subCategory/${subCategoryId}` : "#" }
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"

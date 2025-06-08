@@ -14,7 +14,7 @@ import {
   FaLinkedin,
   FaGooglePlusG,
 } from "react-icons/fa";
-
+import {Link as RouterLink} from "react-router-dom";
 import BG_A from "../../assets/Grafica.svg";
 
 export default function Footer() {
@@ -72,7 +72,8 @@ export default function Footer() {
   {/* Nosotros */}
   <Stack spacing={2}>
     <Link
-      href="http://localhost:5173/"
+      as={RouterLink}
+      to="/"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"
@@ -99,7 +100,8 @@ export default function Footer() {
       Unete a GC Customs
     </Link>
     <Link
-      href="http://localhost:5173/us"
+      as={RouterLink}
+      to="/us"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"

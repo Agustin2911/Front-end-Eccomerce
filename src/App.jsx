@@ -43,27 +43,13 @@ function App() {
   return (
     <ChakraProvider value={system}>
       <Router>
-        <Routes>
-          <Route
-            path="/product-desc/:id_product"
-            element={
-              <ProductPage
-                cart={Cart}
-                setCart={SetCart}
-                type={type}
-                id_usuario={id_usuario}
-              />
-            }
-          ></Route>
+        <Routes>            
 
+          <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} id_user={id_usuario} type={type}/>}></Route>
 
-                    
-
-          <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
-
-          <Route path="/publish" element={<PublishPage cart={Cart} id_user={id_usuario}/>}></Route>
+          <Route path="/publish/:id_user" element={<PublishPage cart={Cart} token={Token_usuario} type={type} />}></Route>
             
-          <Route path="new-shop" element={<NewShopPage cart={Cart} id_user={id_usuario}/>}></Route>
+          <Route path="new-shop" element={<NewShopPage cart={Cart} id_user={id_usuario} type={type} token={Token_usuario}/>}></Route>
 
           <Route
             path="/"
@@ -123,13 +109,13 @@ function App() {
           <Route
 
             path="/products"
-            element={<ShowProductsPage cart={Cart} />}
+            element={<ShowProductsPage cart={Cart} type={type} id_user={id_usuario} />}
 
           ></Route>
           
           <Route
             path="/products/category/:categoryId"
-            element={<ShowProductsPage cart={Cart} />}
+            element={<ShowProductsPage cart={Cart} type={type} id_user={id_usuario}/>}
           >
           </Route>
           <Route

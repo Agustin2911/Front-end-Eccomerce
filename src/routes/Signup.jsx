@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 
@@ -121,7 +121,7 @@ function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
         </button>
 
         <div style={{ marginBottom: "10px" }}>
-          <a href="#" style={{ textDecoration: "none", color: "#ad5add" }}>
+          <a as={RouterLink} to="#" style={{ textDecoration: "none", color: "#ad5add" }}>
             Te olvidaste la contraseña?
           </a>
         </div>

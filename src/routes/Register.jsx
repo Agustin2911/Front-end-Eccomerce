@@ -50,7 +50,7 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
     formData.append("firstname", user_name);
     formData.append("email", user_email);
     formData.append("password", userPassword);
-    formData.append("role", 1);
+    formData.append("role", 2);
     formData.append("cuit", cuit);
     formData.append("companyName", storeName);
     formData.append("description", StoreDescription);
@@ -131,7 +131,7 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
     formData.append("email", user_email);
     formData.append("password", userPassword);
     formData.append("dni", dni);
-    formData.append("role", 2);
+    formData.append("role", 3);
 
     if (image !== "none") {
       formData.append("file", image);

@@ -29,7 +29,7 @@ const images = [SlideOne, SlideTwo, SlideThree];
 
 function LandingPage({ cart, type, id_usuario }) {
   const [loading, setLoading] = useState(true);
-
+console.log("🔍 ShowProductsPage: id_user =", id_usuario);
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
