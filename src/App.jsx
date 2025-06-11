@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { system } from "./theme";
 import { useState, useEffect } from "react";
 
+import AdminPage from "./routes/AdminPage";
 import LandingPage from "./routes/LandingPage.jsx";
 import Signup from "./routes/Signup.jsx";
 import Register from "./routes/Register.jsx";
@@ -18,7 +19,7 @@ import NewShopPage from "./routes/NewShopPage";
 function App() {
   const [Token_usuario, SetToken_usuario] = useState("");
   const [Cart, SetCart] = useState([]);
-  const [id_usuario, setId_usuario] = useState(1);
+  const [id_usuario, setId_usuario] = useState(null);
   const [image_path, setImage_path] = useState(null);
   const [type, SetType] = useState(null);
 
@@ -44,6 +45,8 @@ function App() {
     <ChakraProvider value={system}>
       <Router>
         <Routes>            
+        
+          <Route path="/admin" element={<AdminPage id_user={id_usuario} type={type} token={Token_usuario} />}></Route>    
 
           <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} id_user={id_usuario} type={type}/>}></Route>
 

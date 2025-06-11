@@ -29,7 +29,7 @@ export default function PublishPage({ cart, token, type }) {
     }
   }, [token, type, navigate]);
 
-    const [sellerShopData, setSellerShopData] = useState([]);
+    const [sellerShopData, setSellerShopData] = useState(null);
     const [shopId, setShopId] = useState(null);
 
     const { id_user } = useParams();
@@ -305,7 +305,7 @@ export default function PublishPage({ cart, token, type }) {
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar cart={cart} />
+      <MainNavbar cart={cart} id_user={id_user}/>
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         {/* Contenedor blanco principal */}

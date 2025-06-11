@@ -153,15 +153,6 @@ export default function Footer() {
           <Link href="#" isExternal aria-label="Google Plus">
             <Icon as={FaGooglePlusG} boxSize={6} color="#ec1877" />
           </Link>
-              <Link href="https://www.facebook.com/" isExternal aria-label="Facebook">
-            <Icon as={FaFacebook} boxSize={6}  ml={5} color="#ec1877" />
-          </Link>
-          <Link href="https://x.com/" isExternal aria-label="Twitter">
-            <Icon as={FaTwitter} boxSize={6} color="#ec1877" />
-          </Link>
-          <Link href="https://www.linkedin.com/" isExternal aria-label="LinkedIn">
-            <Icon as={FaLinkedin} boxSize={6} color="#ec1877" />
-          </Link>
         </Flex>
       </Container>
     </Box>

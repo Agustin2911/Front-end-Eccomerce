@@ -3,7 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageUploader from "../components/register/ImageUploader";
-import { Text } from "@chakra-ui/react";
+import {Text, Box, Button} from "@chakra-ui/react";
+import { GoXCircle } from "react-icons/go";
 
 function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
   const [userType, setUserType] = useState("buyer"); // Nuevo: tipo de usuario
@@ -342,6 +343,19 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
           >
             Crear cuenta
           </button>
+
+            <Box textAlign="center" width="100%" maxWidth="400px" px="6" mt={1}>
+                <Button 
+                variant="plain"
+                color="#ad5add"
+                _hover={{ color: "#EC1877"}}
+                mb="6"
+                onClick={() => navigate("/")}
+                >
+                <GoXCircle />
+                Volver
+                </Button>
+            </Box>
         </div>
       </div>
     </div>

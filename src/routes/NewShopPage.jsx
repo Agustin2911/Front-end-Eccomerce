@@ -11,8 +11,10 @@ import {
   Button,
   HStack,
   Image,
+  
 } from "@chakra-ui/react";
 
+import { MdPublish  } from "react-icons/md";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useNavigate } from "react-router";
@@ -53,6 +55,7 @@ export default function PublishPage({ cart, type, id_user, token }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(payload),
       });
@@ -87,7 +90,7 @@ export default function PublishPage({ cart, type, id_user, token }) {
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar cart={cart} />
+      <MainNavbar cart={cart} id_user={id_user}/>
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         {/* Contenedor blanco principal */}
@@ -216,8 +219,21 @@ export default function PublishPage({ cart, type, id_user, token }) {
             </Box>
           </Flex>
         </Box>
-      </Box>
+                  
 
+      </Box>
+            <Flex justify="center" mt={4}>
+                <Button 
+                variant="plain"
+                color="#ad5add"
+                _hover={{ color: "#EC1877"}}
+                mb="6"
+                onClick={() => navigate(`/publish/${id_user}`)}
+                >
+                <MdPublish />
+                    Publicar un producto
+                </Button>
+            </Flex>
       {/**
          * El Footer queda aquí, al final del Flex,
          * pero gracias a que el Box anterior tiene flex="1",

@@ -1,4 +1,4 @@
-// src/components/MainNavbar.jsx
+// src/components/MainNavbar.js
 import React, { useState, useEffect } from "react";
 import {
   FaShoppingCart,
@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { Link as ChakraLink, Button } from "@chakra-ui/react";
 
 
 const MENU_DATA = [
@@ -438,7 +439,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                   type === "buyer"
                     ? `/myorders/${id_user}`
                     : type === "seller"
-                    ? `/mysales/${id_user}` // futuro link para seller
+                    ? `/publish/${id_user}` // futuro link para seller
                     : "/signup"
                 }
                 style={iconStyle}
@@ -448,6 +449,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
               </Link>
 
               {/* Carrito con badge */}
+            {type != "admin" &&
               <div style={{ position: "relative" }}>
                 <Link to="/cart" style={iconStyle}>
                   <FaShoppingCart />
@@ -458,6 +460,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                 )}
 
               </div>
+            }
             </div>
           </>
         ) : (
@@ -480,6 +483,20 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
             </form>
 
             <div style={rightIconsContainer}>
+            {id_user != null &&  
+            <ChakraLink 
+                href="/signup" 
+                _hover={{ textDecoration: "none" }}
+                style = {{textDecoration: "none"}}
+                textDecoration="none"
+                color={"#ec1877"}>
+                    <Button>
+                        Cerrar Sesión
+                    </Button>
+
+            
+              </ChakraLink>
+            }
               <Link
                 to={
                   type === "buyer"
@@ -493,6 +510,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
 
                 <FaUser />
               </Link>
+            {type != "admin" &&
               <div style={{ position: "relative" }}>
                 <Link to="/cart" style={iconStyle}>
                   <FaShoppingCart />
@@ -503,6 +521,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                 )}
 
               </div>
+            }
             </div>
           </>
         )}
