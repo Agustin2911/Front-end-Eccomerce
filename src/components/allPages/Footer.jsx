@@ -14,8 +14,8 @@ import {
   FaLinkedin,
   FaGooglePlusG,
 } from "react-icons/fa";
-
-import BG_A from "../assets/Grafica.svg";
+import {Link as RouterLink} from "react-router-dom";
+import BG_A from "../../assets/Grafica.svg";
 
 export default function Footer() {
   return (
@@ -72,7 +72,8 @@ export default function Footer() {
   {/* Nosotros */}
   <Stack spacing={2}>
     <Link
-      href="http://localhost:5173/"
+      as={RouterLink}
+      to="/"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"
@@ -99,7 +100,8 @@ export default function Footer() {
       Unete a GC Customs
     </Link>
     <Link
-      href="http://localhost:5173/us"
+      as={RouterLink}
+      to="/us"
       fontWeight="semibold"
       color="#d3a5ee"
       textDecoration="none"
@@ -150,15 +152,6 @@ export default function Footer() {
           </Link>
           <Link href="#" isExternal aria-label="Google Plus">
             <Icon as={FaGooglePlusG} boxSize={6} color="#ec1877" />
-          </Link>
-              <Link href="https://www.facebook.com/" isExternal aria-label="Facebook">
-            <Icon as={FaFacebook} boxSize={6}  ml={5} color="#ec1877" />
-          </Link>
-          <Link href="https://x.com/" isExternal aria-label="Twitter">
-            <Icon as={FaTwitter} boxSize={6} color="#ec1877" />
-          </Link>
-          <Link href="https://www.linkedin.com/" isExternal aria-label="LinkedIn">
-            <Icon as={FaLinkedin} boxSize={6} color="#ec1877" />
           </Link>
         </Flex>
       </Container>

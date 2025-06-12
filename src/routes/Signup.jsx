@@ -1,7 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Box } from "@chakra-ui/react";
-
+import { Box, Button } from "@chakra-ui/react";
+import { GoXCircle } from "react-icons/go";
 function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
   const [user_email, setEmail] = useState("");
   const [user_password, setPassword] = useState("");
@@ -121,7 +121,7 @@ function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
         </button>
 
         <div style={{ marginBottom: "10px" }}>
-          <a href="#" style={{ textDecoration: "none", color: "#ad5add" }}>
+          <a as={RouterLink} to="#" style={{ textDecoration: "none", color: "#ad5add" }}>
             Te olvidaste la contraseña?
           </a>
         </div>
@@ -135,6 +135,18 @@ function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
             Creala aca!
           </Link>
         </div>
+        <Box textAlign="center" width="100%" maxWidth="400px" px="6" mt={1}>
+            <Button 
+            variant="plain"
+            color="#ad5add"
+            _hover={{ color: "#EC1877"}}
+            mb="6"
+            onClick={() => navigate("/")}
+            >
+            <GoXCircle />
+            Volver
+            </Button>
+        </Box>
       </Box>
     </Box>
   );

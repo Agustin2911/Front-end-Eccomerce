@@ -1,25 +1,25 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./LandingPage.jsx";
-import Signup from "./Signup";
-import Register from "./Register";
-import ShowProductsPage from "./ShowProductsPage";
-
-import ProductPage from "./ProductPage";
 import { system } from "./theme";
-
-import AboutUsPage from "./AboutUsPage";
-import CartPage from "./CartPage";
-import PaymentPage from "./PaymentPage";
 import { useState, useEffect } from "react";
-import MyOrders from "./MyOrders.jsx";
-import PublishPage from "./PublishPage";
-import NewShopPage from "./NewShopPage";
+
+import AdminPage from "./routes/AdminPage";
+import LandingPage from "./routes/LandingPage.jsx";
+import Signup from "./routes/Signup.jsx";
+import Register from "./routes/Register.jsx";
+import ShowProductsPage from "./routes/ShowProductsPage.jsx";
+import ProductPage from "./routes/ProductPage";
+import AboutUsPage from "./routes/AboutUsPage.jsx";
+import CartPage from "./routes/CartPage";
+import PaymentPage from "./routes/PaymentPage";
+import MyOrders from "./routes/MyOrders.jsx";
+import PublishPage from "./routes/PublishPage";
+import NewShopPage from "./routes/NewShopPage";
 
 function App() {
   const [Token_usuario, SetToken_usuario] = useState("");
   const [Cart, SetCart] = useState([]);
-  const [id_usuario, setId_usuario] = useState(1);
+  const [id_usuario, setId_usuario] = useState(null);
   const [image_path, setImage_path] = useState(null);
   const [type, SetType] = useState(null);
 
@@ -44,27 +44,15 @@ function App() {
   return (
     <ChakraProvider value={system}>
       <Router>
-        <Routes>
-          <Route
-            path="/product-desc/:id_product"
-            element={
-              <ProductPage
-                cart={Cart}
-                setCart={SetCart}
-                type={type}
-                id_usuario={id_usuario}
-              />
-            }
-          ></Route>
+        <Routes>            
+        
+          <Route path="/admin" element={<AdminPage id_user={id_usuario} type={type} token={Token_usuario} />}></Route>    
 
+          <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} id_user={id_usuario} type={type}/>}></Route>
 
-        <Routes>             
-
-          <Route path="/product-desc/:id_product" element={<ProductPage cart={Cart} setCart={SetCart} />}></Route>
-
-          <Route path="/publish" element={<PublishPage cart={Cart} id_user={id_usuario}/>}></Route>
+          <Route path="/publish/:id_user" element={<PublishPage cart={Cart} token={Token_usuario} type={type} />}></Route>
             
-          <Route path="new-shop" element={<NewShopPage cart={Cart} id_user={id_usuario}/>}></Route>
+          <Route path="new-shop" element={<NewShopPage cart={Cart} id_user={id_usuario} type={type} token={Token_usuario}/>}></Route>
 
           <Route
             path="/"
@@ -124,13 +112,13 @@ function App() {
           <Route
 
             path="/products"
-            element={<ShowProductsPage cart={Cart} />}
+            element={<ShowProductsPage cart={Cart} type={type} id_user={id_usuario} />}
 
           ></Route>
           
           <Route
             path="/products/category/:categoryId"
-            element={<ShowProductsPage cart={Cart} />}
+            element={<ShowProductsPage cart={Cart} type={type} id_user={id_usuario}/>}
           >
           </Route>
           <Route

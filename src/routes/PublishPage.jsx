@@ -1,6 +1,7 @@
 // src/pages/PublishPage.jsx
 
 import React, { useState, useRef } from "react";
+import {Link as RouterLink} from "react-router-dom";
 import {
   Flex,
   Box,
@@ -9,37 +10,89 @@ import {
   Input,
   Textarea,
   Button,
-  HStack,
+  HStack, 
   Image,
-  Link
+  Link,
+  Spinner
 } from "@chakra-ui/react";
 import { useEffect } from "react";
-import MainNavbar from "./components/MainNavbar";
-import Footer from "./components/Footer";
+import { useParams, useNavigate } from "react-router-dom";
+import MainNavbar from "../components/allPages/MainNavbar";
+import Footer from "../components/allPages/Footer";
 
-export default function PublishPage({ cart, id_user }) {
-
-    const [sellerShopData, setSellerShopData] = useState(null);
-
+export default function PublishPage({ cart, token, type }) {
+    
+    const navigate = useNavigate();
 
   useEffect(() => {
+    if (!token || type !== "seller") {
+      navigate("/signup", { replace: true });
+    }
+  }, [token, type, navigate]);
+
+
+
+    const [sellerShopData, setSellerShopData] = useState(null);
+    const [shopId, setShopId] = useState(null);
+    const [sellerData, setSellerData] = useState(null)
+
+    const { id_user } = useParams();
+
+    useEffect(() => {
     if (!id_user) return;
 
-    const fetchCatSubcat = async () => {
+    const fetchSellerId = async () => {
       try {
-        const resSellerShop = await fetch(`http://localhost:1273/seller_user/shops/${id_user}`);
-        if (!resSellerShop.ok) {
-          throw new Error(`Error categoría y subcategoría: ${resSellerShop.status}`);
+        const resSellerId = await fetch(
+            `http://localhost:1273/seller_user/${id_user}`,
+        );
+        if (!resSellerId.ok) {
+          throw new Error(`Error shops de seller: ${resSellerId.status}`);
         }
-        const jsonSellerShop = await resSellerShop.json();
-        setSellerShopData(jsonSellerShop); 
+        const jsonSellerId = await resSellerId.json();
+        setSellerData(jsonSellerId); 
+        
       } catch (err) {
         console.error(err);
       } 
     };
 
-    fetchCatSubcat();
+    fetchSellerId();
   }, [id_user]);
+
+
+
+  useEffect(() => {
+    if (!id_user) return;
+
+    const fetchSellerShops = async () => {
+      try {
+        const resSellerShop = await fetch(
+            `http://localhost:1273/seller_user/shops/${id_user}`,
+            {   
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (!resSellerShop.ok) {
+          throw new Error(`Error shops de seller: ${resSellerShop.status}`);
+        }
+        const jsonSellerShop = await resSellerShop.json();
+        setSellerShopData(jsonSellerShop); 
+        console.log(jsonSellerShop[0]);
+        if (Array.isArray(jsonSellerShop) && jsonSellerShop.length > 0) {
+            setShopId(jsonSellerShop[0]);
+        }
+        
+      } catch (err) {
+        console.error(err);
+      } 
+    };
+
+    fetchSellerShops();
+  }, [id_user, token]);
 
     const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
     const [subcategoria, setSubcategoria] = useState("");
@@ -58,30 +111,29 @@ export default function PublishPage({ cart, id_user }) {
     if (!resSub.ok) {
       throw new Error(`No se pudo obtener ID de subcategoría (${resSub.status})`);
     }
-    // Como la respuesta es un número crudo, resSub.json() nos dará directamente ese número
-    // (p. ej. 1). Alternativamente podrías usar resSub.text() y luego Number(...)
-    const id_sub_category = await resSub.json(); // <-- aquí id_sub_category será un número, p.ej. 1
-    if (id_sub_category == null) {
+        const id_sub_category = await resSub.json();
+        if (id_sub_category == null) {
       throw new Error("El endpoint de subcategoría devolvió un valor inválido.");
     }
-    const imageName = imageFile.name;
-    const photoUrl = `http://localhost:1273/images/products/${imageName}`;
+   
 
-     const payload = {
-      product_name: nombre.trim(),
-      photo_url: photoUrl,
-      price: precio,
-      description: descripcion.trim(),
-      discount_state: "false",            discount: 0,
-      id_sub_category: id_sub_category,
-           };
+     const formData = new FormData();
+    formData.append("product_name", nombre.trim());
+    formData.append("price", precio);
+    formData.append("description", descripcion.trim());
+    formData.append("discount_state", "false");
+    formData.append("discount", 0);
+    formData.append("id_sub_category", id_sub_category);
+    // <-- aquí le pasamos directamente el File
+    formData.append("photo_url", imageFile); 
 
       const response = await fetch("http://localhost:1273/product", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        
+        "Authorization": `Bearer ${token}`,
       },
-        body: JSON.stringify(payload)
+        body: formData
         });
 
       if (!response.ok) {
@@ -97,8 +149,34 @@ export default function PublishPage({ cart, id_user }) {
       const data = await response.json();
       console.log("Producto creado con éxito:", data);
 
-      alert("¡El producto se creó con éxito!");
-      // Limpio el formulario
+      const stockPayload = {
+        id:    data.id_product,    // o data.idProduct según tu API
+        stock_entry:         stockAct,
+        shop:          shopId,
+        stock_warning: stockMin
+      };
+
+      const stockRes = await fetch(
+        "http://localhost:1273/stock",
+      {
+        method: "POST",
+        headers: {
+            "Content-Type":  "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(stockPayload)
+      }
+     );
+
+      if (!stockRes.ok) {
+        const errText = await stockRes.text();
+        console.error("Error al crear stock:", errText);
+        alert("Se creó el producto pero falló el registro de stock.");
+      } else {
+            console.log("Stock registrado con éxito");
+      }
+
+      alert("¡El producto y su stock se crearon con éxito!");
       setNombre("");
       setDescripcion("");
       setPrecio("");
@@ -133,6 +211,7 @@ export default function PublishPage({ cart, id_user }) {
     "Streaming",
     "Otros",
     "Notebooks",
+    "Monitores",
   ];
 
   const subcategories = [
@@ -244,7 +323,40 @@ export default function PublishPage({ cart, id_user }) {
     subcategoryInvalid;
     
 
+    if (sellerData === null) {
+        return (
+            <Flex
+            direction="column"
+            minH="100vh"
+            background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+            align="center"
+            justify="center"
+            >
+                <Spinner color="purple.400" />
+            </Flex>
+            );
+    }
 
+
+    if (sellerData.state === "false") {
+    return (
+      <Flex
+        direction="column"
+        minH="100vh"
+        background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+      >
+        <MainNavbar cart={cart} id_user={id_user} />
+
+        <Box flex="1" display="flex" alignItems="center" justifyContent="center">
+          <Text fontSize="xl" color="whiteAlpha.800">
+            Tu cuenta se encuentra pendiente de aprobación
+          </Text>
+        </Box>
+
+        <Footer />
+      </Flex>
+    );
+  }
  
 
 
@@ -255,7 +367,7 @@ export default function PublishPage({ cart, id_user }) {
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar cart={cart} />
+      <MainNavbar cart={cart} id_user={id_user}/>
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         {/* Contenedor blanco principal */}
@@ -639,7 +751,12 @@ export default function PublishPage({ cart, id_user }) {
             <Box w="100%" pr={6}>
 
               
-                <Link href={"http://localhost:5173/new-shop"} w="100%" variant={"plain"} style={{textDecoration: "none"}}>
+                <Link 
+                    as={RouterLink}
+                    to="/new-shop" 
+                    w="100%" 
+                    variant={"plain"} 
+                    style={{textDecoration: "none"}}>
                 <Button
                   bgColor= "#D3A5EE"  
                   _hover = {{bgColor:"#AE5BDD" }}
@@ -661,7 +778,7 @@ export default function PublishPage({ cart, id_user }) {
        **/}
       <Footer />
     </Flex>
-
+    
     
     );
 }

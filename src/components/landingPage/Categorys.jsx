@@ -1,18 +1,18 @@
 // BuscarCategorias.jsx
 import { Box, Grid, Text,} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import CategoryButton from "./CategoryButton";
+import CategoryButton from "../landingPage/CategoryButton";
 
-import PlacasIcon       from "../assets/Grafica.svg";
-import MotherboardsIcon       from "../assets/motherboards.svg";
-import TecladosIcon       from "../assets/Teclados.svg";
-import ProcesadoresIcon from "../assets/Procesadores.svg";
-import AuricularesIcon  from "../assets/auriculares.svg";
-import MemoriasRAMIcon     from "../assets/RAM.svg";
-import MonitoresIcon    from "../assets/monitores.svg";
-import AlmacenamientosIcon          from "../assets/Almacenamientos.svg";
-import GabinetesIcon from "../assets/Gabinete.svg";
-import MousesIcon     from "../assets/Mouses.svg";
+import PlacasIcon       from "../../assets/Grafica.svg";
+import MotherboardsIcon       from "../../assets/motherboards.svg";
+import TecladosIcon       from "../../assets/Teclados.svg";
+import ProcesadoresIcon from "../../assets/Procesadores.svg";
+import AuricularesIcon  from "../../assets/auriculares.svg";
+import MemoriasRAMIcon     from "../../assets/RAM.svg";
+import MonitoresIcon    from "../../assets/monitores.svg";
+import AlmacenamientosIcon          from "../../assets/Almacenamientos.svg";
+import GabinetesIcon from "../../assets/Gabinete.svg";
+import MousesIcon     from "../../assets/Mouses.svg";
 
 const categorias = [
   { nombre: "Placas de Video",    icono: PlacasIcon, categoryId: 2 },

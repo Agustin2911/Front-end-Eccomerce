@@ -1,6 +1,6 @@
-import Footer from "./components/footer";
-import MainNavbar from "./components/MainNavbar";
-import Formdelivery from "./components/FormPayment";
+import Footer from "../components/allPages/Footer";
+import MainNavbar from "../components/allPages/MainNavbar";
+import Formdelivery from "../components/FormPayment";
 
 function PaymentPage({ cart, id_usuario, Token_usuario, setcart, type }) {
   return (

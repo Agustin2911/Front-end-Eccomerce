@@ -1,6 +1,6 @@
-import CartComponent from "./components/CartComponent";
-import MainNavbar from "./components/MainNavbar";
-import Footer from "./components/footer";
+import CartComponent from "../components/cart/CartComponent";
+import MainNavbar from "../components/allPages/MainNavbar";
+import Footer from "../components/allPages/Footer";
 
 function CartPage({ carrito, setcarrito, type, id_usuario }) {
   return (

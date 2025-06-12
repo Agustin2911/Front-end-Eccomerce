@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ImageUploader from "./components/ImageUploader";
-import { Text } from "@chakra-ui/react";
+import ImageUploader from "../components/register/ImageUploader";
+import {Text, Box, Button} from "@chakra-ui/react";
+import { GoXCircle } from "react-icons/go";
 
 function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
   const [userType, setUserType] = useState("buyer"); // Nuevo: tipo de usuario
@@ -55,7 +56,7 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
     formData.append("companyName", storeName);
     formData.append("description", StoreDescription);
     formData.append("state", "false");
-
+    
     if (image && image !== "none") {
       formData.append("file", image);
     } else {
@@ -64,7 +65,6 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
       alert("falta poner una foto");
       return;
     }
-
     try {
       const response = await fetch(
         "http://localhost:1273/api/v1/auth/register/seller_user",
@@ -75,8 +75,14 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
       );
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
+      // lee el texto de error que devuelve el servidor
+      const errorText = await response.text();
+      console.error("Error del servidor:", errorText);
+      // opcional: muestra el texto en un alert o guardarlo en estado
+      alert("Error en el servidor: " + errorText);
+      setLoading(false);
+      return;   // salimos para no seguir con result = await response.json()
+    }
 
       const result = await response.json();
       if (result.access_token) {
@@ -172,7 +178,7 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
     if (data.response === "user created") {
       navigate("/");
     }
-  }, [data]);
+  }, [data, navigate]);
 
   return (
     <div
@@ -204,10 +210,8 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
           </Link>
         </p>
 
-        <form
-          onSubmit={
-            userType === "seller" ? handleFetchSeller : handleFetchBuyer
-          }
+        <div
+          
         >
           {/* Tipo de usuario */}
           <div className="mb-3">
@@ -329,14 +333,30 @@ function Register({ token, settoken, setId_usuario, setImage_path, setType }) {
           <Text>Ingrese una imagen para su usuario</Text>
           <ImageUploader image={image} setimage={setimage}></ImageUploader>
           <button
-            type="submit"
+            onClick={
+                userType === "seller" ? handleFetchSeller : handleFetchBuyer
+            }
+            
             className=" btn w-100"
             disabled={loading}
             style={{ background: "#ad5add", color: "#d3a5ee" }}
           >
             Crear cuenta
           </button>
-        </form>
+
+            <Box textAlign="center" width="100%" maxWidth="400px" px="6" mt={1}>
+                <Button 
+                variant="plain"
+                color="#ad5add"
+                _hover={{ color: "#EC1877"}}
+                mb="6"
+                onClick={() => navigate("/")}
+                >
+                <GoXCircle />
+                Volver
+                </Button>
+            </Box>
+        </div>
       </div>
     </div>
   );
