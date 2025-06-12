@@ -440,6 +440,8 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                     ? `/myorders/${id_user}`
                     : type === "seller"
                     ? `/publish/${id_user}` // futuro link para seller
+                    : type === "admin"
+                    ? `/admin`
                     : "/signup"
                 }
                 style={iconStyle}
@@ -503,7 +505,10 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                     ? `/myorders/${id_user}`
                     : type === "seller"
                     ? `/publish/${id_user}` // futuro link para seller
+                    : type === "admin"
+                    ? `/admin`
                     : "/signup"
+
                 }
                 style={iconStyle}
               >

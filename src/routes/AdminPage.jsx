@@ -1,6 +1,7 @@
 // src/pages/AdminPage.jsx
 
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import MainNavbar from "@/components/allPages/MainNavbar";
 import Footer from "@/components/allPages/Footer";
 import {
@@ -11,10 +12,20 @@ import {
   Button,
   Stack,
   Spinner,
+  HStack
 } from "@chakra-ui/react";
 
 export default function AdminPage({ id_user, token, type }) {
-  // — Estados para usuarios —
+  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token || type !== "admin") {
+      navigate("/signup", { replace: true });
+    }
+  }, [token, type, navigate]);
+
+    // — Estados para usuarios —
   const [users, setUsers] = useState([]);
   const [showUsers, setShowUsers] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -23,6 +34,8 @@ export default function AdminPage({ id_user, token, type }) {
   const [sellers, setSellers] = useState([]);
   const [showSellers, setShowSellers] = useState(false);
   const [loadingSellers, setLoadingSellers] = useState(false);
+  const [approvingId, setApprovingId] = useState(null);
+  const pendingSellers = sellers.filter(s => s.state === "false");
 
   const handleToggleUsers = async () => {
     if (showUsers) {
@@ -32,9 +45,10 @@ export default function AdminPage({ id_user, token, type }) {
     }
     setLoadingUsers(true);
     try {
-      const resp = await fetch("http://localhost:1273/basic_user", {
+      const resp = await fetch("http://localhost:1273/basic_user/roles", {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`},
       });
       if (!resp.ok) throw new Error(await resp.text());
       const data = await resp.json();
@@ -57,7 +71,8 @@ export default function AdminPage({ id_user, token, type }) {
     try {
       const resp = await fetch("http://localhost:1273/seller_user", {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`},
       });
       if (!resp.ok) throw new Error(await resp.text());
       const data = await resp.json();
@@ -70,6 +85,32 @@ export default function AdminPage({ id_user, token, type }) {
       setLoadingSellers(false);
     }
   };
+
+   const handleApproveSeller = async (seller) => {
+   const sellerId = seller.id_user ?? seller.id;
+   setApprovingId(sellerId);
+    try {
+      const resp = await fetch("http://localhost:1273/seller_user", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...seller, state: true })
+      });
+      if (!resp.ok) throw new Error(await resp.text());
+      // una vez aprobado, quitarlo de la lista en pantalla
+      setSellers(prev =>
+            prev.filter(s => (s.id_user ?? s.id) !== sellerId)
+        );  
+      } catch (err) {
+      console.error("Error al aprobar seller:", err);
+      alert("No se pudo aprobar. Revisa la consola.");
+    } finally {
+      setApprovingId(null);
+    }
+  };
+
 
   return (
     <Flex
@@ -125,11 +166,13 @@ export default function AdminPage({ id_user, token, type }) {
                         borderRadius="md"
                       >
                         <Text color="#F1E6F7">
-                          {u.username}
+                          {u.username} - {u.role_name}
                         </Text>
                         <Text color="whiteAlpha.600" fontSize="sm">
                           {u.mail}
                         </Text>
+                          
+
                       </Box>
                     ))}
                   </Stack>
@@ -164,29 +207,43 @@ export default function AdminPage({ id_user, token, type }) {
               {showSellers ? "Ocultar pendientes" : "Ver pendientes"}
             </Button>
 
-            {/* Contenedor del listado con margen superior */}
             {showSellers && (
               <Box mt={6}>
                 {loadingSellers ? (
                   <Spinner color="purple.400" />
-                ) : sellers.length > 0 ? (
+                ) : pendingSellers.length > 0 ? (
                   <Stack spacing={3} maxH="300px" overflowY="auto">
-                    {sellers.map((s) => (
-                      <Box
-                        key={s.id_user || s.id}
-                        p={3}
-                        bg="blackAlpha.300"
-                        borderRadius="md"
-                      >
-                        <Text color="#F1E6F7">{s.company_name}</Text>
-                        <Text color="whiteAlpha.600" fontSize="sm">
-                          {s.cuit}
-                        </Text>
-                      </Box>
-                    ))}
-                  </Stack>
+                    {pendingSellers
+                    .map((s) =>{
+                    const sid = s.id_user ?? s.id;
+                    return (
+                    <HStack
+                    key={s.id_user}
+                    p={3}
+                    bg="blackAlpha.300"
+                    borderRadius="md"
+                    justify="space-between"
+                    >
+                        <Box>
+                            <Text color="#F1E6F7">{s.company_name}</Text>
+                            <Text color="whiteAlpha.600" fontSize="sm">
+                                {s.cuit}
+                            </Text>
+                        </Box>
+                        <Button
+                        color="#AE5BDD"
+                        variant="ghost"
+                        _hover={{ bg: "blackAlpha.500", color: "#EC1877" }}
+                        isLoading={approvingId === sid}
+                        onClick={() => handleApproveSeller(s)}  // <-- aquí pasas todo 's'
+                        >
+                            Aprobar
+                        </Button>
+                    </HStack>
+                    )})}
+                </Stack>                
                 ) : (
-                  <Text color="whiteAlpha.600">No hay vendedores.</Text>
+                  <Text color="whiteAlpha.600">No hay vendedores pendientes.</Text>
                 )}
               </Box>
             )}

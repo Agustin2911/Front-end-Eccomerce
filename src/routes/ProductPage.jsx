@@ -9,7 +9,6 @@ import { useParams, Link as RouterLink } from "react-router-dom";
 
 
 
-
 export default function ProductPage({cart, setCart, type, id_user}) {
  console.log("🔍 ShowProductsPage: id_user =", id_user); 
   const { id_product } = useParams();

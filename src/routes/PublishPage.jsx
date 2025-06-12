@@ -12,7 +12,8 @@ import {
   Button,
   HStack, 
   Image,
-  Link
+  Link,
+  Spinner
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -29,10 +30,38 @@ export default function PublishPage({ cart, token, type }) {
     }
   }, [token, type, navigate]);
 
+
+
     const [sellerShopData, setSellerShopData] = useState(null);
     const [shopId, setShopId] = useState(null);
+    const [sellerData, setSellerData] = useState(null)
 
     const { id_user } = useParams();
+
+    useEffect(() => {
+    if (!id_user) return;
+
+    const fetchSellerId = async () => {
+      try {
+        const resSellerId = await fetch(
+            `http://localhost:1273/seller_user/${id_user}`,
+        );
+        if (!resSellerId.ok) {
+          throw new Error(`Error shops de seller: ${resSellerId.status}`);
+        }
+        const jsonSellerId = await resSellerId.json();
+        setSellerData(jsonSellerId); 
+        
+      } catch (err) {
+        console.error(err);
+      } 
+    };
+
+    fetchSellerId();
+  }, [id_user]);
+
+
+
   useEffect(() => {
     if (!id_user) return;
 
@@ -294,7 +323,40 @@ export default function PublishPage({ cart, token, type }) {
     subcategoryInvalid;
     
 
+    if (sellerData === null) {
+        return (
+            <Flex
+            direction="column"
+            minH="100vh"
+            background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+            align="center"
+            justify="center"
+            >
+                <Spinner color="purple.400" />
+            </Flex>
+            );
+    }
 
+
+    if (sellerData.state === "false") {
+    return (
+      <Flex
+        direction="column"
+        minH="100vh"
+        background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+      >
+        <MainNavbar cart={cart} id_user={id_user} />
+
+        <Box flex="1" display="flex" alignItems="center" justifyContent="center">
+          <Text fontSize="xl" color="whiteAlpha.800">
+            Tu cuenta se encuentra pendiente de aprobación
+          </Text>
+        </Box>
+
+        <Footer />
+      </Flex>
+    );
+  }
  
 
 
@@ -716,7 +778,7 @@ export default function PublishPage({ cart, token, type }) {
        **/}
       <Footer />
     </Flex>
-
+    
     
     );
 }
