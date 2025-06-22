@@ -15,45 +15,46 @@ export default function ShowProducts({ products, setProducts }) {
   useEffect(() => {
     let endpoint = "";
 
-    // 1) Si hay un término de búsqueda, pedimos todos los productos
     if (searchTerm.trim()) {
       endpoint = `http://localhost:1273/product`;
-
-    // 2) Si no buscamos, pero hay subCategoryId, usamos ese endpoint
     } else if (subCategoryId) {
       endpoint = `http://localhost:1273/product/bySubCategoryid/${subCategoryId}`;
-
-    // 3) Si no hay subCategoryId pero sí categoryId, usamos el endpoint de categoría
     } else if (categoryId) {
       endpoint = `http://localhost:1273/product/byCategoryid/${categoryId}`;
-
-    // 4) Si no hay nada, pedimos todos
     } else {
       endpoint = `http://localhost:1273/product`;
     }
 
     const fetchProductos = async () => {
       try {
-        const response = await fetch(endpoint);
+        const response = await fetch(endpoint, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!response.ok) {
-          throw new Error(`Error en la solicitud: ${response.status}`);
+          // Borra productos anteriores si hay error
+          setProducts([]);
         }
+
         const data = await response.json();
 
-        // 5) Si estamos en modo “search”, filtramos localmente por product_name
         if (searchTerm.trim()) {
           const termLower = searchTerm.toLowerCase();
           const filtrados = data.filter((p) =>
             p.product_name.toLowerCase().includes(termLower)
           );
-          setProducts(filtrados);
-
-        // 6) Si no hay búsqueda, simplemente guardamos todo lo que venga
+          setProducts(filtrados); // ya sean 0 o más
         } else {
-          setProducts(data);
+          setProducts(data); // ya sean 0 o más
         }
+
+        setError(null); // limpia errores previos si todo sale bien
       } catch (err) {
-        setError(err.message);
+        setProducts([]); // borra productos anteriores
+        setError(err.message); // muestra error
         console.error("Error al obtener productos:", err);
       }
     };
@@ -78,12 +79,7 @@ export default function ShowProducts({ products, setProducts }) {
                   display="flex"
                   justifyContent="center"
                 >
-                  <Box
-                    flex="0 0 250px"
-                    maxW="300px"
-                    h="400px"
-                    display="flex"
-                  >
+                  <Box flex="0 0 250px" maxW="300px" h="400px" display="flex">
                     <Box
                       flex="1"
                       display="flex"
@@ -92,18 +88,7 @@ export default function ShowProducts({ products, setProducts }) {
                       transform="scaleX(1.3) scaleY(1.0)"
                       transformOrigin="center center"
                     >
-                      <LandingProductCard
-                        image={
-                          product.photo_url
-                            ? product.photo_url
-                            : "https://www.freundferreteria.com/Productos/GetImagenProductoPrincipal?idProducto=125ecabc-5319-4317-b455-0f5c1aa634d1&width=250&height=250&qa=75&ext=.jpg"
-                        }
-                        price={product.price}
-                        name={product.product_name}
-                        id={product.id_product}
-                        discount={product.discount}
-                        discountState={product.discount_state}
-                      />
+                      <LandingProductCard product={product} />
                     </Box>
                   </Box>
                 </Box>

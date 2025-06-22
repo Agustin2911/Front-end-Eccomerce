@@ -27,41 +27,59 @@ import StockQuantity from "./StockQuantity";
 import Description from "./Description";
 import RelatedProducts from "./RelatedProducts";
 import ProductReviews from "./ProductReviews";
+import { addToCart } from "../../features/cart/cartSlice";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { mode } from "@chakra-ui/theme-tools";
 
+export default function ProductSection({
+  images,
+  reviews,
+  related,
+  name,
+  description,
+  price,
+  stock,
+  stockWarning,
+  id,
+  id_category,
+  discount,
+  discount_state,
+}) {
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
+  const [quantity, setQuantity] = useState(1);
+  const dec = () => setQuantity((q) => Math.max(q - 1, 1));
+  const inc = () => setQuantity((q) => q + 1);
 
-export default function ProductSection({images, reviews, related, name, description, price, stock, stockWarning, id, id_category, cart, setCart, discount, discount_state}) {
-    
-    const [quantity, setQuantity] = useState(1);
-    const dec = () => setQuantity((q) => Math.max(q - 1, 1));
-    const inc = () => setQuantity((q) => q + 1);
-    
-//    const [selectedImage, setSelectedImage] = useState(0);
+  //    const [selectedImage, setSelectedImage] = useState(0);
 
-    const cuotas = price / 12; 
-    const priceFormatted = price.toLocaleString("es-AR");
-    const cuotasFormatted = cuotas.toLocaleString("es-AR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    });
-    const newCart = cart;
-    let newIndex = newCart.length + 1;
-    function handleClick(amount){
-        newCart.push({
-            index: newIndex,
-            id_product: id,
-            product_name: name,
-            amount: amount,
-            price: price,
-            url: images,
-            condition: "new",
-            description: description,
-            discount: discount,
-            discount_state: discount_state,
-        });
+  const cuotas = price / 12;
+  const priceFormatted = price.toLocaleString("es-AR");
+  const cuotasFormatted = cuotas.toLocaleString("es-AR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
-        setCart(newCart);
-    }
-
+  function handleClick(amount) {
+    dispatch(
+      addToCart({
+        item: {
+          id_product: id,
+          product_name: name,
+          amount: quantity,
+          price: price,
+          photo_url: images,
+          description: description,
+          discount: discount,
+          discount_state: discount_state,
+        },
+        // cualquier otro dato adicional que quieras pasar
+        extraFlag: true,
+      })
+    );
+    console.log(cart);
+  }
 
   return (
     <>
@@ -187,91 +205,96 @@ export default function ProductSection({images, reviews, related, name, descript
 
             <Box w="100%" h="1px" bg="gray.300" mt="-5px" mb="10px" />
 
-                    <Flex align="center" gap={{ base: 2, md: 4 }} justify="center">
-                        <IconButton
-                            aria-label="Disminuir cantidad"
-                            colorPalette="#AE5BDD"
-                            variant="unstyled"
-                            color="#AE5BDD"
-                            onClick={dec}
-                           _hover={{color: "#422A52"}}
-                        >
-                            <FaMinus/>
-                        </IconButton>
-                        <Input
-                            value={quantity}
-                            readOnly
-                            w="60px"
-                            textAlign="center"
-                        />
-                        <IconButton
-                            aria-label="Aumentar cantidad"
-                            color="#AE5BDD"
-                            variant="unstyled"
-                            onClick={inc}
-                            _hover={{color: "#422A52"}}
-                        >
-                            <FaPlus/>
-                         </IconButton>
-                    </Flex>
-                  
-                    <Button bg="#AE5BDD" size={{ base: "sm", md: "lg" }} w="100%" _hover={{bg: "#422A52"}} py={{ base: 2, md: 3 }} 
-                      css={{
-                          "@media screen and (max-width: 321px)": {
-                              w:"98%"
-                        },
-                      }}>
-                        Comprar ahora
-                    </Button>
-                    <HStack spacing={4} w="100%">
-                        <Button 
-                        borderWidth="2px" 
-                        borderColor="#AE5BDD" 
-                        variant="outline" 
-                        flex="1" 
-                        _hover={{bg: "#422A52",color: "white", borderColor:"#422A52"}}
-                        fontSize={{ base: "sm", md: "sm" }}
-                        css={{
-                          "@media screen and (max-width: 321px)": {
-                              maxW:"47%",
-                              fontSize: "xs"
-                            },
-                        }}
-                        >
-                            <FaTruck /> Calcular envío
-                        </Button>
-                        <Button
-                            borderWidth="2px"
-                            borderColor="#AE5BDD"
-                            variant="outline"
-                            flex="1"
-                            _hover={{bg: "#422A52",color: "white", borderColor:"#422A52"}}
-                            fontSize={{ base: "sm", md: "sm" }}
-                             css={{
-                                "@media screen and (max-width: 321px)": {
-                                    maxW:"47%",
-                                    fontSize: "xs"  
-                                },
-                             }}
-                            onClick={() => handleClick(quantity)}
-                            >
-                            <FaShoppingCart/> Agregar
-                        </Button>
-                    </HStack>
-                  
-                    
-                 </VStack>
-            </Box>  
-        
-            
-                
-        </Box>
-        <Description description={description} />
-        <RelatedProducts  products={related} id_product={id} id_category={id_category} />
-        <ProductReviews reviews={reviews}/>
-        
-       </>
-    );
-}
+            <Flex align="center" gap={{ base: 2, md: 4 }} justify="center">
+              <IconButton
+                aria-label="Disminuir cantidad"
+                colorPalette="#AE5BDD"
+                variant="unstyled"
+                color="#AE5BDD"
+                onClick={dec}
+                _hover={{ color: "#422A52" }}
+              >
+                <FaMinus />
+              </IconButton>
+              <Input value={quantity} readOnly w="60px" textAlign="center" />
+              <IconButton
+                aria-label="Aumentar cantidad"
+                color="#AE5BDD"
+                variant="unstyled"
+                onClick={inc}
+                _hover={{ color: "#422A52" }}
+              >
+                <FaPlus />
+              </IconButton>
+            </Flex>
 
-      
+            <Button
+              bg="#AE5BDD"
+              size={{ base: "sm", md: "lg" }}
+              w="100%"
+              _hover={{ bg: "#422A52" }}
+              py={{ base: 2, md: 3 }}
+              css={{
+                "@media screen and (max-width: 321px)": {
+                  w: "98%",
+                },
+              }}
+            >
+              Comprar ahora
+            </Button>
+            <HStack spacing={4} w="100%">
+              <Button
+                borderWidth="2px"
+                borderColor="#AE5BDD"
+                variant="outline"
+                flex="1"
+                _hover={{
+                  bg: "#422A52",
+                  color: "white",
+                  borderColor: "#422A52",
+                }}
+                fontSize={{ base: "sm", md: "sm" }}
+                css={{
+                  "@media screen and (max-width: 321px)": {
+                    maxW: "47%",
+                    fontSize: "xs",
+                  },
+                }}
+              >
+                <FaTruck /> Calcular envío
+              </Button>
+              <Button
+                borderWidth="2px"
+                borderColor="#AE5BDD"
+                variant="outline"
+                flex="1"
+                _hover={{
+                  bg: "#422A52",
+                  color: "white",
+                  borderColor: "#422A52",
+                }}
+                fontSize={{ base: "sm", md: "sm" }}
+                css={{
+                  "@media screen and (max-width: 321px)": {
+                    maxW: "47%",
+                    fontSize: "xs",
+                  },
+                }}
+                onClick={() => handleClick(quantity)}
+              >
+                <FaShoppingCart /> Agregar
+              </Button>
+            </HStack>
+          </VStack>
+        </Box>
+      </Box>
+      <Description description={description} />
+      <RelatedProducts
+        products={related}
+        id_product={id}
+        id_category={id_category}
+      />
+      <ProductReviews reviews={reviews} />
+    </>
+  );
+}

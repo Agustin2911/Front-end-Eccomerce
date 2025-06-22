@@ -29,75 +29,77 @@ export default function BrandProductShowcase({
   const total = products.length;
 
   // pick your card scale
-  const cardScale = isSmallDesktop ? 0.80 : 0.85;
+  const cardScale = isSmallDesktop ? 0.8 : 0.85;
 
   useEffect(() => {
-      const fetchProductos = async () => {
-        if (!productIds || productIds.length === 0) {
-          setError("No product IDs provided");
-          setLoading(false);
-          return;
+    const fetchProductos = async () => {
+      if (!productIds || productIds.length === 0) {
+        setError("No product IDs provided");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log("Fetching products for IDs:", productIds);
+
+        const requests = productIds.map((id) => {
+          const url = `http://localhost:1273/product/productById/${id}`;
+          console.log("Fetching:", url);
+          return fetch(url);
+        });
+
+        const responses = await Promise.all(requests);
+
+        // Check each response individually
+        const data = await Promise.all(
+          responses.map(async (res, index) => {
+            if (!res.ok) {
+              console.error(
+                `Error fetching product ${productIds[index]}:`,
+                res.status,
+                res.statusText
+              );
+              throw new Error(
+                `Error ${res.status}: ${res.statusText} for product ${productIds[index]}`
+              );
+            }
+            const productData = await res.json();
+            console.log(`Product ${productIds[index]} data:`, productData);
+            return productData;
+          })
+        );
+
+        const validProducts = data.filter((p) => p && p.id_product);
+        console.log("Valid products:", validProducts);
+        setProducts(validProducts);
+
+        if (validProducts.length === 0) {
+          setError("No valid products found");
         }
-  
-        try {
-          setLoading(true);
-          setError(null);
-          
-          console.log("Fetching products for IDs:", productIds);
-          
-          const requests = productIds.map((id) => {
-            const url = `http://localhost:1273/product/productById/${id}`;
-            console.log("Fetching:", url);
-            return fetch(url);
-          });
-  
-          const responses = await Promise.all(requests);
-          
-          // Check each response individually
-          const data = await Promise.all(
-            responses.map(async (res, index) => {
-              if (!res.ok) {
-                console.error(`Error fetching product ${productIds[index]}:`, res.status, res.statusText);
-                throw new Error(`Error ${res.status}: ${res.statusText} for product ${productIds[index]}`);
-              }
-              const productData = await res.json();
-              console.log(`Product ${productIds[index]} data:`, productData);
-              return productData;
-            })
-          );
-  
-          const validProducts = data.filter(p => p && p.id_product);
-          console.log("Valid products:", validProducts);
-          setProducts(validProducts);
-          
-          if (validProducts.length === 0) {
-            setError("No valid products found");
-          }
-        } catch (err) {
-          setError(err.message);
-          console.error("Error al obtener productos:", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchProductos();
-    }, [productIds]);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error al obtener productos:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductos();
+  }, [productIds]);
   return (
     <Box
       as="section"
-      h={{ base: "auto", md: "500px" }}   // allow collapse on small screens
+      h={{ base: "auto", md: "500px" }} // allow collapse on small screens
       w="100%"
       overflow="hidden"
       px={{ base: 4, md: 8 }}
       py={{ base: 4, md: 8 }}
       bg="transparent"
     >
-      <Flex
-        h="100%"
-        minH="0"
-        flexDir={{ base: "column", md: "row" }}
-      >
+      <Flex h="100%" minH="0" flexDir={{ base: "column", md: "row" }}>
         {/* Video Panel */}
         {videoLeft && (
           <Box
@@ -128,7 +130,12 @@ export default function BrandProductShowcase({
               borderColor="#EC1877"
               variant="outline"
               color="#F1E6F7"
-              _hover={{ bg: "#EC1877", color: "#F1E6F7", borderColor: "#F1E6F7", boxShadow: "0 0 8px 2px #F1E6F7", }}
+              _hover={{
+                bg: "#EC1877",
+                color: "#F1E6F7",
+                borderColor: "#F1E6F7",
+                boxShadow: "0 0 8px 2px #F1E6F7",
+              }}
             >
               {exploreText}
             </Button>
@@ -149,17 +156,17 @@ export default function BrandProductShowcase({
           <SimpleGrid
             columns={{ base: 1, sm: 2, md: 4 }}
             spacing={6}
-            h= "100%"      // auto height on small
-            gridAutoRows="1fr"  
+            h="100%" // auto height on small
+            gridAutoRows="1fr"
             justifyItems="center"
             alignItems="center"
           >
             {products.slice(0, 4).map((prod) => (
               <Box
                 key={prod.id}
-                w= "100%"
-                maxW= "250px"
-                h="100%"              // fill the grid cell
+                w="100%"
+                maxW="250px"
+                h="100%" // fill the grid cell
                 display="flex"
                 alignItems="stretch"
                 justifyContent="center"
@@ -173,15 +180,7 @@ export default function BrandProductShowcase({
                   transformOrigin="center center"
                   w="100%"
                 >
-                  <LandingProductCard
-                    image={prod.photo_url || 
-                               "https://www.freundferreteria.com/Productos/GetImagenProductoPrincipal?idProducto=default"}
-                    name={prod.product_name}
-                    price={prod.price}
-                    id={prod.id_product}
-                    discount={prod.discount}
-                    discountState={prod.discount_state}
-                  />
+                  <LandingProductCard product={prod} />
                 </Box>
               </Box>
             ))}
@@ -207,7 +206,7 @@ export default function BrandProductShowcase({
               height="100%"
               objectFit="cover"
             />
-             {/* ←—— NEW BUTTON */}
+            {/* ←—— NEW BUTTON */}
             <Button
               position="absolute"
               transition="box-shadow 0.2s ease"
@@ -218,7 +217,12 @@ export default function BrandProductShowcase({
               borderColor="#EC1877"
               variant="outline"
               color="#F1E6F7"
-              _hover={{ bg: "#EC1877", color: "#F1E6F7", borderColor: "#F1E6F7", boxShadow: "0 0 8px 2px #F1E6F7",}}
+              _hover={{
+                bg: "#EC1877",
+                color: "#F1E6F7",
+                borderColor: "#F1E6F7",
+                boxShadow: "0 0 8px 2px #F1E6F7",
+              }}
             >
               {exploreText}
             </Button>

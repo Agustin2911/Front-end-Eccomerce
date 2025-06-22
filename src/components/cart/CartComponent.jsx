@@ -2,33 +2,16 @@ import { Box, Text, Button, Stack, StackSeparator } from "@chakra-ui/react";
 import Cardcart from "./CardCart";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-function deleter_cart(setCart) {
-  setCart([]);
-}
-
-function CartComponent({ cart, setCart }) {
-  let navigate = useNavigate();
-
-  useEffect(() => {}, []);
-
-  function delete_product(id_product, setSuccess) {
-    return function (event) {
-      let index_delete = cart.findIndex((e) => e.id_product === id_product);
-
-      const updatedCart = [...cart];
-      let carrito = updatedCart.filter(
-        (producto, index) => index !== index_delete
-      );
-
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 1000);
-      setTimeout(() => setCart(carrito), 1000);
-    };
-  }
+import { useSelector } from "react-redux";
+import { clearCart } from "../../features/cart/cartSlice";
+import { useDispatch } from "react-redux";
+function CartComponent() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
 
   function check_card() {
-    if (cart.length > 0) {
+    if (cart.items.length > 0) {
       navigate("/delivery");
     }
   }
@@ -36,20 +19,21 @@ function CartComponent({ cart, setCart }) {
   return (
     <div
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         width: "100%",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#170d20", // Fondo principal
+        alignItems: "flex-start", // 👈 IMPORTANTE
+        backgroundColor: "#170d20",
+        paddingTop: "20px", // 👈 espacio desde arriba para que no quede pegado
+        paddingBottom: "20px", // 👈 espacio para botones abajo
+        overflowY: "auto", // 👈 permite scroll en pantallas chicas
       }}
     >
       <Box
         width={{ base: "100%", md: "80%", lg: "100%" }}
-        height={{ base: "100%", md: "100%" }}
         display="flex"
         flexDirection="column"
-        justifyContent="center"
         alignItems="center"
         p={4}
       >
@@ -59,51 +43,33 @@ function CartComponent({ cart, setCart }) {
           textAlign="center"
           color="#f1e6f7"
         >
-          {cart.length > 0
-            ? `El total de tu carrito es de: $${cart.reduce(
-                (acc, item) => acc + item.price * item.amount,
-                0
-              )}`
+          {cart.items.length > 0
+            ? `El total de tu carrito es de: $${cart.total}`
             : "El carrito está vacío 🛒"}
         </Text>
 
         <Box
-          borderWidth={"5px"}
-          borderColor={"#D3A5EE"}
-          shadow="2px 2px 2px 1px rgb(187, 141, 214)"
-          height={{ base: "70%", md: "80%" }}
+          borderWidth="5px"
+          borderColor="#D3A5EE"
+          boxShadow="2px 2px 2px 1px rgb(187, 141, 214)"
+          maxHeight="70vh" // 👈 límite razonable para scroll interno
           my={6}
           width={{ base: "90%", md: "80%" }}
           borderRadius="lg"
           p={4}
           overflowY="auto"
           backgroundColor="white"
-          display={cart.length > 0 ? "block" : "flex"}
-          alignItems={"center"}
-          justifyContent={"center"}
         >
-          <Stack separator={<StackSeparator />}>
-            {cart.length > 0 ? (
-              cart.map((product, index) => (
-                <Cardcart
-                  key={index}
-                  index={index}
-                  id_product={product.id_product}
-                  product_name={product.product_name}
-                  amount={product.amount}
-                  price={product.price}
-                  url="  "
-                  condition={product.condition}
-                  delete_product={delete_product}
-                  cart={cart}
-                  setCart={setCart}
-                />
+          <Stack spacing={4} separator={<StackSeparator />}>
+            {cart.items.length > 0 ? (
+              cart.items.map((product, index) => (
+                <Cardcart key={index} index={index} product={product} />
               ))
             ) : (
               <Box
                 display="flex"
                 width="100%"
-                height="100%"
+                height="800px"
                 fontSize="3xl"
                 justifyContent="center"
                 alignItems="center"
@@ -112,10 +78,24 @@ function CartComponent({ cart, setCart }) {
                 <Text color="#170D20">El carrito está vacío..</Text>
               </Box>
             )}
+
+            {cart.items.length <= 2 && cart.items.length > 0 ? (
+              <Box
+                display="flex"
+                width="100%"
+                height="400px"
+                fontSize="3xl"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+              ></Box>
+            ) : (
+              ""
+            )}
           </Stack>
         </Box>
 
-        <Box display="flex" flexDirection="row" gap={10}>
+        <Box display="flex" flexDirection="row" gap={10} flexWrap="wrap">
           <Button
             borderRadius="lg"
             width={{ base: "150px", md: "350px" }}
@@ -130,7 +110,7 @@ function CartComponent({ cart, setCart }) {
           <Button
             borderRadius="lg"
             width={{ base: "150px", md: "350px" }}
-            onClick={() => deleter_cart(setCart)}
+            onClick={() => dispatch(clearCart())}
             bg="#AE5BDD"
             _hover={{ bg: "#9149bc" }}
             color="white"

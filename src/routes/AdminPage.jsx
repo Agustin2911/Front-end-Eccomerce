@@ -12,30 +12,31 @@ import {
   Button,
   Stack,
   Spinner,
-  HStack
+  HStack,
 } from "@chakra-ui/react";
 
-export default function AdminPage({ id_user, token, type }) {
-  
-  const navigate = useNavigate();
+import { useSelector } from "react-redux";
 
+export default function AdminPage() {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
   useEffect(() => {
-    if (!token || type !== "admin") {
+    if (!user.token || user.type !== "admin") {
       navigate("/signup", { replace: true });
     }
-  }, [token, type, navigate]);
+  }, [user.token, user.type, navigate]);
 
-    // — Estados para usuarios —
+  // — Estados para usuarios —
   const [users, setUsers] = useState([]);
   const [showUsers, setShowUsers] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
 
-  // — Estados para sellers 
+  // — Estados para sellers
   const [sellers, setSellers] = useState([]);
   const [showSellers, setShowSellers] = useState(false);
   const [loadingSellers, setLoadingSellers] = useState(false);
   const [approvingId, setApprovingId] = useState(null);
-  const pendingSellers = sellers.filter(s => s.state === "false");
+  const pendingSellers = sellers.filter((s) => s.state === "false");
 
   const handleToggleUsers = async () => {
     if (showUsers) {
@@ -47,8 +48,10 @@ export default function AdminPage({ id_user, token, type }) {
     try {
       const resp = await fetch("http://localhost:1273/basic_user/roles", {
         method: "GET",
-        headers: { "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`},
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
       });
       if (!resp.ok) throw new Error(await resp.text());
       const data = await resp.json();
@@ -71,8 +74,10 @@ export default function AdminPage({ id_user, token, type }) {
     try {
       const resp = await fetch("http://localhost:1273/seller_user", {
         method: "GET",
-        headers: { "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`},
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
       });
       if (!resp.ok) throw new Error(await resp.text());
       const data = await resp.json();
@@ -86,24 +91,24 @@ export default function AdminPage({ id_user, token, type }) {
     }
   };
 
-   const handleApproveSeller = async (seller) => {
-   const sellerId = seller.id_user ?? seller.id;
-   setApprovingId(sellerId);
+  const handleApproveSeller = async (seller) => {
+    const sellerId = seller.id_user ?? seller.id;
+    setApprovingId(sellerId);
     try {
       const resp = await fetch("http://localhost:1273/seller_user", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({ ...seller, state: true })
+        body: JSON.stringify({ ...seller, state: true }),
       });
       if (!resp.ok) throw new Error(await resp.text());
       // una vez aprobado, quitarlo de la lista en pantalla
-      setSellers(prev =>
-            prev.filter(s => (s.id_user ?? s.id) !== sellerId)
-        );  
-      } catch (err) {
+      setSellers((prev) =>
+        prev.filter((s) => (s.id_user ?? s.id) !== sellerId)
+      );
+    } catch (err) {
       console.error("Error al aprobar seller:", err);
       alert("No se pudo aprobar. Revisa la consola.");
     } finally {
@@ -111,14 +116,13 @@ export default function AdminPage({ id_user, token, type }) {
     }
   };
 
-
   return (
     <Flex
       direction="column"
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar type={type} id_user={id_user} />
+      <MainNavbar />
 
       <Box flex="1" py={12} px={8}>
         <Flex
@@ -171,8 +175,6 @@ export default function AdminPage({ id_user, token, type }) {
                         <Text color="whiteAlpha.600" fontSize="sm">
                           {u.mail}
                         </Text>
-                          
-
                       </Box>
                     ))}
                   </Stack>
@@ -195,7 +197,8 @@ export default function AdminPage({ id_user, token, type }) {
               Vendedores pendientes
             </Heading>
             <Text color="#F1E6F7" mb={6}>
-              Revisa y aprueba las cuentas de vendedor pendientes de verificación.
+              Revisa y aprueba las cuentas de vendedor pendientes de
+              verificación.
             </Text>
             <Button
               color="#AE5BDD"
@@ -213,37 +216,39 @@ export default function AdminPage({ id_user, token, type }) {
                   <Spinner color="purple.400" />
                 ) : pendingSellers.length > 0 ? (
                   <Stack spacing={3} maxH="300px" overflowY="auto">
-                    {pendingSellers
-                    .map((s) =>{
-                    const sid = s.id_user ?? s.id;
-                    return (
-                    <HStack
-                    key={s.id_user}
-                    p={3}
-                    bg="blackAlpha.300"
-                    borderRadius="md"
-                    justify="space-between"
-                    >
-                        <Box>
+                    {pendingSellers.map((s) => {
+                      const sid = s.id_user ?? s.id;
+                      return (
+                        <HStack
+                          key={s.id_user}
+                          p={3}
+                          bg="blackAlpha.300"
+                          borderRadius="md"
+                          justify="space-between"
+                        >
+                          <Box>
                             <Text color="#F1E6F7">{s.company_name}</Text>
                             <Text color="whiteAlpha.600" fontSize="sm">
-                                {s.cuit}
+                              {s.cuit}
                             </Text>
-                        </Box>
-                        <Button
-                        color="#AE5BDD"
-                        variant="ghost"
-                        _hover={{ bg: "blackAlpha.500", color: "#EC1877" }}
-                        isLoading={approvingId === sid}
-                        onClick={() => handleApproveSeller(s)}  // <-- aquí pasas todo 's'
-                        >
+                          </Box>
+                          <Button
+                            color="#AE5BDD"
+                            variant="ghost"
+                            _hover={{ bg: "blackAlpha.500", color: "#EC1877" }}
+                            isLoading={approvingId === sid}
+                            onClick={() => handleApproveSeller(s)} // <-- aquí pasas todo 's'
+                          >
                             Aprobar
-                        </Button>
-                    </HStack>
-                    )})}
-                </Stack>                
+                          </Button>
+                        </HStack>
+                      );
+                    })}
+                  </Stack>
                 ) : (
-                  <Text color="whiteAlpha.600">No hay vendedores pendientes.</Text>
+                  <Text color="whiteAlpha.600">
+                    No hay vendedores pendientes.
+                  </Text>
                 )}
               </Box>
             )}

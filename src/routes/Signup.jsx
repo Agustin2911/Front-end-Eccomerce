@@ -2,12 +2,19 @@ import { Link, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { GoXCircle } from "react-icons/go";
-function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
+import { useDispatch } from "react-redux";
+import { login, logout } from "../features/user/userSlice";
+import { useSelector } from "react-redux";
+
+function Signup() {
   const [user_email, setEmail] = useState("");
   const [user_password, setPassword] = useState("");
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user);
 
   const handleFetch = async () => {
     setLoading(true);
@@ -30,10 +37,14 @@ function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
 
       const result = await response.json();
 
-      SetType(result.type);
-      settoken(result.access_token);
-      setImage_path(result.photo_url);
-      setId_usuario(result.id_user);
+      dispatch(
+        login({
+          id_usuario: result.id_user,
+          image_path: result.photo_url,
+          type: result.type,
+          token: result.access_token,
+        })
+      );
 
       setData("success");
     } catch (error) {
@@ -121,7 +132,11 @@ function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
         </button>
 
         <div style={{ marginBottom: "10px" }}>
-          <a as={RouterLink} to="#" style={{ textDecoration: "none", color: "#ad5add" }}>
+          <a
+            as={RouterLink}
+            to="#"
+            style={{ textDecoration: "none", color: "#ad5add" }}
+          >
             Te olvidaste la contraseña?
           </a>
         </div>
@@ -136,16 +151,16 @@ function Signup({ token, settoken, setImage_path, setId_usuario, SetType }) {
           </Link>
         </div>
         <Box textAlign="center" width="100%" maxWidth="400px" px="6" mt={1}>
-            <Button 
+          <Button
             variant="plain"
             color="#ad5add"
-            _hover={{ color: "#EC1877"}}
+            _hover={{ color: "#EC1877" }}
             mb="6"
             onClick={() => navigate("/")}
-            >
+          >
             <GoXCircle />
             Volver
-            </Button>
+          </Button>
         </Box>
       </Box>
     </Box>

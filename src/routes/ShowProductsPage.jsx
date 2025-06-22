@@ -8,8 +8,7 @@ import Footer from "../components/allPages/Footer";
 import ShowProducts from "../components/showProductsPage/ShowProducts";
 import Filters from "../components/showProductsPage/Filters";
 
-
-export default function ShowProductsPage({ cart, type, id_user }) {
+export default function ShowProductsPage() {
   const { categoryId, subCategoryId } = useParams();
   const [productos, setProductos] = useState([]);
 
@@ -77,7 +76,8 @@ export default function ShowProductsPage({ cart, type, id_user }) {
   let breadcrumbLabel;
   let breadcrumbLink;
   if (subCategoryId) {
-    breadcrumbLabel = SUBCATEGORY_NAMES[subCategoryId] || `Subcategoría ${subCategoryId}`;
+    breadcrumbLabel =
+      SUBCATEGORY_NAMES[subCategoryId] || `Subcategoría ${subCategoryId}`;
     breadcrumbLink = `/products/subCategory/${subCategoryId}`;
   } else if (categoryId) {
     breadcrumbLabel = CATEGORY_NAMES[categoryId] || `Categoría ${categoryId}`;
@@ -106,8 +106,7 @@ export default function ShowProductsPage({ cart, type, id_user }) {
 
   return (
     <Box bg={"#170d20"}>
-      <MainNavbar cart={cart} type={type} id_user={id_user}/>
-
+      <MainNavbar />
 
       {/* Breadcrumb */}
       <Stack mt={"30px"} ml={"50px"}>
@@ -125,7 +124,7 @@ export default function ShowProductsPage({ cart, type, id_user }) {
                 Inicio
               </Breadcrumb.Link>
             </Breadcrumb.Item>
-            <Breadcrumb.Separator color="white"/>
+            <Breadcrumb.Separator color="white" />
             <Breadcrumb.Item>
               <Breadcrumb.Link
                 as={RouterLink}

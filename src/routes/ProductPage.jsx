@@ -6,38 +6,40 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import ProductSection from "../components/productPage/ProductSection";
 import { useState, useEffect } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-
-
-export default function ProductPage({cart, setCart, type, id_user}) {
- console.log("🔍 ShowProductsPage: id_user =", id_user); 
+export default function ProductPage() {
+  const user = useSelector((state) => state.user);
+  console.log("🔍 ShowProductsPage: id_user =", user.id_usuario);
   const { id_product } = useParams();
-    
   useEffect(() => {
-  if ( id_product ) {
-    window.scrollTo(0,0);
+    if (id_product) {
+      window.scrollTo(0, 0);
     }
-  }, [ id_product ]);
-
+  }, [id_product]);
 
   const [stockData, setStockData] = useState({ stock: 0, stock_warning: 0 });
   const [productData, setProductData] = useState(null);
   const [error, setError] = useState(null);
-  const [reviewsData, setReviewsData] = useState([])
-  const [relatedData, setRelatedData] = useState([])  
-  const [catSubcatData, setCatSubcatData] = useState("","","","")
-  
+  const [reviewsData, setReviewsData] = useState([]);
+  const [relatedData, setRelatedData] = useState([]);
+  const [catSubcatData, setCatSubcatData] = useState("", "", "", "");
+
   useEffect(() => {
     if (!id_product) return;
 
     const fetchCatSubcat = async () => {
       try {
-        const resCatSubcat = await fetch(`http://localhost:1273/product/category-subCategory/${id_product}`);
+        const resCatSubcat = await fetch(
+          `http://localhost:1273/product/category-subCategory/${id_product}`
+        );
         if (!resCatSubcat.ok) {
-          throw new Error(`Error categoría y subcategoría: ${resCatSubcat.status}`);
+          throw new Error(
+            `Error categoría y subcategoría: ${resCatSubcat.status}`
+          );
         }
         const jsonCatSubcat = await resCatSubcat.json();
-        setCatSubcatData(jsonCatSubcat); 
+        setCatSubcatData(jsonCatSubcat);
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -46,7 +48,6 @@ export default function ProductPage({cart, setCart, type, id_user}) {
 
     fetchCatSubcat();
   }, [id_product]);
-
 
   useEffect(() => {
     if (!id_product) return;
@@ -90,33 +91,29 @@ export default function ProductPage({cart, setCart, type, id_user}) {
         }
         setReviewsData(reviewJson);
 
-        if (catSubcatData && catSubcatData[2] !== '') {
-        
-            const resRelated = await fetch(`http://localhost:1273/product/byCategoryid/${catSubcatData[2]}`);
-            setRelatedData(await resRelated.json())
-        }else{
-            setRelatedData([])
+        if (catSubcatData && catSubcatData[2] !== "") {
+          const resRelated = await fetch(
+            `http://localhost:1273/product/byCategoryid/${catSubcatData[2]}`
+          );
+          setRelatedData(await resRelated.json());
+        } else {
+          setRelatedData([]);
         }
-        
-        
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message);
       }
     }
     fetchAll();
-  }, [catSubcatData, id_product]); 
+  }, [catSubcatData, id_product]);
 
-
-  if (
-    !productData 
-  ) {
+  if (!productData) {
     return <div>Cargando producto...</div>;
   }
-  const categoryUpper = catSubcatData?.[0]?.toUpperCase() ?? "ERROR"
-  const subCategoryUpper = catSubcatData?.[1]?.toUpperCase() ?? "ERROR"
-  const categoryId = catSubcatData?.[2] ?? ''
-  const subCategoryId = catSubcatData?.[3] ?? ''
+  const categoryUpper = catSubcatData?.[0]?.toUpperCase() ?? "ERROR";
+  const subCategoryUpper = catSubcatData?.[1]?.toUpperCase() ?? "ERROR";
+  const categoryId = catSubcatData?.[2] ?? "";
+  const subCategoryId = catSubcatData?.[3] ?? "";
   return (
     <Flex
       direction="column"
@@ -124,7 +121,7 @@ export default function ProductPage({cart, setCart, type, id_user}) {
       backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
       {/* Navbar */}
-      <MainNavbar cart={cart} type={type} id_user={id_user} />
+      <MainNavbar />
 
       {/* Contenido principal */}
 
@@ -148,7 +145,7 @@ export default function ProductPage({cart, setCart, type, id_user}) {
             >
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  as={RouterLink} 
+                  as={RouterLink}
                   to="/"
                   fontSize="sm"
                   color="#F1E6F7"
@@ -163,8 +160,10 @@ export default function ProductPage({cart, setCart, type, id_user}) {
               <Breadcrumb.Separator />
               <Breadcrumb.Item>
                 <Breadcrumb.Link
-                  as={RouterLink}            
-                  to={categoryId != "" ? `/products/category/${categoryId}` : "#" }
+                  as={RouterLink}
+                  to={
+                    categoryId != "" ? `/products/category/${categoryId}` : "#"
+                  }
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
@@ -172,14 +171,18 @@ export default function ProductPage({cart, setCart, type, id_user}) {
                   wordBreak="normal"
                   overflowWrap="break-word"
                 >
-                    {categoryUpper} 
+                  {categoryUpper}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
               <Breadcrumb.Separator />
               <Breadcrumb.Item>
                 <Breadcrumb.Link
                   as={RouterLink}
-                  to={subCategoryId != "" ? `/products/subCategory/${subCategoryId}` : "#" }
+                  to={
+                    subCategoryId != ""
+                      ? `/products/subCategory/${subCategoryId}`
+                      : "#"
+                  }
                   fontSize="sm"
                   color="#F1E6F7"
                   textDecoration="none"
@@ -187,7 +190,7 @@ export default function ProductPage({cart, setCart, type, id_user}) {
                   wordBreak="normal"
                   overflowWrap="break-word"
                 >
-                    {subCategoryUpper}
+                  {subCategoryUpper}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
               <Breadcrumb.Separator />
@@ -205,21 +208,24 @@ export default function ProductPage({cart, setCart, type, id_user}) {
             </Breadcrumb.List>
           </Breadcrumb.Root>
 
-       
-
-        {/* DIV ENORME: aquí va toda la info de producto */}
-        <Box
-          id="product-container"
-          bg="white" 
-          borderWidth="0px"
-          p={6}
-        >
-       
-            <ProductSection reviews={reviewsData} name={productData.product_name} images={productData.photo_url} description={productData.description} price={productData.price} related={relatedData} stock={stockData.stock} stockWarning={stockData.stock_warning} id={productData.id_product} id_category={catSubcatData[2]} cart={cart} setCart={setCart} discount={productData.discount} discount_state={productData.discount_state}></ProductSection> 
-
-
+          {/* DIV ENORME: aquí va toda la info de producto */}
+          <Box id="product-container" bg="white" borderWidth="0px" p={6}>
+            <ProductSection
+              reviews={reviewsData}
+              name={productData.product_name}
+              images={productData.photo_url}
+              description={productData.description}
+              price={productData.price}
+              related={relatedData}
+              stock={stockData.stock}
+              stockWarning={stockData.stock_warning}
+              id={productData.id_product}
+              id_category={catSubcatData[2]}
+              discount={productData.discount}
+              discount_state={productData.discount_state}
+            ></ProductSection>
+          </Box>
         </Box>
-      </Box>
       </Box>
 
       {/* Footer */}

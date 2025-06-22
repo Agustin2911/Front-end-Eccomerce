@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import MainNavbar from "../components/allPages/MainNavbar";
 
-const MyOrders = ({ cart, type, id_usuario }) => {
+const MyOrders = () => {
   const { idUser } = useParams();
   const [showHistorial, setShowHistorial] = useState(false);
   const [delivered, setDelivered] = useState([]);
@@ -31,7 +31,7 @@ const MyOrders = ({ cart, type, id_usuario }) => {
     const sumarPedidos = (listaPedidos) =>
       listaPedidos.reduce((total, pedido) => {
         const subtotal = pedido.reduce(
-          (acc, item) => acc + item.price * item.amount,
+          (acc, item) => acc + item.price * -item.amount,
           0
         );
         return total + subtotal;
@@ -159,7 +159,7 @@ const MyOrders = ({ cart, type, id_usuario }) => {
 
     // Calcular total
     const total = pedido.reduce(
-      (acc, item) => acc + item.price * item.amount,
+      (acc, item) => acc + item.price * -item.amount,
       0
     );
 
@@ -171,12 +171,9 @@ const MyOrders = ({ cart, type, id_usuario }) => {
         borderColor={borderColor}
         borderRadius="md"
         p={6}
-        width={{ base: "360px", md: "600px" }}
-        ml={3}
         height="100%"
-        boxShadow={
-          "0 8px 12px rgba(0, 0, 0, 0.15), 0 16px 35px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
-        }
+        boxShadow="0 8px 12px rgba(0, 0, 0, 0.15), 0 16px 35px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
+        width={{ sm: "600px", base: "380px" }}
       >
         <Flex direction="column" justify="space-between" height="100%">
           <Box>
@@ -210,7 +207,7 @@ const MyOrders = ({ cart, type, id_usuario }) => {
                   {item.product_name} × {item.amount}
                 </Text>
                 <Text fontWeight="medium" color={"#F1E6F7"}>
-                  {formatPrice(item.price * item.amount)}
+                  {formatPrice(-item.price * item.amount)}
                 </Text>
               </Flex>
             ))}
@@ -236,7 +233,7 @@ const MyOrders = ({ cart, type, id_usuario }) => {
 
   return (
     <Box bg={"#170D20"}>
-      <MainNavbar cart={cart} type={type} id_user={id_usuario}></MainNavbar>
+      <MainNavbar></MainNavbar>
       {/* Header */}
       <VStack spacing={8} m={8}>
         <Box textAlign="center">
@@ -302,29 +299,23 @@ const MyOrders = ({ cart, type, id_usuario }) => {
 
           <Grid
             templateColumns={{
-              base: "1fr", // 1 columna en móviles
-              sm: "repeat(2, 1fr)", // 2 columnas en pantallas pequeñas
-              md: "repeat(3, 1fr)", // máximo 3 columnas en pantallas medianas o grandes
+              base: "1fr", // 1 tarjeta por fila en móviles
+              sm: "repeat(2, 1fr)", // 2 tarjetas por fila en tablets
+              lg: "repeat(3, 1fr)", // 3 tarjetas por fila en pantallas grandes
             }}
-            style={
-              delivered.length === 0
-                ? {
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#170d20",
-                    marginTop: "50px",
-                  }
-                : {}
-            }
-            gap={3}
+            gap={6}
+            mt={4}
           >
             {inProgress.length > 0 ? (
               inProgress.map((pedido, index) => (
                 <PedidoCard key={index} pedido={pedido} />
               ))
             ) : (
-              <Text color={"#F1E6F7"}>no se hay pedidos pendientes</Text>
+              <Box colSpan={{ base: 1, sm: 2, lg: 3 }}>
+                <Text textAlign="center" color="#F1E6F7">
+                  No hay pedidos pendientes
+                </Text>
+              </Box>
             )}
           </Grid>
         </Box>

@@ -1,7 +1,7 @@
 // src/pages/PublishPage.jsx
 
 import React, { useState, useRef } from "react";
-import {Link as RouterLink} from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Flex,
   Box,
@@ -10,57 +10,53 @@ import {
   Input,
   Textarea,
   Button,
-  HStack, 
+  HStack,
   Image,
   Link,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
+import { useSelector } from "react-redux";
 
-export default function PublishPage({ cart, token, type }) {
-    
-    const navigate = useNavigate();
+export default function PublishPage() {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (!token || type !== "seller") {
+    if (!user.token || user.type !== "seller") {
       navigate("/signup", { replace: true });
     }
-  }, [token, type, navigate]);
+  }, [user.token, user.type, navigate]);
 
+  const [sellerShopData, setSellerShopData] = useState(null);
+  const [shopId, setShopId] = useState(null);
+  const [sellerData, setSellerData] = useState(null);
 
+  const { id_user } = useParams();
 
-    const [sellerShopData, setSellerShopData] = useState(null);
-    const [shopId, setShopId] = useState(null);
-    const [sellerData, setSellerData] = useState(null)
-
-    const { id_user } = useParams();
-
-    useEffect(() => {
+  useEffect(() => {
     if (!id_user) return;
 
     const fetchSellerId = async () => {
       try {
         const resSellerId = await fetch(
-            `http://localhost:1273/seller_user/${id_user}`,
+          `http://localhost:1273/seller_user/${id_user}`
         );
         if (!resSellerId.ok) {
           throw new Error(`Error shops de seller: ${resSellerId.status}`);
         }
         const jsonSellerId = await resSellerId.json();
-        setSellerData(jsonSellerId); 
-        
+        setSellerData(jsonSellerId);
       } catch (err) {
         console.error(err);
-      } 
+      }
     };
 
     fetchSellerId();
   }, [id_user]);
-
-
 
   useEffect(() => {
     if (!id_user) return;
@@ -68,73 +64,74 @@ export default function PublishPage({ cart, token, type }) {
     const fetchSellerShops = async () => {
       try {
         const resSellerShop = await fetch(
-            `http://localhost:1273/seller_user/shops/${id_user}`,
-            {   
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
+          `http://localhost:1273/seller_user/shops/${id_user}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "Content-Type": "application/json",
+            },
+          }
         );
         if (!resSellerShop.ok) {
           throw new Error(`Error shops de seller: ${resSellerShop.status}`);
         }
         const jsonSellerShop = await resSellerShop.json();
-        setSellerShopData(jsonSellerShop); 
+        setSellerShopData(jsonSellerShop);
         console.log(jsonSellerShop[0]);
         if (Array.isArray(jsonSellerShop) && jsonSellerShop.length > 0) {
-            setShopId(jsonSellerShop[0]);
+          setShopId(jsonSellerShop[0]);
         }
-        
       } catch (err) {
         console.error(err);
-      } 
+      }
     };
 
     fetchSellerShops();
-  }, [id_user, token]);
+  }, [id_user, user.token]);
 
-    const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
-    const [subcategoria, setSubcategoria] = useState("");
+  const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
+  const [subcategoria, setSubcategoria] = useState("");
 
-   const handleRegisterProduct = async () => {
+  const handleRegisterProduct = async () => {
     if (isButtonDisabled) return;
 
     // Evitamos doble envío
     setIsSubmittingProduct(true);
 
     try {
-            const encodedSubcat = encodeURIComponent(subcategoria.trim());
-    const resSub = await fetch(
-      `http://localhost:1273/sub_categories/name/${encodedSubcat}`
-    );
-    if (!resSub.ok) {
-      throw new Error(`No se pudo obtener ID de subcategoría (${resSub.status})`);
-    }
-        const id_sub_category = await resSub.json();
-        if (id_sub_category == null) {
-      throw new Error("El endpoint de subcategoría devolvió un valor inválido.");
-    }
-   
+      const encodedSubcat = encodeURIComponent(subcategoria.trim());
+      const resSub = await fetch(
+        `http://localhost:1273/sub_categories/name/${encodedSubcat}`
+      );
+      if (!resSub.ok) {
+        throw new Error(
+          `No se pudo obtener ID de subcategoría (${resSub.status})`
+        );
+      }
+      const id_sub_category = await resSub.json();
+      if (id_sub_category == null) {
+        throw new Error(
+          "El endpoint de subcategoría devolvió un valor inválido."
+        );
+      }
 
-     const formData = new FormData();
-    formData.append("product_name", nombre.trim());
-    formData.append("price", precio);
-    formData.append("description", descripcion.trim());
-    formData.append("discount_state", "false");
-    formData.append("discount", 0);
-    formData.append("id_sub_category", id_sub_category);
-    // <-- aquí le pasamos directamente el File
-    formData.append("photo_url", imageFile); 
+      const formData = new FormData();
+      formData.append("product_name", nombre.trim());
+      formData.append("price", precio);
+      formData.append("description", descripcion.trim());
+      formData.append("discount_state", "false");
+      formData.append("discount", 0);
+      formData.append("id_sub_category", id_sub_category);
+      // <-- aquí le pasamos directamente el File
+      formData.append("photo_url", imageFile);
 
       const response = await fetch("http://localhost:1273/product", {
-      method: "POST",
-      headers: {
-        
-        "Authorization": `Bearer ${token}`,
-      },
-        body: formData
-        });
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: formData,
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -150,30 +147,27 @@ export default function PublishPage({ cart, token, type }) {
       console.log("Producto creado con éxito:", data);
 
       const stockPayload = {
-        id:    data.id_product,    // o data.idProduct según tu API
-        stock_entry:         stockAct,
-        shop:          shopId,
-        stock_warning: stockMin
+        id: data.id_product, // o data.idProduct según tu API
+        stock_entry: stockAct,
+        shop: shopId,
+        stock_warning: stockMin,
       };
 
-      const stockRes = await fetch(
-        "http://localhost:1273/stock",
-      {
+      const stockRes = await fetch("http://localhost:1273/stock", {
         method: "POST",
         headers: {
-            "Content-Type":  "application/json",
-            "Authorization": `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify(stockPayload)
-      }
-     );
+        body: JSON.stringify(stockPayload),
+      });
 
       if (!stockRes.ok) {
         const errText = await stockRes.text();
         console.error("Error al crear stock:", errText);
         alert("Se creó el producto pero falló el registro de stock.");
       } else {
-            console.log("Stock registrado con éxito");
+        console.log("Stock registrado con éxito");
       }
 
       alert("¡El producto y su stock se crearon con éxito!");
@@ -194,9 +188,7 @@ export default function PublishPage({ cart, token, type }) {
     }
   };
 
-
-
-    // 1) Listas de nombres (categorías y subcategorías)
+  // 1) Listas de nombres (categorías y subcategorías)
   const categories = [
     "PCs Armadas",
     "Placas de Video",
@@ -261,16 +253,15 @@ export default function PublishPage({ cart, token, type }) {
   // 2) Estados de campos
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [precio, setPrecio] = useState("");      // "" o número entero
-  const [stockAct, setStockAct] = useState("");   // "" o entero ≥ 0
-  const [stockMin, setStockMin] = useState("");   // "" o entero ≥ 0
+  const [precio, setPrecio] = useState(""); // "" o número entero
+  const [stockAct, setStockAct] = useState(""); // "" o entero ≥ 0
+  const [stockMin, setStockMin] = useState(""); // "" o entero ≥ 0
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef();
- console.log(imageFile);
+  console.log(imageFile);
   const [categoria, setCategoria] = useState("");
-  
 
   // Estado para saber si el cursor está encima del botón deshabilitado
   const [isHoveringDisabled, setIsHoveringDisabled] = useState(false);
@@ -321,33 +312,36 @@ export default function PublishPage({ cart, token, type }) {
     imageInvalid ||
     categoryInvalid ||
     subcategoryInvalid;
-    
 
-    if (sellerData === null) {
-        return (
-            <Flex
-            direction="column"
-            minH="100vh"
-            background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
-            align="center"
-            justify="center"
-            >
-                <Spinner color="purple.400" />
-            </Flex>
-            );
-    }
+  if (sellerData === null) {
+    return (
+      <Flex
+        direction="column"
+        minH="100vh"
+        background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+        align="center"
+        justify="center"
+      >
+        <Spinner color="purple.400" />
+      </Flex>
+    );
+  }
 
-
-    if (sellerData.state === "false") {
+  if (sellerData.state === "false") {
     return (
       <Flex
         direction="column"
         minH="100vh"
         background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
       >
-        <MainNavbar cart={cart} id_user={id_user} />
+        <MainNavbar id_user={id_user} />
 
-        <Box flex="1" display="flex" alignItems="center" justifyContent="center">
+        <Box
+          flex="1"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
           <Text fontSize="xl" color="whiteAlpha.800">
             Tu cuenta se encuentra pendiente de aprobación
           </Text>
@@ -357,17 +351,14 @@ export default function PublishPage({ cart, token, type }) {
       </Flex>
     );
   }
- 
 
-
-  return (
-    sellerShopData ? 
+  return sellerShopData ? (
     <Flex
       direction="column"
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar cart={cart} id_user={id_user}/>
+      <MainNavbar id_user={id_user} />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         {/* Contenedor blanco principal */}
@@ -384,8 +375,8 @@ export default function PublishPage({ cart, token, type }) {
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
             border: "1px solid rgba(255, 255, 255, 0.2)",
-          }} 
-                  >
+          }}
+        >
           <Heading as="h1" size="lg" mb={6} textAlign="center" color="#AE5BDD">
             Publicar un producto
           </Heading>
@@ -437,7 +428,6 @@ export default function PublishPage({ cart, token, type }) {
               >
                 {nombre.length}/100
               </Text>
-
 
               {/* 2) Descripción (máximo 500 caracteres) */}
               <Text
@@ -707,7 +697,7 @@ export default function PublishPage({ cart, token, type }) {
                   disabled={isButtonDisabled}
                   onClick={handleRegisterProduct}
                 >
-                 Registrar producto
+                  Registrar producto
                 </Button>
               </Box>
             </Box>
@@ -715,19 +705,17 @@ export default function PublishPage({ cart, token, type }) {
         </Box>
       </Box>
 
-
       <Footer />
-    </Flex> : 
-
-        <Flex
+    </Flex>
+  ) : (
+    <Flex
       direction="column"
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar cart={cart} />
+      <MainNavbar />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
-
         <Box
           p={8}
           borderRadius="lg"
@@ -741,27 +729,24 @@ export default function PublishPage({ cart, token, type }) {
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
             border: "1px solid rgba(255, 255, 255, 0.2)",
-          }} 
-                  >
+          }}
+        >
           <Heading as="h1" size="lg" mb={6} textAlign="center" color="#AE5BDD">
-            Debe registrar al menos una tienda para publicar un producto 
+            Debe registrar al menos una tienda para publicar un producto
           </Heading>
-          <Flex >
-
+          <Flex>
             <Box w="100%" pr={6}>
-
-              
-                <Link 
-                    as={RouterLink}
-                    to="/new-shop" 
-                    w="100%" 
-                    variant={"plain"} 
-                    style={{textDecoration: "none"}}>
+              <Link
+                as={RouterLink}
+                to="/new-shop"
+                w="100%"
+                variant={"plain"}
+                style={{ textDecoration: "none" }}
+              >
                 <Button
-                  bgColor= "#D3A5EE"  
-                  _hover = {{bgColor:"#AE5BDD" }}
+                  bgColor="#D3A5EE"
+                  _hover={{ bgColor: "#AE5BDD" }}
                   w="100%"
-                  
                 >
                   Registrar tienda
                 </Button>
@@ -772,14 +757,11 @@ export default function PublishPage({ cart, token, type }) {
       </Box>
 
       {/**
-         * El Footer queda aquí, al final del Flex,
-         * pero gracias a que el Box anterior tiene flex="1",
-         * siempre se empuja al bottom de la pantalla
+       * El Footer queda aquí, al final del Flex,
+       * pero gracias a que el Box anterior tiene flex="1",
+       * siempre se empuja al bottom de la pantalla
        **/}
       <Footer />
     </Flex>
-    
-    
-    );
+  );
 }
-

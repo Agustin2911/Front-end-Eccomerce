@@ -9,9 +9,10 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Link as ChakraLink, Button } from "@chakra-ui/react";
-
-
+import { Link as ChakraLink, Button, Image, Box } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/user/userSlice";
 const MENU_DATA = [
   {
     label: "PCs Armadas",
@@ -35,8 +36,6 @@ const MENU_DATA = [
     label: "Hardware",
     sections: [
       {
-
-
         // Category ID = 2
         title: "Placas de Video",
         url: "/products/category/2",
@@ -103,7 +102,6 @@ const MENU_DATA = [
           { name: "SODIMM DDR4", url: "/products/subCategory/19" },
           // id_sub_category = 20
           { name: "SODIMM DDR5", url: "/products/subCategory/20" },
-
         ],
       },
     ],
@@ -112,7 +110,6 @@ const MENU_DATA = [
     label: "Periféricos",
     sections: [
       {
-
         // Category ID = 7
         title: "Teclados",
         url: "/products/category/7",
@@ -191,11 +188,9 @@ const MENU_DATA = [
           { name: "Sillas Gamer", url: "/products/subCategory/37" },
           // id_sub_category = 38
 
-          { name: "Impresoras",       url: "/products/subCategory/38" },
+          { name: "Impresoras", url: "/products/subCategory/38" },
           // id_sub_category = 39
-          { name: "Proyectores",      url: "/products/subCategory/39" },
-
-
+          { name: "Proyectores", url: "/products/subCategory/39" },
         ],
       },
     ],
@@ -219,16 +214,17 @@ const MENU_DATA = [
   },
 ];
 
-export default function MainNavbar({ cartCount = 0, type, id_user }) {
-
+export default function MainNavbar() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 858);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-
+  const cart = useSelector((state) => state.cart);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -239,7 +235,6 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
       setIsMobileSearchOpen(false);
     }
   };
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -297,6 +292,7 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
     borderRadius: 4,
     border: "1px solid #555",
     padding: "0 12px",
+
     fontSize: 14,
     outline: "none",
     backgroundColor: "#111",
@@ -373,8 +369,6 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
     whiteSpace: "nowrap",
   };
 
-
-
   const sectionTitleStyle = {
     color: "#EC1877",
     fontSize: 16,
@@ -405,7 +399,6 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               style={iconStyle}
             >
-
               {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
             </div>
 
@@ -420,7 +413,6 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
                 zIndex: 1,
               }}
             >
-
               <img src="/longlogo.svg" alt="GcCustoms" style={logoStyle} />
             </Link>
 
@@ -429,40 +421,47 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
 
               <div
                 onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-                style={iconStyle}
+                style={{ ...iconStyle, marginRight: "-8px" }}
               >
                 <FaSearch />
               </div>
 
               <Link
                 to={
-                  type === "buyer"
-                    ? `/myorders/${id_user}`
-                    : type === "seller"
-                    ? `/publish/${id_user}` // futuro link para seller
-                    : type === "admin"
+                  user.type === "buyer"
+                    ? `/myorders/${user.id_usuario}`
+                    : user.type === "seller"
+                    ? `/publish/${user.id_usuario}` // futuro link para seller
+                    : user.type === "admin"
                     ? `/admin`
                     : "/signup"
                 }
                 style={iconStyle}
               >
-
-                <FaUser />
+                {user.image_path !== null ? (
+                  <Image
+                    src={user.image_path}
+                    h="30px"
+                    w="30px"
+                    borderRadius="50px"
+                  />
+                ) : (
+                  <FaUser />
+                )}
               </Link>
 
               {/* Carrito con badge */}
-            {type != "admin" &&
-              <div style={{ position: "relative" }}>
-                <Link to="/cart" style={iconStyle}>
-                  <FaShoppingCart />
-                </Link>
+              {user.type != "admin" && (
+                <div style={{ position: "relative" }}>
+                  <Link to="/cart" style={iconStyle}>
+                    <FaShoppingCart />
+                  </Link>
 
-                {cartCount > 0 && (
-                  <span style={cartBadgeStyle}>{cartCount}</span>
-                )}
-
-              </div>
-            }
+                  {cart.items.length > 0 && (
+                    <span style={cartBadgeStyle}>{cart.items.length}</span>
+                  )}
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -471,62 +470,71 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
               <img src="/longlogo.svg" alt="GcCustoms" style={logoStyle} />
             </Link>
 
-
             <form onSubmit={handleSearchSubmit} style={searchInputContainer}>
-
               <input
                 type="text"
                 placeholder="¿Qué buscas hoy?"
-                style={searchInputStyle}
-
+                style={{
+                  ...searchInputStyle,
+                  marginLeft: user.image_path !== null ? "200px" : "0px",
+                }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </form>
 
             <div style={rightIconsContainer}>
-            {id_user != null &&  
-            <ChakraLink 
-                href="/signup" 
-                _hover={{ textDecoration: "none" }}
-                style = {{textDecoration: "none"}}
-                textDecoration="none"
-                color={"#ec1877"}>
-                    <Button>
-                        Cerrar Sesión
-                    </Button>
-
-            
-              </ChakraLink>
-            }
+              {user.id_usuario != null && (
+                <ChakraLink
+                  href="/signup"
+                  _hover={{ textDecoration: "none" }}
+                  style={{ textDecoration: "none" }}
+                  textDecoration="none"
+                  color={"#ec1877"}
+                >
+                  <Button
+                    onClick={() => {
+                      dispatch(logout());
+                    }}
+                  >
+                    Cerrar Sesión
+                  </Button>
+                </ChakraLink>
+              )}
               <Link
                 to={
-                  type === "buyer"
-                    ? `/myorders/${id_user}`
-                    : type === "seller"
-                    ? `/publish/${id_user}` // futuro link para seller
-                    : type === "admin"
+                  user.type === "buyer"
+                    ? `/myorders/${user.id_usuario}`
+                    : user.type === "seller"
+                    ? `/publish/${user.id_usuario}` // futuro link para seller
+                    : user.type === "admin"
                     ? `/admin`
                     : "/signup"
-
                 }
                 style={iconStyle}
               >
-
-                <FaUser />
-              </Link>
-            {type != "admin" &&
-              <div style={{ position: "relative" }}>
-                <Link to="/cart" style={iconStyle}>
-                  <FaShoppingCart />
-                </Link>
-
-                {cartCount > 0 && (
-                  <span style={cartBadgeStyle}>{cartCount}</span>
+                {user.image_path !== null ? (
+                  <Image
+                    src={user.image_path}
+                    h="35px"
+                    w="35px"
+                    borderRadius="50px"
+                  />
+                ) : (
+                  <FaUser />
                 )}
+              </Link>
+              {user.type != "admin" && (
+                <div style={{ position: "relative" }}>
+                  <Link to="/cart" style={iconStyle}>
+                    <FaShoppingCart />
+                  </Link>
 
-              </div>
-            }
+                  {cart.items.length > 0 && (
+                    <span style={cartBadgeStyle}>{cart.items.length}</span>
+                  )}
+                </div>
+              )}
             </div>
           </>
         )}
@@ -534,7 +542,6 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
 
       {/* Barra de búsqueda emergente en mobile */}
       {isMobile && isMobileSearchOpen && (
-
         <div
           style={{
             position: "fixed",
@@ -563,13 +570,11 @@ export default function MainNavbar({ cartCount = 0, type, id_user }) {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </form>
-
         </div>
       )}
 
       {/* Menú desktop */}
       <nav style={menuBarStyle}>
-
         <div style={containerStyle}>
           <div style={menuStyle}>
             {MENU_DATA.map((menu, idx) => {
