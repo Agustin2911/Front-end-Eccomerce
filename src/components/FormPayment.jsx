@@ -2,10 +2,14 @@ import { Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
-  console.log(cart);
 
+import { clearCart } from "@/features/cart/cartSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+
+function FormPayment() {
   const [address, setAddress] = useState("");
+  const user = useSelector((state) => state.user);
   const [verify_address, setVerify_address] = useState(false);
   const [takeawayType, setTakeawayType] = useState("local");
   const [selectedStore, setSelectedStore] = useState("");
@@ -17,7 +21,8 @@ function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
   const [cardType, setCardType] = useState("");
   const navigate = useNavigate();
   const stores = ["Sucursal Centro", "Sucursal Norte", "Sucursal Sur"];
-
+  const cart = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
   useEffect(() => {
     let Total = cart.reduce((acc, item) => acc + item.price * item.amount, 0);
     Total += Total * 0.21;
@@ -63,7 +68,7 @@ function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
 
     const saleData = {
       total_price: Math.round(total),
-      id_user: id_usuario,
+      id_user: user.id_usuario,
       sale_date: new Date().toISOString(),
       items: cart.map((item) => ({
         id_product: item.id_product,
@@ -81,20 +86,20 @@ function FormPayment({ cart, setcart, id_usuario, Token_usuario }) {
           : "Calle Sur 789",
       delivery_status: "Pendiente",
     };
-
+    console.log(user.token);
     try {
       const response = await fetch("http://localhost:1273/sale", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${Token_usuario}`,
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify(saleData),
       });
 
       if (response.ok) {
         alert("Pago procesado correctamente.");
-        setcart([]);
+        dispatch(clearCart());
         navigate("/");
       } else {
         const errorData = await response.json();

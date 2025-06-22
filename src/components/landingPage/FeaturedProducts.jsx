@@ -6,7 +6,7 @@ import {
   HStack,
   useToken,
   Icon,
-  Text
+  Text,
 } from "@chakra-ui/react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,34 +34,40 @@ export default function FeaturedProducts({ productIds = [] }) {
       try {
         setLoading(true);
         setError(null);
-        
-        console.log("Fetching products for IDs:", productIds);
-        
+
+        "Fetching products for IDs:", productIds;
+
         const requests = productIds.map((id) => {
           const url = `http://localhost:1273/product/productById/${id}`;
-          console.log("Fetching:", url);
+          "Fetching:", url;
           return fetch(url);
         });
 
         const responses = await Promise.all(requests);
-        
+
         // Check each response individually
         const data = await Promise.all(
           responses.map(async (res, index) => {
             if (!res.ok) {
-              console.error(`Error fetching product ${productIds[index]}:`, res.status, res.statusText);
-              throw new Error(`Error ${res.status}: ${res.statusText} for product ${productIds[index]}`);
+              console.error(
+                `Error fetching product ${productIds[index]}:`,
+                res.status,
+                res.statusText
+              );
+              throw new Error(
+                `Error ${res.status}: ${res.statusText} for product ${productIds[index]}`
+              );
             }
             const productData = await res.json();
-            console.log(`Product ${productIds[index]} data:`, productData);
+            `Product ${productIds[index]} data:`, productData;
             return productData;
           })
         );
 
-        const validProducts = data.filter(p => p && p.id_product);
-        console.log("Valid products:", validProducts);
+        const validProducts = data.filter((p) => p && p.id_product);
+        "Valid products:", validProducts;
         setProducts(validProducts);
-        
+
         if (validProducts.length === 0) {
           setError("No valid products found");
         }
@@ -134,15 +140,17 @@ export default function FeaturedProducts({ productIds = [] }) {
     );
   }
 
-  const display = Array.from({ length: Math.min(visibleCount, products.length) }, (_, i) =>
-    products[(startIdx + i) % total]
+  const display = Array.from(
+    { length: Math.min(visibleCount, products.length) },
+    (_, i) => products[(startIdx + i) % total]
   );
 
+  console.log(display);
   const handlePrev = () => {
     setDirection(-1);
     setStartIdx((i) => (i - 1 + total) % total);
   };
-  
+
   const handleNext = () => {
     setDirection(1);
     setStartIdx((i) => (i + 1) % total);
@@ -194,9 +202,15 @@ export default function FeaturedProducts({ productIds = [] }) {
           >
             <HStack spacing={6} justify="center">
               {display.map((prod) => {
-                console.log("Rendering product:", prod);
+                "Rendering product:", prod;
                 return prod ? (
-                  <Box key={prod.id_product} flex="0 0 250px" maxW="240px" h="400px" display="flex">
+                  <Box
+                    key={prod.id_product}
+                    flex="0 0 250px"
+                    maxW="240px"
+                    h="400px"
+                    display="flex"
+                  >
                     <Box
                       flex="1"
                       display="flex"
@@ -205,15 +219,7 @@ export default function FeaturedProducts({ productIds = [] }) {
                       transform="scale(0.9)"
                       transformOrigin="center center"
                     >
-                      <LandingProductCard
-                        image={prod.photo_url || 
-                               "https://www.freundferreteria.com/Productos/GetImagenProductoPrincipal?idProducto=default"}
-                        name={prod.product_name}
-                        price={prod.price}
-                        id={prod.id_product}
-                        discount={prod.discount}
-                        discountState={prod.discount_state}
-                      />
+                      <LandingProductCard product={prod} />
                     </Box>
                   </Box>
                 ) : null;

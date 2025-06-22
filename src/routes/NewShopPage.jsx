@@ -11,23 +11,22 @@ import {
   Button,
   HStack,
   Image,
-  
 } from "@chakra-ui/react";
 
-import { MdPublish  } from "react-icons/md";
+import { MdPublish } from "react-icons/md";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
-export default function PublishPage({ cart, type, id_user, token }) {
-
+export default function PublishPage() {
   const navigate = useNavigate();
-
+  const user = useSelector((state) => state.user);
   useEffect(() => {
-    if (!token || type !== "seller") {
+    if (!user.token || user.type !== "seller") {
       navigate("/signup", { replace: true });
     }
-  }, [token, type, navigate]);
+  }, [user.token, user.type, navigate]);
 
   const [ciudad, setCiudad] = useState("");
   const [street, setStreet] = useState("");
@@ -46,7 +45,7 @@ export default function PublishPage({ cart, type, id_user, token }) {
 
     try {
       const payload = {
-        id_user: id_user,
+        id_user: user.id_usuario,
         city: ciudad.trim(),
         street: street.trim(),
       };
@@ -55,7 +54,7 @@ export default function PublishPage({ cart, type, id_user, token }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -64,7 +63,9 @@ export default function PublishPage({ cart, type, id_user, token }) {
         // si el backend devuelve algún error HTTP
         const errorText = await response.text();
         console.error("Error al registrar la tienda:", errorText);
-        alert("Ocurrió un error al crear la tienda. Revisa la consola para más detalles.");
+        alert(
+          "Ocurrió un error al crear la tienda. Revisa la consola para más detalles."
+        );
         setIsSubmitting(false);
         return;
       }
@@ -90,7 +91,7 @@ export default function PublishPage({ cart, type, id_user, token }) {
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar cart={cart} id_user={id_user}/>
+      <MainNavbar />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         {/* Contenedor blanco principal */}
@@ -107,10 +108,10 @@ export default function PublishPage({ cart, type, id_user, token }) {
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
             border: "1px solid rgba(255, 255, 255, 0.2)",
-          }} 
-                  >
+          }}
+        >
           <Heading as="h1" size="lg" mb={6} textAlign="center" color="#AE5BDD">
-            Registra tu tienda 
+            Registra tu tienda
           </Heading>
 
           {/*
@@ -160,7 +161,6 @@ export default function PublishPage({ cart, type, id_user, token }) {
               >
                 {ciudad.length}/100
               </Text>
-                
 
               <Text
                 fontSize="sm"
@@ -171,7 +171,7 @@ export default function PublishPage({ cart, type, id_user, token }) {
                     : "whiteAlpha.800"
                 }
               >
-                Direccion donde esta ubicada: 
+                Direccion donde esta ubicada:
               </Text>
               <Input
                 color="white"
@@ -202,7 +202,7 @@ export default function PublishPage({ cart, type, id_user, token }) {
               <Box
                 onMouseEnter={() => {
                   if (isButtonDisabled) setIsHoveringDisabled(true);
-               }}
+                }}
                 onMouseLeave={() => {
                   if (isButtonDisabled) setIsHoveringDisabled(false);
                 }}
@@ -219,29 +219,25 @@ export default function PublishPage({ cart, type, id_user, token }) {
             </Box>
           </Flex>
         </Box>
-                  
-
       </Box>
-            <Flex justify="center" mt={4}>
-                <Button 
-                variant="plain"
-                color="#ad5add"
-                _hover={{ color: "#EC1877"}}
-                mb="6"
-                onClick={() => navigate(`/publish/${id_user}`)}
-                >
-                <MdPublish />
-                    Publicar un producto
-                </Button>
-            </Flex>
+      <Flex justify="center" mt={4}>
+        <Button
+          variant="plain"
+          color="#ad5add"
+          _hover={{ color: "#EC1877" }}
+          mb="6"
+          onClick={() => navigate(`/publish/${user.id_usuario}`)}
+        >
+          <MdPublish />
+          Publicar un producto
+        </Button>
+      </Flex>
       {/**
-         * El Footer queda aquí, al final del Flex,
-         * pero gracias a que el Box anterior tiene flex="1",
-         * siempre se empuja al bottom de la pantalla
+       * El Footer queda aquí, al final del Flex,
+       * pero gracias a que el Box anterior tiene flex="1",
+       * siempre se empuja al bottom de la pantalla
        **/}
       <Footer />
     </Flex>
   );
 }
-
-

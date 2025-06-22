@@ -23,13 +23,13 @@ import VideoB from "../assets/corsairGabo.mp4";
 import BG_B from "../assets/corsairBG.svg";
 import VideoC from "../assets/samsungOddysey.mp4";
 import BG_C from "../assets/samsungBG.svg";
-
-
+import { useSelector } from "react-redux";
 const images = [SlideOne, SlideTwo, SlideThree];
 
-function LandingPage({ cart, type, id_usuario }) {
+function LandingPage() {
   const [loading, setLoading] = useState(true);
-console.log("🔍 ShowProductsPage: id_user =", id_usuario);
+  const user = useSelector((state) => state.user);
+  console.log("🔍 ShowProductsPage: id_user =", user.id_usuario);
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
@@ -45,7 +45,6 @@ console.log("🔍 ShowProductsPage: id_user =", id_usuario);
       {/* Loader with transition */}
       <Loader isLoading={loading} />
 
-
       {/* Main content */}
       <Box
         opacity={loading ? 0 : 1}
@@ -53,12 +52,7 @@ console.log("🔍 ShowProductsPage: id_user =", id_usuario);
         transitionDelay={loading ? "0s" : "0.3s"}
         pointerEvents={loading ? "none" : "auto"}
       >
-        <MainNavbar
-          opacity={true}
-          cart={cart}
-          type={type}
-          id_user={id_usuario}
-        />
+        <MainNavbar opacity={true} />
         <CarouselShow images={images} />
         <Categorys />
 

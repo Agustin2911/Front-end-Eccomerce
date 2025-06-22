@@ -3,8 +3,9 @@
 import React from "react";
 import { Box, Image, Text, Button, Link } from "@chakra-ui/react";
 import { FaShoppingCart } from "react-icons/fa";
-import { Link as RouterLink } from "react-router-dom";  // <-- import React Router
-
+import { Link as RouterLink } from "react-router-dom"; // <-- import React Router
+import { addToCart } from "@/features/cart/cartSlice";
+import { useDispatch } from "react-redux";
 /**
  * LandingProductCard
  * Displays a single product with image, name, price (with discount logic), old price if on sale, and action button.
@@ -17,24 +18,19 @@ import { Link as RouterLink } from "react-router-dom";  // <-- import React Rout
  *  - discount: number porcentaje a descontar (por ejemplo 20 para 20%)
  *  - discountState: string "true" o "false"; si es "true", muestra badge, precio con descuento y precio anterior tachado
  */
-export default function LandingProductCard({
-  image,
-  name,
-  price,
-  id,
-  discount,
-  discountState,
-}) {
-  const linkTo = `/product-desc/${id}`;
-
+export default function LandingProductCard({ product }) {
+  const linkTo = `/product-desc/${product.id_product}`;
+  const dispatch = useDispatch();
   // Verificamos si discountState es "true"
-  const isOnSale = discountState === "true";
+  const isOnSale = product.discount_state === "true";
   // Calculamos precio con descuento
   const discountedPrice = isOnSale
-    ? (price - (price * discount) / 100).toLocaleString("es-AR")
+    ? (product.price - (product.price * product.discount) / 100).toLocaleString(
+        "es-AR"
+      )
     : null;
   // Formateamos precio original
-  const originalPrice = price.toLocaleString("es-AR");
+  const originalPrice = product.price.toLocaleString("es-AR");
 
   return (
     <Box
@@ -81,8 +77,12 @@ export default function LandingProductCard({
       >
         <RouterLink to={linkTo} textDecoration="none">
           <Image
-            src={image}
-            alt={name}
+            src={
+              product.photo_url !== null
+                ? product.photo_url
+                : "https://www.freundferreteria.com/Productos/GetImagenProductoPrincipal?idProducto=default"
+            }
+            alt={product.product_name}
             mx="auto"
             mb={2}
             maxH="120px"
@@ -101,8 +101,12 @@ export default function LandingProductCard({
         justifyContent="space-between"
       >
         <Box flex="1" overflow="hidden" mb={2}>
-          <RouterLink to={linkTo} style={{ textDecoration: "none" }} onMouseOver={(e) => (e.currentTarget.style.textDecoration = "none")}
-                                                                     onMouseOut={(e) => (e.currentTarget.style.textDecoration = "none")}>
+          <RouterLink
+            to={linkTo}
+            style={{ textDecoration: "none" }}
+            onMouseOver={(e) => (e.currentTarget.style.textDecoration = "none")}
+            onMouseOut={(e) => (e.currentTarget.style.textDecoration = "none")}
+          >
             <Text
               fontSize="clamp(0.75rem, 2vw, 1rem)"
               fontWeight="semibold"
@@ -111,7 +115,7 @@ export default function LandingProductCard({
               lineHeight="1"
               color="#F1E6F7"
             >
-              {name}
+              {product.product_name}
             </Text>
           </RouterLink>
         </Box>
@@ -120,7 +124,12 @@ export default function LandingProductCard({
       <Box mb={2} textAlign="center">
         {isOnSale ? (
           <>
-            <Text fontSize="md" fontWeight="bold" color="#F1E6F7" lineHeight="1">
+            <Text
+              fontSize="md"
+              fontWeight="bold"
+              color="#F1E6F7"
+              lineHeight="1"
+            >
               ${discountedPrice}
             </Text>
             <Text
@@ -156,6 +165,9 @@ export default function LandingProductCard({
             borderColor: "#EC1877",
             boxShadow: "0 0 8px 2px #EC1877",
           }}
+          onClick={() =>
+            dispatch(addToCart({ item: product, extraFlag: false }))
+          }
         >
           <FaShoppingCart /> Agregar
         </Button>
