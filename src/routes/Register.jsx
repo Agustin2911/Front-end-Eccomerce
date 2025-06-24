@@ -5,11 +5,10 @@ import { useNavigate } from "react-router-dom";
 import ImageUploader from "../components/register/ImageUploader";
 import { Text, Box, Button } from "@chakra-ui/react";
 import { GoXCircle } from "react-icons/go";
-import { useDispatch } from "react-redux";
-import { login } from "../features/user/userSlice";
-
+import { setUserType, registerUser } from "../features/fetch/registerSlice";
+import { useDispatch, useSelector } from "react-redux";
 function Register() {
-  const [userType, setUserType] = useState("buyer"); // Nuevo: tipo de usuario
+  // Nuevo: tipo de usuario
   const [user_name, setName] = useState("");
   const [user_LastName, setLastName] = useState("");
   const [user_email, setEmail] = useState("");
@@ -23,173 +22,72 @@ function Register() {
 
   const [data, setData] = useState({});
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
-
-  const handleFetchSeller = async (e) => {
+  const { userType, loading, error, result } = useSelector(
+    (state) => state.register
+  );
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    if (
-      !user_name ||
-      !user_email ||
-      !userPassword ||
-      !userPassword2 ||
-      !storeName ||
-      !StoreDescription ||
-      !cuit
-    ) {
-      alert("Complete los campos obligatorios");
-      setLoading(false);
-      return;
-    }
-
-    if (userPassword !== userPassword2) {
-      alert("Las contraseñas no coinciden");
-      setLoading(false);
-      return;
-    }
 
     const formData = new FormData();
-    formData.append("firstname", user_name);
-    formData.append("email", user_email);
-    formData.append("password", userPassword);
-    formData.append("role", 2);
-    formData.append("cuit", cuit);
-    formData.append("companyName", storeName);
-    formData.append("description", StoreDescription);
-    formData.append("state", "false");
 
-    if (image && image !== "none") {
-      formData.append("file", image);
+    if (userType === "buyer") {
+      if (
+        !user_name ||
+        !user_LastName ||
+        !user_email ||
+        !userPassword ||
+        !userPassword2 ||
+        !dni
+      ) {
+        return alert("Complete todos los campos");
+      }
+      if (userPassword !== userPassword2)
+        return alert("Contraseñas no coinciden");
+
+      formData.append("firstname", user_name);
+      formData.append("name", user_name);
+      formData.append("last_name", user_LastName);
+      formData.append("email", user_email);
+      formData.append("password", userPassword);
+      formData.append("dni", dni);
+      formData.append("role", 3);
+      formData.append("file", image || null);
     } else {
-      formData.append("file", null);
-      setLoading(false);
-      alert("falta poner una foto");
-      return;
-    }
-    try {
-      const response = await fetch(
-        "http://localhost:1273/api/v1/auth/register/seller_user",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        // lee el texto de error que devuelve el servidor
-        const errorText = await response.text();
-        console.error("Error del servidor:", errorText);
-        // opcional: muestra el texto en un alert o guardarlo en estado
-        alert("Error en el servidor: " + errorText);
-        setLoading(false);
-        return; // salimos para no seguir con result = await response.json()
+      if (
+        !user_name ||
+        !user_email ||
+        !userPassword ||
+        !userPassword2 ||
+        !storeName ||
+        !StoreDescription ||
+        !cuit
+      ) {
+        return alert("Complete todos los campos");
       }
+      if (userPassword !== userPassword2)
+        return alert("Contraseñas no coinciden");
 
-      const result = await response.json();
-      if (result.access_token) {
-        dispatch(
-          login({
-            id_usuario: result.id_user,
-            image_path: result.photo_url,
-            type: result.type,
-            token: result.access_token,
-          })
-        );
-        setLoading(false);
-        navigate("/");
-      } else {
-        alert("Compruebe que todos los datos sean correctos");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error en la petición:", error);
-      setLoading(false);
-    }
-  };
-
-  const handleFetchBuyer = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    if (
-      !user_name ||
-      !user_LastName ||
-      !user_email ||
-      !userPassword ||
-      !userPassword2 ||
-      !dni
-    ) {
-      alert("Complete todos los campos obligatorios");
-      setLoading(false);
-      return;
+      formData.append("firstname", user_name);
+      formData.append("email", user_email);
+      formData.append("password", userPassword);
+      formData.append("role", 2);
+      formData.append("cuit", cuit);
+      formData.append("companyName", storeName);
+      formData.append("description", StoreDescription);
+      formData.append("state", "false");
+      formData.append("file", image || null);
     }
 
-    if (userPassword !== userPassword2) {
-      alert("Las contraseñas no coinciden");
-      setLoading(false);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("firstname", user_name);
-    formData.append("name", user_name);
-    formData.append("last_name", user_LastName);
-    formData.append("email", user_email);
-    formData.append("password", userPassword);
-    formData.append("dni", dni);
-    formData.append("role", 3);
-
-    if (image !== "none") {
-      formData.append("file", image);
-    } else {
-      formData.append("file", null);
-      setLoading(false);
-      alert("falta poner una foto");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        "http://localhost:1273/api/v1/auth/register/buyer_user",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      if (result.access_token) {
-        dispatch(
-          login({
-            id_usuario: result.id_user,
-            image_path: result.photo_url,
-            type: result.type,
-            token: result.access_token,
-          })
-        );
-        setLoading(false);
-        navigate("/");
-      } else {
-        alert("Revise los datos ingresados");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error en la petición:", error);
-      setLoading(false);
-    }
+    dispatch(registerUser({ userType, formData }));
   };
 
   useEffect(() => {
-    if (data.response === "user created") {
+    if (result === "success") {
       navigate("/");
     }
-  }, [data, navigate]);
+  }, [result]);
 
   return (
     <div
@@ -342,9 +240,7 @@ function Register() {
           <Text>Ingrese una imagen para su usuario</Text>
           <ImageUploader image={image} setimage={setimage}></ImageUploader>
           <button
-            onClick={
-              userType === "seller" ? handleFetchSeller : handleFetchBuyer
-            }
+            onClick={handleSubmit}
             className=" btn w-100"
             disabled={loading}
             style={{ background: "#ad5add", color: "#d3a5ee" }}
