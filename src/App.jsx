@@ -15,12 +15,15 @@ import PaymentPage from "./routes/PaymentPage";
 import MyOrders from "./routes/MyOrders.jsx";
 import PublishPage from "./routes/PublishPage";
 import NewShopPage from "./routes/NewShopPage";
+import MyProductsPage from "./routes/MyProductsPage";
 
 function App() {
   return (
     <ChakraProvider value={system}>
       <Router>
         <Routes>
+
+          <Route path="/my-products" element={<MyProductsPage />}></Route>
           <Route path="/admin" element={<AdminPage />}></Route>
 
           <Route

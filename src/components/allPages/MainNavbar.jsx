@@ -7,12 +7,16 @@ import {
   FaSearch,
   FaTimes,
 } from "react-icons/fa";
+import { GoArchive } from "react-icons/go";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Link as ChakraLink, Button, Image, Box } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/user/userSlice";
+
+
+
 const MENU_DATA = [
   {
     label: "PCs Armadas",
@@ -451,7 +455,8 @@ export default function MainNavbar() {
               </Link>
 
               {/* Carrito con badge */}
-              {user.type != "admin" && (
+              
+              {user.type === "admin" || user.type === "buyer" || user.type === null ? (
                 <div style={{ position: "relative" }}>
                   <Link to="/cart" style={iconStyle}>
                     <FaShoppingCart />
@@ -461,7 +466,12 @@ export default function MainNavbar() {
                     <span style={cartBadgeStyle}>{cart.items.length}</span>
                   )}
                 </div>
-              )}
+              ) : user.type === "seller" && 
+              <div style={{ position: "relative" }}>
+                  <Link to="/my-products" style={iconStyle}>
+                    <GoArchive />
+                  </Link>
+                </div>}
             </div>
           </>
         ) : (
@@ -524,7 +534,7 @@ export default function MainNavbar() {
                   <FaUser />
                 )}
               </Link>
-              {user.type != "admin" && (
+              {user.type === "admin" || user.type === "buyer" || user.type === null ? (
                 <div style={{ position: "relative" }}>
                   <Link to="/cart" style={iconStyle}>
                     <FaShoppingCart />
@@ -534,7 +544,12 @@ export default function MainNavbar() {
                     <span style={cartBadgeStyle}>{cart.items.length}</span>
                   )}
                 </div>
-              )}
+              ) : user.type === "seller" && 
+              <div style={{ position: "relative" }}>
+                  <Link to="/my-products" style={iconStyle}>
+                    <GoArchive />
+                  </Link>
+                </div>}
             </div>
           </>
         )}

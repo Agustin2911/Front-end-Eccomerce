@@ -138,7 +138,7 @@ export default function PublishPage() {
               </Text>
               <Input
                 color="white"
-                placeholder="Ingresa el nombre"
+                placeholder="Ingresa la ciudad"
                 _placeholder={{ color: "whiteAlpha.600" }}
                 value={ciudad}
                 mb={4}
@@ -175,7 +175,7 @@ export default function PublishPage() {
               </Text>
               <Input
                 color="white"
-                placeholder="Ingresa el nombre"
+                placeholder="Ingresa la direccion"
                 _placeholder={{ color: "whiteAlpha.600" }}
                 value={street}
                 mb={4}
