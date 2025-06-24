@@ -14,13 +14,17 @@ import {
   Flex,
   SimpleGrid,
 } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrdersByUser } from "@/features/fetch/ordersSlice";
 import MainNavbar from "../components/allPages/MainNavbar";
 
 const MyOrders = () => {
   const { idUser } = useParams();
   const [showHistorial, setShowHistorial] = useState(false);
-  const [delivered, setDelivered] = useState([]);
-  const [inProgress, setInProgress] = useState([]);
+  const dispatch = useDispatch();
+  const { delivered, inProgress, loading, error } = useSelector(
+    (state) => state.orders
+  );
 
   const cardBg = "gray.50";
   const borderColor = "gray.900";
@@ -75,21 +79,8 @@ const MyOrders = () => {
   };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:1273/delivery-status/orders/${idUser}`
-        );
-        const data = await response.json();
-        agruparYSepararPorEstado(data);
-      } catch (error) {
-        console.error("Error al obtener las órdenes:", error);
-      }
-    };
-
-    fetchOrders();
-  }, [idUser]);
-  // Datos estáticos (a pedido de capi)
+    dispatch(fetchOrdersByUser(idUser));
+  }, [dispatch, idUser]);
 
   const getEstadoProps = (estado) => {
     const props = {
