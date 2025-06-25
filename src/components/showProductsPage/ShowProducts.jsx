@@ -4,6 +4,11 @@ import LandingProductCard from "../landingPage/LandingProductCard";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../features/fetch/productsSlice";
+import {
+  filterByCategory,
+  filterBySubcategory,
+  showAllProducts,
+} from "../../features/fetch/allProductsSlice";
 
 export default function ShowProducts() {
   const { categoryId, subCategoryId } = useParams();
@@ -12,14 +17,27 @@ export default function ShowProducts() {
 
   const dispatch = useDispatch();
   const {
-    items: products,
+    items,
+    filtered: products,
     loading,
     error,
-  } = useSelector((state) => state.products);
+  } = useSelector((state) => state.allProducts);
 
   useEffect(() => {
-    dispatch(fetchProducts({ categoryId, subCategoryId, searchTerm }));
-  }, [categoryId, subCategoryId, searchTerm, dispatch]);
+    if (items.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, items.length]);
+
+  useEffect(() => {
+    if (subCategoryId) {
+      dispatch(filterBySubcategory(Number(subCategoryId)));
+    } else if (categoryId) {
+      dispatch(filterByCategory(Number(categoryId)));
+    } else {
+      dispatch(showAllProducts());
+    }
+  }, [categoryId, subCategoryId, dispatch]);
 
   return (
     <Flex width="full" justify="center">

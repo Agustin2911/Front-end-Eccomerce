@@ -12,7 +12,8 @@ import {
   createListCollection,
 } from "@chakra-ui/react";
 import { useState } from "react";
-
+import { applyFilters } from "@/features/fetch/allProductsSlice";
+import { useDispatch } from "react-redux";
 // Opciones de orden
 const orderOptions = createListCollection({
   items: [
@@ -21,11 +22,16 @@ const orderOptions = createListCollection({
   ],
 });
 
-function Filters({ onApplyFilters }) {
+function Filters() {
   const [order, setOrder] = useState(null);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
+  const dispatch = useDispatch();
+
+  const onApplyFilters = ({ order, minPrice, maxPrice }) => {
+    dispatch(applyFilters({ order, minPrice, maxPrice }));
+  };
   return (
     <Box
       p={6}
