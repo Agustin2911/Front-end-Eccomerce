@@ -435,7 +435,7 @@ export default function MainNavbar() {
                   user.type === "buyer"
                     ? `/myorders/${user.id_usuario}`
                     : user.type === "seller"
-                    ? `/publish/${user.id_usuario}` // futuro link para seller
+                    ? `/publish` // futuro link para seller
                     : user.type === "admin"
                     ? `/admin`
                     : "/signup"
@@ -516,7 +516,7 @@ export default function MainNavbar() {
                   user.type === "buyer"
                     ? `/myorders/${user.id_usuario}`
                     : user.type === "seller"
-                    ? `/publish/${user.id_usuario}` // futuro link para seller
+                    ? `/publish` // futuro link para seller
                     : user.type === "admin"
                     ? `/admin`
                     : "/signup"

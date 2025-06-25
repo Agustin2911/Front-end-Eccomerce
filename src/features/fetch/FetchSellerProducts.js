@@ -55,6 +55,7 @@ const sellerProductsSlice = createSlice({
       .addCase(fetchSellerProducts.fulfilled, (state, action) => {
         state.sellerLoading = false;
         state.sellerList = action.payload;
+       
       })
       .addCase(fetchSellerProducts.rejected, (state, action) => {
         state.sellerLoading = false;

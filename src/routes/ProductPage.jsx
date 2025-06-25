@@ -114,6 +114,7 @@ export default function ProductPage() {
   const subCategoryUpper = catSubcatData?.[1]?.toUpperCase() ?? "ERROR";
   const categoryId = catSubcatData?.[2] ?? "";
   const subCategoryId = catSubcatData?.[3] ?? "";
+
   return (
     <Flex
       direction="column"

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
@@ -15,18 +15,19 @@ import {
   Flex,
   VStack,
   Image,
-  Button
+  Button,
+  Link
 } from "@chakra-ui/react";
 
 export default function MyProductsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { token, type } = useSelector((state) => state.user);
+  const { token, type, id_usuario } = useSelector((state) => state.user);
   const { sellerList, sellerLoading, sellerError } = useSelector(
     (state) => state.sellerProducts
   );
-
+ console.log(sellerList)
   useEffect(() => {
     if (!token || type !== "seller") {
       navigate("/signup", { replace: true });
@@ -50,6 +51,38 @@ export default function MyProductsPage() {
       </Text>
     );
 
+    if (sellerList.length === 0) {
+    return (
+      <Flex
+        direction="column"
+        backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+        minH="100vh"
+      >
+        <MainNavbar />
+        <Flex flex="1" direction="column" justify="center" align="center">
+          <Text color="#F1E6F7" fontSize="2xl" mb={4}>
+            No tienes productos publicados
+          </Text>
+          <Link
+            as={RouterLink}
+            to={`/publish/${id_usuario}`}
+            w="200px"
+            style={{ textDecoration: "none" }}
+          >
+            <Button
+              bgColor="#D3A5EE"
+              _hover={{ bgColor: "#AE5BDD" }}
+              w="100%"
+            >
+              Publica uno
+            </Button>
+          </Link>
+        </Flex>
+        <Footer />
+      </Flex>
+    );
+  }
+
   return (
     <Flex
       direction="column"
@@ -72,10 +105,16 @@ export default function MyProductsPage() {
               boxShadow="0 8px 12px rgba(0,0,0,0.15), 0 16px 35px rgba(139,92,246,0.4)"
             >
               <VStack align="start" spacing={4}>
-                <Heading size="md" color="#F1E6F7">
-                  {item.product_name}
-                </Heading>
-
+                <Link
+                as={RouterLink}
+                to={`/product-desc/${item.id_product}`}
+                style={{ textDecoration: "none" }}
+                
+                >
+                    <Heading size="md" color="#F1E6F7" _hover={{ color: "#EC1877"}}> 
+                        {item.product_name}
+                    </Heading>
+                </Link>
                 <VStack align="start" spacing={1} w="100%">
                   <Text color="#F1E6F7">Stock actual: {item.amount}</Text>
                   <Text color="#F1E6F7">Precio: {formatPrice(item.price)}</Text>
@@ -85,7 +124,7 @@ export default function MyProductsPage() {
                   src={item.photo_url}
                   alt={item.product_name}
                   w="100%"
-                  maxH="150px"
+                  maxH="225px"
                   objectFit="cover"
                   borderRadius="md"
                 />

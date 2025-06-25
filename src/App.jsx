@@ -31,7 +31,7 @@ function App() {
             element={<ProductPage />}
           ></Route>
 
-          <Route path="/publish/:id_user" element={<PublishPage />}></Route>
+          <Route path="/publish" element={<PublishPage />}></Route>
 
           <Route path="new-shop" element={<NewShopPage />}></Route>
 

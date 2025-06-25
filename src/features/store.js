@@ -8,6 +8,10 @@ import registerReducer from "../features/fetch/registerSlice";
 import productsReducer from "../features/fetch/productsSlice";
 import checkoutReducer from "../features/fetch/checkoutSlice";
 import paymentReducer from "../features/fetch/paymentSlice";
+import sellerReducer from "../features/fetch/fetchSellerData";
+import userShopsReducer from "../features/fetch/fetchUserShops";
+import registerProductReducer from "../features/fetch/fetchCreateProduct";
+import createShopReducer from "../features/fetch/fetchCreateShop";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +24,9 @@ export const store = configureStore({
     sellerProducts: sellerProductsReducer,
     checkout: checkoutReducer,
     payment: paymentReducer,
+    seller: sellerReducer,
+    userShops: userShopsReducer,
+    registerProduct: registerProductReducer,
+    createShop: createShopReducer,
   },
 });

@@ -17,7 +17,8 @@ import { MdPublish } from "react-icons/md";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createShop, resetCreateShop } from "../features/fetch/fetchCreateShop";
 
 export default function PublishPage() {
   const navigate = useNavigate();
@@ -37,53 +38,20 @@ export default function PublishPage() {
   const isButtonDisabled = ciudadInvalid || streetInvalid;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleRegister = async () => {
-    // Si el botón está deshabilitado, no hacemos nada
-    if (isButtonDisabled) return;
+  const dispatch = useDispatch();
+const { loading, error, success, shop } = useSelector(state => state.createShop);
 
-    setIsSubmitting(true);
+  function handleRegister() {
+    dispatch(createShop({ city: ciudad, street }));
+  }
 
-    try {
-      const payload = {
-        id_user: user.id_usuario,
-        city: ciudad.trim(),
-        street: street.trim(),
-      };
-
-      const response = await fetch("http://localhost:1273/shops", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        // si el backend devuelve algún error HTTP
-        const errorText = await response.text();
-        console.error("Error al registrar la tienda:", errorText);
-        alert(
-          "Ocurrió un error al crear la tienda. Revisa la consola para más detalles."
-        );
-        setIsSubmitting(false);
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Tienda creada con éxito:", data);
-
-      // Aquí puedes hacer lo que consideres: redirigir, limpiar el formulario, mostrar mensaje, etc.
-      alert("¡La tienda se creó con éxito!");
-      setCiudad("");
-      setStreet("");
-    } catch (error) {
-      console.error("Error en fetch:", error);
-      alert("Hubo un problema de conexión al intentar crear la tienda.");
-    } finally {
-      setIsSubmitting(false);
+  useEffect(() => {
+    if (success) {
+      alert("¡Tienda creada con éxito!");
+      dispatch(resetCreateShop());
+      navigate("/publish")  
     }
-  };
+  }, [success, dispatch, navigate]);
 
   return (
     <Flex
@@ -226,7 +194,7 @@ export default function PublishPage() {
           color="#ad5add"
           _hover={{ color: "#EC1877" }}
           mb="6"
-          onClick={() => navigate(`/publish/${user.id_usuario}`)}
+          onClick={() => navigate(`/publish`)}
         >
           <MdPublish />
           Publicar un producto
