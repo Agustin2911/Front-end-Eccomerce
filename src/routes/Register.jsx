@@ -130,7 +130,7 @@ function Register() {
                 background: "#d3a5ee",
                 color: "#f1e6f7",
               }}
-              onChange={(e) => setUserType(e.target.value)}
+              onChange={(e) => dispatch(setUserType(e.target.value))}
             >
               <option value="buyer">comprador</option>
               <option value="seller">vendedor</option>

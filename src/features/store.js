@@ -7,6 +7,7 @@ import registerReducer from "../features/fetch/registerSlice";
 import productsReducer from "../features/fetch/productsSlice";
 import checkoutReducer from "../features/fetch/checkoutSlice";
 import paymentReducer from "../features/fetch/paymentSlice";
+import allProductReducer from "../features/fetch/allProductsSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -17,5 +18,6 @@ export const store = configureStore({
     products: productsReducer,
     checkout: checkoutReducer,
     payment: paymentReducer,
+    allProducts: allProductReducer,
   },
 });
