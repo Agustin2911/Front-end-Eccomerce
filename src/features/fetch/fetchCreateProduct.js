@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { toast, ToastContainer } from "react-toastify";
 
 export const registerProduct = createAsyncThunk(
   "product/register",
@@ -16,8 +17,18 @@ export const registerProduct = createAsyncThunk(
         `http://localhost:1273/sub_categories/name/${encodeURIComponent(subcategoria)}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+        toast.success("¡El producto y su stock se crearon con éxito!", {
+            autoClose: 2000,
+            theme: "colored",
+        });
+
+
       if (!resSub.ok) {
-        throw new Error(`Error subcat: ${resSub.status}`);
+        toast.error(
+          "Ocurrió un error al crear el producto. Revisa la consola para más detalles.",
+        { autoClose: 2000 })
+
       }
       const id_sub_category = await resSub.json();
 

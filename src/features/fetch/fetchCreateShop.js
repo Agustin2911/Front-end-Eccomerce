@@ -1,5 +1,6 @@
 // src/features/fetch/fetchCreateShop.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { toast, ToastContainer } from "react-toastify";
 
 // Thunk para crear una tienda
 export const createShop = createAsyncThunk(
@@ -28,9 +29,16 @@ export const createShop = createAsyncThunk(
         },
         body: JSON.stringify(payload),
       });
+      toast.success("¡La tienda se creó con éxito!", { autoClose: 3000 });
 
       if (!res.ok) {
         const errorText = await res.text();
+        
+        toast.error(
+          "Ocurrió un error al crear la tienda. Revisa la consola para más detalles.",
+          { autoClose: 2500 }
+        );
+
         return rejectWithValue(
           errorText || `Error al crear la tienda: ${res.status}`
         );

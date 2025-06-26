@@ -88,21 +88,6 @@ export default function ShowProductsPage() {
   }
 
   // Handler de filtros (igual que antes)
-  const handleApplyFilters = ({ order, minPrice, maxPrice }) => {
-    let filtered = [...productos];
-    if (minPrice) {
-      filtered = filtered.filter((p) => p.price >= parseFloat(minPrice));
-    }
-    if (maxPrice) {
-      filtered = filtered.filter((p) => p.price <= parseFloat(maxPrice));
-    }
-    if (order[0] === "asc") {
-      filtered.sort((a, b) => a.price - b.price);
-    } else if (order[0] === "desc") {
-      filtered.sort((a, b) => b.price - a.price);
-    }
-    setProductos(filtered);
-  };
 
   return (
     <Box bg={"#170d20"}>
@@ -143,8 +128,8 @@ export default function ShowProductsPage() {
 
       {/* Filtros y listado de productos */}
       <Box display={{ base: "block", md: "flex" }}>
-        <Filters onApplyFilters={handleApplyFilters} />
-        <ShowProducts products={productos} setProducts={setProductos} />
+        <Filters />
+        <ShowProducts />
       </Box>
 
       <Footer />

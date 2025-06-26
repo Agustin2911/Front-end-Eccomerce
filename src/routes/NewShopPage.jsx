@@ -1,16 +1,13 @@
 // src/pages/PublishPage.jsx
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState,  useEffect } from "react";
 import {
   Flex,
   Box,
   Heading,
   Text,
   Input,
-  Textarea,
   Button,
-  HStack,
-  Image,
 } from "@chakra-ui/react";
 
 import { MdPublish } from "react-icons/md";
@@ -39,19 +36,11 @@ export default function PublishPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dispatch = useDispatch();
-const { loading, error, success, shop } = useSelector(state => state.createShop);
+  const { loading, error, success, shop } = useSelector(state => state.createShop);
 
-  function handleRegister() {
+  const handleRegister = async () => {
     dispatch(createShop({ city: ciudad, street }));
   }
-
-  useEffect(() => {
-    if (success) {
-      alert("¡Tienda creada con éxito!");
-      dispatch(resetCreateShop());
-      navigate("/publish")  
-    }
-  }, [success, dispatch, navigate]);
 
   return (
     <Flex
@@ -60,6 +49,7 @@ const { loading, error, success, shop } = useSelector(state => state.createShop)
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
       <MainNavbar />
+      <ToastContainer />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         {/* Contenedor blanco principal */}

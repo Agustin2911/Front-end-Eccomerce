@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./user/userSlice";
 import cartReducer from "./cart/cartSlice";
-import sellerProductsReducer from "./fetch/fetchSellerProducts";
+import sellerProductsReducer from "../fetch/fetchSellerProducts";
 import authReducer from "../features/fetch/authSlice";
 import ordersReducer from "./fetch/ordersSlice";
 import registerReducer from "../features/fetch/registerSlice";
@@ -12,6 +12,7 @@ import sellerReducer from "../features/fetch/fetchSellerData";
 import userShopsReducer from "../features/fetch/fetchUserShops";
 import registerProductReducer from "../features/fetch/fetchCreateProduct";
 import createShopReducer from "../features/fetch/fetchCreateShop";
+import allProductReducer from "../features/fetch/allProductsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -28,5 +29,6 @@ export const store = configureStore({
     userShops: userShopsReducer,
     registerProduct: registerProductReducer,
     createShop: createShopReducer,
+    allProducts: allProductReducer,
   },
 });

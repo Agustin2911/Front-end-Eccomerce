@@ -16,8 +16,17 @@ import MyOrders from "./routes/MyOrders.jsx";
 import PublishPage from "./routes/PublishPage";
 import NewShopPage from "./routes/NewShopPage";
 import MyProductsPage from "./routes/MyProductsPage";
+import { useDispatch } from "react-redux";
+import { fetchProducts } from "./features/fetch/allProductsSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("App montado ✅");
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
   return (
     <ChakraProvider value={system}>
       <Router>

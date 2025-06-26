@@ -23,10 +23,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchSellerData } from "../features/fetch/fetchSellerData";
 import { fetchUserShops } from "../features/fetch/fetchUserShops";
 import { registerProduct, resetRegister } from "../features/fetch/fetchCreateProduct";
+import { addProduct } from "@/features/fetch/allProductsSlice";
+
 export default function PublishPage() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+
   const user = useSelector((state) => state.user);
   
   const { data: seller, loading: sellerLoading, error: sellerError } = useSelector(
@@ -69,6 +73,7 @@ export default function PublishPage() {
 
 
   const { loading: productLoading, error: productError, success } = useSelector(state => state.registerProduct);
+
     function handleRegisterProduct(){
         dispatch(registerProduct({
             nombre,
@@ -81,23 +86,15 @@ export default function PublishPage() {
         }));
 
         setSubcategoria("");
-
-   setNombre("");
-   setDescripcion("");
-   setPrecio(""); // "" o número entero
-   setStockAct(""); // "" o entero ≥ 0
-   setStockMin(""); // "" o entero ≥ 0
-   setImageFile(null);
-   setPreviewUrl(null);
-   setCategoria("");
-    };
-
-  useEffect(() => {
-    if (success) {
-      alert("¡producto creado con exito!");
-      dispatch(resetRegister());
-    }
-  }, [success, dispatch]);
+        setNombre("");
+        setDescripcion("");
+        setPrecio(""); // "" o número entero
+        setStockAct(""); // "" o entero ≥ 0
+        setStockMin(""); // "" o entero ≥ 0
+        setImageFile(null);
+        setPreviewUrl(null);
+        setCategoria("");
+  };
 
   const categories = [
     "PCs Armadas",
@@ -259,6 +256,7 @@ export default function PublishPage() {
       <MainNavbar  />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
+        <ToastContainer />
         {/* Contenedor blanco principal */}
         <Box
           p={8}
