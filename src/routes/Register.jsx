@@ -7,6 +7,7 @@ import { Text, Box, Button } from "@chakra-ui/react";
 import { GoXCircle } from "react-icons/go";
 import { setUserType, registerUser } from "../features/fetch/registerSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
 function Register() {
   // Nuevo: tipo de usuario
   const [user_name, setName] = useState("");
@@ -27,9 +28,40 @@ function Register() {
   const { userType, loading, error, result } = useSelector(
     (state) => state.register
   );
+
+  const isFormValid = () => {
+    const commonFields =
+      user_name &&
+      user_email.includes("@") &&
+      userPassword &&
+      userPassword2 &&
+      userPassword === userPassword2 &&
+      image;
+
+    if (userType === "buyer") {
+      if (!commonFields || !user_LastName || !dni) {
+        toast.error("faltan rellenar campos");
+        return false;
+      } else {
+        return true;
+      }
+    } else if (userType === "seller") {
+      if (!commonFields || !storeName || !StoreDescription || !cuit) {
+        toast.error("faltan rellenar campos");
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    return false;
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (isFormValid() === false) {
+      return;
+    }
     const formData = new FormData();
 
     if (userType === "buyer") {
@@ -106,6 +138,7 @@ function Register() {
           marginBottom: userType === "seller" ? "50px" : "50px",
         }}
       >
+        <ToastContainer />
         <h2 className="text-center">Crea tu cuenta de GCCustoms</h2>
         <p className="text-center">
           Crea tu cuenta de vendedor o de comprador

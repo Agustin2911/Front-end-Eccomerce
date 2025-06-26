@@ -17,6 +17,7 @@ import {
   setSelectedStore,
 } from "../features/fetch/checkoutSlice";
 import { processPayment } from "../features/fetch/paymentSlice";
+import { toast, ToastContainer, Zoom } from "react-toastify";
 function FormPayment() {
   const user = useSelector((state) => state.user);
   const [verify_address, setVerify_address] = useState(false);
@@ -52,10 +53,29 @@ function FormPayment() {
     return true;
   }
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   async function generate_payment() {
+    if (user.token === null) {
+      toast.info("no estas registrado, se te redireccionara al login", {
+        autoClose: 2500,
+      });
+      await sleep(3000);
+      navigate("/signup");
+
+      return;
+    }
+
     const result = await address_verification();
     if (!result) {
-      alert("La dirección ingresada no es válida");
+      toast.error(
+        "la direccion ingresa no existe ,  verifique lo ingresado o pruebe con otra",
+        {
+          autoClose: 2500,
+        }
+      );
       return;
     }
 
@@ -65,23 +85,33 @@ function FormPayment() {
       !checkout.expiry ||
       !checkout.cvv
     ) {
-      alert("Faltan datos de pago");
+      toast.error("faltan datos de pago", {
+        autoClose: 2500,
+      });
+
       return;
     }
 
     try {
       await dispatch(processPayment({ user, checkout, total })).unwrap();
-      alert("Pago procesado correctamente.");
+      toast.success("Pago procesado correctamente.", {
+        autoClose: 2500,
+        theme: "colored",
+      });
+      await sleep(3000);
       dispatch(clearCart());
       navigate("/");
     } catch (err) {
       console.error("Error al procesar el pago:", err);
-      alert("Hubo un error al procesar el pago.");
+      toast.error("Hubo un error al procesar el pago.", {
+        autoClose: 2500,
+      });
     }
   }
 
   return (
     <Box h="auto" py={8} display="flex" justifyContent="center" mt={"50px"}>
+      <ToastContainer transition={Zoom} />
       <style>
         {`
       .pagar-btn {

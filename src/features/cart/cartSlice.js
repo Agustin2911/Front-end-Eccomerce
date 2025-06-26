@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 const initialState = {
   items: [],
@@ -31,6 +32,10 @@ const cartSlice = createSlice({
       }
 
       state.total = state.items.reduce((acc, i) => acc + i.price * i.amount, 0);
+      toast.success("se agrego el producto al carrito exitosamente", {
+        autoClose: 2500,
+        theme: "colored",
+      });
     },
 
     decrementFromCart(state, action) {
