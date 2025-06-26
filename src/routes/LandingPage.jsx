@@ -24,6 +24,7 @@ import BG_B from "../assets/corsairBG.svg";
 import VideoC from "../assets/samsungOddysey.mp4";
 import BG_C from "../assets/samsungBG.svg";
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
 const images = [SlideOne, SlideTwo, SlideThree];
 
 function LandingPage() {
@@ -53,6 +54,7 @@ function LandingPage() {
         pointerEvents={loading ? "none" : "auto"}
       >
         <MainNavbar opacity={true} />
+        <ToastContainer />
         <CarouselShow images={images} />
         <Categorys />
 

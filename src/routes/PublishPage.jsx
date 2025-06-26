@@ -20,9 +20,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addProduct } from "@/features/fetch/allProductsSlice";
 
 export default function PublishPage() {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -136,9 +142,11 @@ export default function PublishPage() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Error al registrar el producto:", errorText);
-        alert(
-          "Ocurrió un error al crear el producto. Revisa la consola para más detalles."
+        toast.error(
+          "Ocurrió un error al crear el producto. Revisa la consola para más detalles.",
+          { autoClose: 2000 }
         );
+
         setIsSubmittingProduct(false);
         return;
       }
@@ -165,12 +173,19 @@ export default function PublishPage() {
       if (!stockRes.ok) {
         const errText = await stockRes.text();
         console.error("Error al crear stock:", errText);
-        alert("Se creó el producto pero falló el registro de stock.");
+        toast.error("Se creó el producto pero falló el registro de stock.", {
+          autoClose: 2000,
+        });
       } else {
         console.log("Stock registrado con éxito");
       }
 
-      alert("¡El producto y su stock se crearon con éxito!");
+      toast.success("¡El producto y su stock se crearon con éxito!", {
+        autoClose: 2000,
+        theme: "colored",
+      });
+
+      dispatch(addProduct(data));
       setNombre("");
       setDescripcion("");
       setPrecio("");
@@ -182,7 +197,12 @@ export default function PublishPage() {
       setSubcategoria("");
     } catch (err) {
       console.error("Error en fetch crear producto:", err);
-      alert("Hubo un problema de conexión al intentar crear el producto.");
+      toast.error(
+        "Hubo un problema de conexión al intentar crear el producto.",
+        {
+          autoClose: 2000,
+        }
+      );
     } finally {
       setIsSubmittingProduct(false);
     }
@@ -361,6 +381,7 @@ export default function PublishPage() {
       <MainNavbar id_user={id_user} />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
+        <ToastContainer />
         {/* Contenedor blanco principal */}
         <Box
           p={8}

@@ -3,8 +3,9 @@ import { useEffect } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { GoXCircle } from "react-icons/go";
 import { useDispatch } from "react-redux";
-
+import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { setError } from "../features/fetch/authSlice";
 
 import {
   setEmail,
@@ -25,6 +26,15 @@ function Signup() {
   };
 
   useEffect(() => {
+    if (error !== null) {
+      toast.error("el mail ingresado o la contraseña no son validas", {
+        autoClose: 3000,
+      });
+      dispatch(setError());
+    }
+  }, [error]);
+
+  useEffect(() => {
     if (result === "success") {
       dispatch(resetAuth());
       navigate("/");
@@ -39,6 +49,7 @@ function Signup() {
       height="100vh"
       backgroundColor="#170d20"
     >
+      <ToastContainer />
       <Box textAlign="center" width="100%" maxWidth="400px" px="6">
         <h2
           style={{

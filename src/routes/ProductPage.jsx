@@ -7,6 +7,7 @@ import ProductSection from "../components/productPage/ProductSection";
 import { useState, useEffect } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
 
 export default function ProductPage() {
   const user = useSelector((state) => state.user);
@@ -122,7 +123,7 @@ export default function ProductPage() {
     >
       {/* Navbar */}
       <MainNavbar />
-
+      <ToastContainer />
       {/* Contenido principal */}
 
       <Box flex="1" pt="20px" px={{ base: 0, md: 12 }} mt="20px">
