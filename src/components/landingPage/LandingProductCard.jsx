@@ -1,8 +1,8 @@
 // src/components/LandingProductCard.jsx
 
-import React from "react";
-import { Box, Image, Text, Button, Link } from "@chakra-ui/react";
-import { FaShoppingCart } from "react-icons/fa";
+import React, {useState} from "react";
+import { Box, Image, Text, Button, Link} from "@chakra-ui/react";
+import { FaShoppingCart, FaCheck } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom"; // <-- import React Router
 import { addToCart } from "@/features/cart/cartSlice";
 import { useDispatch } from "react-redux";
@@ -19,6 +19,7 @@ import { useDispatch } from "react-redux";
  *  - discountState: string "true" o "false"; si es "true", muestra badge, precio con descuento y precio anterior tachado
  */
 export default function LandingProductCard({ product }) {
+  const [isAdded, setIsAdded] = useState(false);
   const linkTo = `/product-desc/${product.id_product}`;
   const dispatch = useDispatch();
   // Verificamos si discountState es "true"
@@ -31,6 +32,16 @@ export default function LandingProductCard({ product }) {
     : null;
   // Formateamos precio original
   const originalPrice = product.price.toLocaleString("es-AR");
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({ item: product, extraFlag: false }));
+    setIsAdded(true);
+    
+    // Resetear el estado después de 2 segundos
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
+  };
 
   return (
     <Box
@@ -153,24 +164,31 @@ export default function LandingProductCard({ product }) {
           py={2}
           px={4}
           fontSize="sm"
-          transition="box-shadow 0.2s ease"
+          transition="all 0.3s ease"
           width="100%"
           borderWidth="2px"
-          borderColor="#EC1877"
+          borderColor={isAdded ? "green.500" : "#EC1877"}
           variant="outline"
-          color="#F1E6F7"
+          color={isAdded ? "white" : "#F1E6F7"}
+          bg={isAdded ? "green.500" : "transparent"}
           _hover={{
-            bg: "#EC1877",
+            bg: isAdded ? "green.600" : "#EC1877",
             color: "#F1E6F7",
-            borderColor: "#EC1877",
-            boxShadow: "0 0 8px 2px #EC1877",
+            borderColor: isAdded ? "green.600" : "#EC1877",
+            boxShadow: isAdded ? "0 0 8px 2px green" : "0 0 8px 2px #EC1877",
           }}
-          onClick={() =>
-            dispatch(addToCart({ item: product, extraFlag: false }))
-          }
+          onClick={handleAddToCart}
         >
-          <FaShoppingCart /> Agregar
-        </Button>
+          {isAdded ? (
+                  <>
+                    <FaCheck /> Agregado
+                  </>
+                ) : (
+                  <>
+                    <FaShoppingCart /> Agregar
+                  </>
+                )}
+              </Button>
       </Box>
     </Box>
   );

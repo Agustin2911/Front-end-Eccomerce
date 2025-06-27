@@ -6,6 +6,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Box, Image } from "@chakra-ui/react";
 import CarouselShow from "../components/landingPage/CarouselShow";
 import Categorys from "../components/landingPage/Categorys";
+import CustomerReviewsSection from "../components/landingPage/CustomerReviewsSection";
 import { useState, useEffect } from "react";
 
 import BrandProductShowcase from "../components/landingPage/BrandProductShowcase";
@@ -69,6 +70,7 @@ function LandingPage() {
             bgImage={BG_A}
             videoLeft={true}
             exploreText="Explora ROG"
+            exploreLink = "/products?search=ROG"
           />
         </Box>
 
@@ -79,6 +81,7 @@ function LandingPage() {
             bgImage={BG_B}
             videoLeft={false}
             exploreText="Explora Corsair"
+            exploreLink = "/products?search=Corsair"
           />
         </Box>
 
@@ -89,9 +92,12 @@ function LandingPage() {
             bgImage={BG_C}
             videoLeft={true}
             exploreText="Explora Samsung"
+            exploreLink = "/products?search=Samsung"
           />
         </Box>
-
+        <Box px={{ base: 4, md: 8 }} py={{ base: 4, md: 4 }}>
+          <CustomerReviewsSection />
+        </Box>
         <Footer />
       </Box>
     </Box>

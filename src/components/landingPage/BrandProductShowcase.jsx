@@ -1,6 +1,7 @@
 // src/components/BrandProductShowcase.jsx
 import { Box, Flex, SimpleGrid, useMediaQuery, Button } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import LandingProductCard from "./LandingProductCard";
 
 /**
@@ -20,6 +21,7 @@ export default function BrandProductShowcase({
   bgImage,
   videoLeft = true,
   exploreText = "Explora",
+  exploreLink,
 }) {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const [isSmallDesktop] = useMediaQuery("(max-width: 1368px)");
@@ -121,6 +123,8 @@ export default function BrandProductShowcase({
             />
             {/* ←—— NEW BUTTON */}
             <Button
+              as={RouterLink}
+              to={exploreLink}
               position="absolute"
               bottom="4"
               transition="box-shadow 0.2s ease"
@@ -130,11 +134,13 @@ export default function BrandProductShowcase({
               borderColor="#EC1877"
               variant="outline"
               color="#F1E6F7"
+              textDecoration="none" 
               _hover={{
                 bg: "#EC1877",
                 color: "#F1E6F7",
                 borderColor: "#F1E6F7",
                 boxShadow: "0 0 8px 2px #F1E6F7",
+                textDecoration: "none", 
               }}
             >
               {exploreText}
@@ -208,6 +214,8 @@ export default function BrandProductShowcase({
             />
             {/* ←—— NEW BUTTON */}
             <Button
+              as={RouterLink}
+              to={exploreLink}
               position="absolute"
               transition="box-shadow 0.2s ease"
               bottom="4"
@@ -217,11 +225,13 @@ export default function BrandProductShowcase({
               borderColor="#EC1877"
               variant="outline"
               color="#F1E6F7"
+              textDecoration="none"
               _hover={{
                 bg: "#EC1877",
                 color: "#F1E6F7",
                 borderColor: "#F1E6F7",
                 boxShadow: "0 0 8px 2px #F1E6F7",
+                textDecoration: "none",
               }}
             >
               {exploreText}
