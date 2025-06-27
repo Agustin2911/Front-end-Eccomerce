@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-
+import { deleteProductFetch, resetDeleteProduct } from "../features/fetch/fetchDeleteProduct";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import Loader from "../components/landingPage/Loader";
 import { fetchSellerProducts } from "../features/fetch/FetchSellerProducts";
-
+import { deleteProduct } from "../features/fetch/allProductsSlice";
+import { ToastContainer } from "react-toastify";
 import {
   Box,
   SimpleGrid,
@@ -27,7 +28,10 @@ export default function MyProductsPage() {
   const { sellerList, sellerLoading, sellerError } = useSelector(
     (state) => state.sellerProducts
   );
- console.log(sellerList)
+  
+  const [updatedList, setUpdatedList] = useState(sellerList); 
+
+
   useEffect(() => {
     if (!token || type !== "seller") {
       navigate("/signup", { replace: true });
@@ -35,6 +39,18 @@ export default function MyProductsPage() {
     }
     dispatch(fetchSellerProducts());
   }, [dispatch, navigate, token, type]);
+
+    const handleDelete = (id) => {
+        dispatch(deleteProductFetch(id)).then((result) => {
+            if (result.type === 'product/deleteProduct/fulfilled') {
+                dispatch(deleteProduct(result.payload));
+                const newList = updatedList.filter((item) => item.id_product != id)
+                setUpdatedList(newList);
+            }
+          });
+      
+  };
+
 
   const formatPrice = (price) =>
     new Intl.NumberFormat("es-AR", {
@@ -65,7 +81,7 @@ export default function MyProductsPage() {
           </Text>
           <Link
             as={RouterLink}
-            to={`/publish/${id_usuario}`}
+            to={`/publish`}
             w="200px"
             style={{ textDecoration: "none" }}
           >
@@ -92,8 +108,9 @@ export default function MyProductsPage() {
       <MainNavbar />
 
       <Box flex="1" w="80%" mx="auto" py={8}>
+      <ToastContainer />
         <SimpleGrid columns={[1, 2]} spacing={10} justifyItems="center">
-          {sellerList.map((item) => (
+          {updatedList.map((item) => (
             <Box
               key={item.id}
               w="100%"
@@ -146,6 +163,7 @@ export default function MyProductsPage() {
                       borderColor: "#EC1877",
                       boxShadow: "0 0 8px 2px #EC1877",
                     }}
+                    onClick={() => handleDelete(item.id_product)}
                   >
                     Eliminar producto
                   </Button>
@@ -166,7 +184,7 @@ export default function MyProductsPage() {
                       boxShadow: "0 0 8px 2px #EC1877",
                     }}
                   >
-                    Modificar stock
+                    Modificar producto
                   </Button>
                 </Flex>
 

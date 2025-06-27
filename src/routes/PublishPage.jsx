@@ -15,6 +15,7 @@ import {
   Link,
   Spinner,
 } from "@chakra-ui/react";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { useEffect } from "react";
 import {  useNavigate } from "react-router-dom";
 import MainNavbar from "../components/allPages/MainNavbar";
@@ -24,6 +25,7 @@ import { fetchSellerData } from "../features/fetch/fetchSellerData";
 import { fetchUserShops } from "../features/fetch/fetchUserShops";
 import { registerProduct, resetRegister } from "../features/fetch/fetchCreateProduct";
 import { addProduct } from "@/features/fetch/allProductsSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function PublishPage() {
 
@@ -74,8 +76,9 @@ export default function PublishPage() {
 
   const { loading: productLoading, error: productError, success } = useSelector(state => state.registerProduct);
 
-    function handleRegisterProduct(){
-        dispatch(registerProduct({
+    async function handleRegisterProduct() {
+
+        const actionResult = await dispatch(registerProduct({
             nombre,
             descripcion,
             precio,
@@ -84,6 +87,11 @@ export default function PublishPage() {
             subcategoria,
             imageFile
         }));
+
+        const prodData = unwrapResult(actionResult);
+        dispatch(addProduct(prodData))
+        
+        
 
         setSubcategoria("");
         setNombre("");

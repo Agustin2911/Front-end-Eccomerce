@@ -18,11 +18,7 @@ export const registerProduct = createAsyncThunk(
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-        toast.success("¡El producto y su stock se crearon con éxito!", {
-            autoClose: 2000,
-            theme: "colored",
-        });
-
+        
 
       if (!resSub.ok) {
         toast.error(
@@ -66,6 +62,13 @@ export const registerProduct = createAsyncThunk(
         },
         body: JSON.stringify(stockPayload),
       });
+
+      toast.success("¡El producto y su stock se crearon con éxito!", {
+            autoClose: 2000,
+            theme: "colored",
+        });
+
+
       if (!resStock.ok) {
         const errText = await resStock.text();
         throw new Error(`Error crear stock: ${errText}`);
@@ -111,4 +114,4 @@ const registerSlice = createSlice({
 
 export const { resetRegister } = registerSlice.actions;
 export default registerSlice.reducer;
-
+toast
