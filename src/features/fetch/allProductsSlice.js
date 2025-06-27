@@ -78,6 +78,7 @@ const productsSlice = createSlice({
 
     deleteProduct: (state, action) => {
       const idToDelete = action.payload;
+      console.log(action.payload)
       state.items = state.items.filter((p) => p.id_product !== idToDelete);
     },
     applyFilters: (state, action) => {

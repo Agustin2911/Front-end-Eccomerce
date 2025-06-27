@@ -1,24 +1,21 @@
 // src/pages/PublishPage.jsx
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState,  useEffect } from "react";
 import {
   Flex,
   Box,
   Heading,
   Text,
   Input,
-  Textarea,
   Button,
-  HStack,
-  Image,
 } from "@chakra-ui/react";
 
 import { MdPublish } from "react-icons/md";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { createShop, resetCreateShop } from "../features/fetch/fetchCreateShop";
 
 export default function PublishPage() {
   const navigate = useNavigate();
@@ -38,58 +35,12 @@ export default function PublishPage() {
   const isButtonDisabled = ciudadInvalid || streetInvalid;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const dispatch = useDispatch();
+  const { loading, error, success, shop } = useSelector(state => state.createShop);
+
   const handleRegister = async () => {
-    // Si el botón está deshabilitado, no hacemos nada
-    if (isButtonDisabled) return;
-
-    setIsSubmitting(true);
-
-    try {
-      const payload = {
-        id_user: user.id_usuario,
-        city: ciudad.trim(),
-        street: street.trim(),
-      };
-
-      const response = await fetch("http://localhost:1273/shops", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        // si el backend devuelve algún error HTTP
-        const errorText = await response.text();
-        console.error("Error al registrar la tienda:", errorText);
-        toast.error(
-          "Ocurrió un error al crear la tienda. Revisa la consola para más detalles.",
-          { autoClose: 2500 }
-        );
-
-        setIsSubmitting(false);
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Tienda creada con éxito:", data);
-
-      // Aquí puedes hacer lo que consideres: redirigir, limpiar el formulario, mostrar mensaje, etc.
-
-      toast.success("¡La tienda se creó con éxito!", { autoClose: 3000 });
-      setCiudad("");
-      setStreet("");
-    } catch (error) {
-      console.error("Error en fetch:", error);
-      toast.error("Hubo un problema de conexión al intentar crear la tienda.", {
-        autoClose: 3000,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    dispatch(createShop({ city: ciudad, street }));
+  }
 
   return (
     <Flex
@@ -145,7 +96,7 @@ export default function PublishPage() {
               </Text>
               <Input
                 color="white"
-                placeholder="Ingresa el nombre"
+                placeholder="Ingresa la ciudad"
                 _placeholder={{ color: "whiteAlpha.600" }}
                 value={ciudad}
                 mb={4}
@@ -182,7 +133,7 @@ export default function PublishPage() {
               </Text>
               <Input
                 color="white"
-                placeholder="Ingresa el nombre"
+                placeholder="Ingresa la direccion"
                 _placeholder={{ color: "whiteAlpha.600" }}
                 value={street}
                 mb={4}
@@ -233,7 +184,7 @@ export default function PublishPage() {
           color="#ad5add"
           _hover={{ color: "#EC1877" }}
           mb="6"
-          onClick={() => navigate(`/publish/${user.id_usuario}`)}
+          onClick={() => navigate(`/publish`)}
         >
           <MdPublish />
           Publicar un producto
