@@ -31,6 +31,7 @@ import { addToCart } from "../../features/cart/cartSlice";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { mode } from "@chakra-ui/theme-tools";
+import { ToastContainer } from "react-toastify";
 
 export default function ProductSection({
   images,
@@ -54,8 +55,14 @@ export default function ProductSection({
 
   //    const [selectedImage, setSelectedImage] = useState(0);
 
-  const cuotas = price / 12;
+  const isDiscountActive = discount_state === "true";
+  const discountedPrice = isDiscountActive
+    ? price - (price * discount) / 100
+    : price;
+
   const priceFormatted = price.toLocaleString("es-AR");
+  const discountedPriceFormatted = discountedPrice.toLocaleString("es-AR");
+  const cuotas = discountedPrice / 12;
   const cuotasFormatted = cuotas.toLocaleString("es-AR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -186,9 +193,25 @@ export default function ProductSection({
             <Stack spacing={0}>
               <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
                 Precio especial:{" "}
-                <Text as="span" color="green.500">
-                  {priceFormatted}
-                </Text>
+                {isDiscountActive ? (
+                  <>
+                    <Text
+                      as="span"
+                      color="gray.500"
+                      textDecoration="line-through"
+                      mr={2}
+                    >
+                      ${priceFormatted}
+                    </Text>
+                    <Text as="span" color="green.500" fontWeight="bold">
+                      ${discountedPriceFormatted}
+                    </Text>
+                  </>
+                ) : (
+                  <Text as="span" color="green.500" fontWeight="bold">
+                    ${priceFormatted}
+                  </Text>
+                )}
               </Text>
               <Text
                 fontSize={{ base: "xs", md: "sm" }}

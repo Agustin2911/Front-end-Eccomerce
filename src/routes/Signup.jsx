@@ -1,67 +1,45 @@
 import { Link, useNavigate, Link as RouterLink } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { GoXCircle } from "react-icons/go";
 import { useDispatch } from "react-redux";
-import { login, logout } from "../features/user/userSlice";
+import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { setError } from "../features/fetch/authSlice";
 
+import {
+  setEmail,
+  setPassword,
+  authenticateUser,
+  resetAuth,
+} from "../features/fetch/authSlice";
 function Signup() {
-  const [user_email, setEmail] = useState("");
-  const [user_password, setPassword] = useState("");
-  const [data, setData] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user);
+  const { email, password, loading, result, error } = useSelector(
+    (state) => state.auth
+  );
 
-  const handleFetch = async () => {
-    setLoading(true);
-
-    const user_data = { email: user_email, password: user_password };
-
-    try {
-      const response = await fetch(
-        "http://localhost:1273/api/v1/auth/authenticate",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user_data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      dispatch(
-        login({
-          id_usuario: result.id_user,
-          image_path: result.photo_url,
-          type: result.type,
-          token: result.access_token,
-        })
-      );
-
-      setData("success");
-    } catch (error) {
-      console.error("Error en la petición:", error);
-      alert(
-        "hubo un error en el proceso del sign up, verifique que sus datos sean correctos"
-      );
-    } finally {
-      setLoading(false);
-    }
+  const handleLogin = () => {
+    dispatch(authenticateUser({ email, password }));
   };
 
   useEffect(() => {
-    if (data === "success") {
+    if (error !== null) {
+      toast.error("el mail ingresado o la contraseña no son validas", {
+        autoClose: 3000,
+      });
+      dispatch(setError());
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (result === "success") {
+      dispatch(resetAuth());
       navigate("/");
     }
-  }, [data]);
+  }, [result, dispatch, navigate]);
 
   return (
     <Box
@@ -71,6 +49,7 @@ function Signup() {
       height="100vh"
       backgroundColor="#170d20"
     >
+      <ToastContainer />
       <Box textAlign="center" width="100%" maxWidth="400px" px="6">
         <h2
           style={{
@@ -87,8 +66,8 @@ function Signup() {
           className="form-control"
           type="text"
           placeholder="Email"
-          value={user_email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          onChange={(e) => dispatch(setEmail(e.target.value))}
           style={{
             width: "100%",
             padding: "12px",
@@ -102,8 +81,8 @@ function Signup() {
           className="form-control"
           type="password"
           placeholder="Constraseña"
-          value={user_password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          onChange={(e) => dispatch(setPassword(e.target.value))}
           style={{
             width: "100%",
             padding: "12px",
@@ -115,7 +94,7 @@ function Signup() {
 
         <button
           className=" w-100"
-          onClick={handleFetch}
+          onClick={handleLogin}
           disabled={loading}
           style={{
             width: "100%",

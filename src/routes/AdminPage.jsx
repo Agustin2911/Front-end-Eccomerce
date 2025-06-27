@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -59,7 +60,9 @@ export default function AdminPage() {
       setShowUsers(true);
     } catch (err) {
       console.error("Error al obtener usuarios:", err);
-      alert("No se pudieron cargar los usuarios. Revisa la consola.");
+      toast.error("No se pudieron cargar los usuarios. Revisa la consola.", {
+        autoClose: 3000,
+      });
     } finally {
       setLoadingUsers(false);
     }
@@ -85,7 +88,9 @@ export default function AdminPage() {
       setShowSellers(true);
     } catch (err) {
       console.error("Error al obtener sellers:", err);
-      alert("No se pudieron cargar los vendedores. Revisa la consola.");
+      toast.error("No se pudieron cargar los vendedores. Revisa la consola.", {
+        autoClose: 3000,
+      });
     } finally {
       setLoadingSellers(false);
     }
@@ -110,7 +115,9 @@ export default function AdminPage() {
       );
     } catch (err) {
       console.error("Error al aprobar seller:", err);
-      alert("No se pudo aprobar. Revisa la consola.");
+      toast.error("No se pudo aprobar. Revisa la consola.", {
+        autoClose: 3000,
+      });
     } finally {
       setApprovingId(null);
     }
@@ -123,6 +130,7 @@ export default function AdminPage() {
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
       <MainNavbar />
+      <ToastContainer />
 
       <Box flex="1" py={12} px={8}>
         <Flex

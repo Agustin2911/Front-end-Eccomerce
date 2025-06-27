@@ -18,6 +18,7 @@ import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function PublishPage() {
   const navigate = useNavigate();
@@ -63,9 +64,11 @@ export default function PublishPage() {
         // si el backend devuelve algún error HTTP
         const errorText = await response.text();
         console.error("Error al registrar la tienda:", errorText);
-        alert(
-          "Ocurrió un error al crear la tienda. Revisa la consola para más detalles."
+        toast.error(
+          "Ocurrió un error al crear la tienda. Revisa la consola para más detalles.",
+          { autoClose: 2500 }
         );
+
         setIsSubmitting(false);
         return;
       }
@@ -74,12 +77,15 @@ export default function PublishPage() {
       console.log("Tienda creada con éxito:", data);
 
       // Aquí puedes hacer lo que consideres: redirigir, limpiar el formulario, mostrar mensaje, etc.
-      alert("¡La tienda se creó con éxito!");
+
+      toast.success("¡La tienda se creó con éxito!", { autoClose: 3000 });
       setCiudad("");
       setStreet("");
     } catch (error) {
       console.error("Error en fetch:", error);
-      alert("Hubo un problema de conexión al intentar crear la tienda.");
+      toast.error("Hubo un problema de conexión al intentar crear la tienda.", {
+        autoClose: 3000,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -92,6 +98,7 @@ export default function PublishPage() {
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
       <MainNavbar />
+      <ToastContainer />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         {/* Contenedor blanco principal */}
