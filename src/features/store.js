@@ -14,7 +14,7 @@ import registerProductReducer from "../features/fetch/fetchCreateProduct";
 import createShopReducer from "../features/fetch/fetchCreateShop";
 import allProductReducer from "../features/fetch/allProductsSlice";
 import deleteProductReducer from "../features/fetch/fetchDeleteProduct";
-
+import stocksReducer from "../features/fetch/fetchStocks";
 
 export const store = configureStore({
   reducer: {
@@ -33,5 +33,6 @@ export const store = configureStore({
     createShop: createShopReducer,
     allProducts: allProductReducer,
     deleteProductFetch: deleteProductReducer,
+    stocks: stocksReducer,
   },
 });

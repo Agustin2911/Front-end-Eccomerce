@@ -8,6 +8,7 @@ import Loader from "../components/landingPage/Loader";
 import { fetchSellerProducts } from "../features/fetch/FetchSellerProducts";
 import { deleteProduct } from "../features/fetch/allProductsSlice";
 import { ToastContainer } from "react-toastify";
+import { fetchAllStocks } from "../features/fetch/fetchStocks";
 import {
   Box,
   SimpleGrid,
@@ -28,9 +29,11 @@ export default function MyProductsPage() {
   const { sellerList, sellerLoading, sellerError } = useSelector(
     (state) => state.sellerProducts
   );
+  const { items: stockList, loading: stocksLoading } = useSelector(
+    (state) => state.stocks
+  );
   
   const [updatedList, setUpdatedList] = useState(sellerList); 
-
 
   useEffect(() => {
     if (!token || type !== "seller") {
@@ -38,7 +41,13 @@ export default function MyProductsPage() {
       return;
     }
     dispatch(fetchSellerProducts());
+    dispatch(fetchAllStocks()); 
   }, [dispatch, navigate, token, type]);
+
+    useEffect(() => {
+        setUpdatedList(sellerList);
+    }, [sellerList]);
+
 
     const handleDelete = (id) => {
         dispatch(deleteProductFetch(id)).then((result) => {
@@ -50,6 +59,8 @@ export default function MyProductsPage() {
           });
       
   };
+
+  
 
 
   const formatPrice = (price) =>
@@ -110,9 +121,17 @@ export default function MyProductsPage() {
       <Box flex="1" w="80%" mx="auto" py={8}>
       <ToastContainer />
         <SimpleGrid columns={[1, 2]} spacing={10} justifyItems="center">
-          {updatedList.map((item) => (
-            <Box
-              key={item.id}
+          {updatedList.map((item) => {
+            console.log(stockList)
+            const stockForThis = stockList.find(
+                    (s) => s.id === item.id_product
+                );
+            console.log(stockForThis);
+            const amount = stockForThis ? stockForThis.stock : 0;
+
+              return (
+                          <Box
+              key={item.id_product}
               w="100%"
               maxW="400px"
               bg="#170D20"
@@ -133,8 +152,13 @@ export default function MyProductsPage() {
                     </Heading>
                 </Link>
                 <VStack align="start" spacing={1} w="100%">
-                  <Text color="#F1E6F7">Stock actual: {item.amount}</Text>
-                  <Text color="#F1E6F7">Precio: {formatPrice(item.price)}</Text>
+                  <Text color="#F1E6F7">Stock actual: {amount}</Text>
+                  <Text color="#F1E6F7">Precio: {
+                      item.discount_state === "false" ? 
+                        formatPrice(item.price) : 
+                        formatPrice(item.price - item.price*item.discount/100)
+                      }
+                  </Text>
                 </VStack>
 
                 <Image
@@ -183,6 +207,7 @@ export default function MyProductsPage() {
                       borderColor: "#EC1877",
                       boxShadow: "0 0 8px 2px #EC1877",
                     }}
+                    onClick={() => navigate(`/modify-product/${item.id_product}`)}
                   >
                     Modificar producto
                   </Button>
@@ -190,7 +215,7 @@ export default function MyProductsPage() {
 
               </VStack>
             </Box>
-          ))}
+              )})}
         </SimpleGrid>
       </Box>
 

@@ -18,6 +18,7 @@ import NewShopPage from "./routes/NewShopPage";
 import MyProductsPage from "./routes/MyProductsPage";
 import { useDispatch } from "react-redux";
 import { fetchProducts } from "./features/fetch/allProductsSlice";
+import ModifyProductsPage from "./routes/ModifyProductPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,7 +32,8 @@ function App() {
     <ChakraProvider value={system}>
       <Router>
         <Routes>
-
+            
+          <Route path="/modify-product/:id_product" element={<ModifyProductsPage />}></Route>
           <Route path="/my-products" element={<MyProductsPage />}></Route>
           <Route path="/admin" element={<AdminPage />}></Route>
 
