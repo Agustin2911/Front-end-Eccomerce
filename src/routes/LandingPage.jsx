@@ -7,6 +7,8 @@ import { Box, Image } from "@chakra-ui/react";
 import CarouselShow from "../components/landingPage/CarouselShow";
 import Categorys from "../components/landingPage/Categorys";
 import { useState, useEffect } from "react";
+import { fetchUserShops } from "../features/fetch/fetchUserShops";
+
 
 import BrandProductShowcase from "../components/landingPage/BrandProductShowcase";
 import FeaturedProducts from "../components/landingPage/FeaturedProducts";
@@ -16,25 +18,35 @@ import SlideOne from "../assets/carrusel.svg";
 import SlideTwo from "../assets/carrusel1.svg";
 import SlideThree from "../assets/carrusel2.svg";
 
-// >>> Showcase assets <<<
 import VideoA from "../assets/asusRog.mp4";
 import BG_A from "../assets/asusBG.png";
 import VideoB from "../assets/corsairGabo.mp4";
 import BG_B from "../assets/corsairBG.svg";
 import VideoC from "../assets/samsungOddysey.mp4";
 import BG_C from "../assets/samsungBG.svg";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
+
 const images = [SlideOne, SlideTwo, SlideThree];
 
 function LandingPage() {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const user = useSelector((state) => state.user);
+
+
   console.log("🔍 ShowProductsPage: id_user =", user.id_usuario);
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if ( user.type === "seller"){
+        dispatch(fetchUserShops());
+    }
+  }, [dispatch, user.type]);
+
 
   return (
     <Box

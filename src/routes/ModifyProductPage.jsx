@@ -1,16 +1,22 @@
-import React, { useState } from "react";
-import { Flex, Box, Heading, Text, Input, Textarea, Button, HStack, Image } from "@chakra-ui/react";
+import { useState } from "react";
+import { Flex, Box, Heading, Text, Input, Textarea, Button, HStack, Image, Spinner} from "@chakra-ui/react";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { fetchProductStock } from "../features/fetch/fetchProductStock";
+import { modifyProduct, modifyStock } from "../features/fetch/fetchModifyProduct";
+import { toast, ToastContainer } from "react-toastify";
+import { updateProduct } from "@/features/fetch/allProductsSlice";
 
-export default function PublishPage() {
+export default function ModifyProductPage() {
 
     
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   useEffect(() => {
     if (!user.token || user.type !== "seller") {
@@ -25,6 +31,14 @@ export default function PublishPage() {
   const productId = parseInt(id_product, 10);
   const product = allProducts.find(p => p.id_product === productId);
 
+  const { item: stockItem, loading: stockLoading } = useSelector(
+    (s) => s.stock
+  );
+  useEffect(() => {
+    if (productId) {
+      dispatch(fetchProductStock(productId));
+    }
+  }, [dispatch, productId]);
 
 
   // Estados para inputs
@@ -32,26 +46,27 @@ export default function PublishPage() {
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
   const [stockAct, setStockAct] = useState("");
-  const [stockMin, setStockMin] = useState("");
   const [estadoDescuento, setEstadoDescuento] = useState("");
   const [descuento, setDescuento] = useState("");
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
-
+    
   
    useEffect(() => {
     if (!product) return;
     setNombre(product.product_name || "");
     setDescripcion(product.description || "");
     setPrecio(product.price || "");
-    setStockAct("");
-    setStockMin("");
-    setEstadoDescuento(product.discount_state === "true" ? "activar" : "desactivar");
+    setEstadoDescuento(product.discount_state === "true" ? "activado" : "desactivado");
     setDescuento(product.discount || "");
     setPreviewUrl(product.photo_url || null);
   }, [product]);
 
-
+  useEffect(() => {
+    if (!stockItem) return; 
+    setStockAct(0);
+  },[stockItem]);
 
   // Estado para hover en botón deshabilitado
   const [isHoveringDisabled, setIsHoveringDisabled] = useState(false);
@@ -60,10 +75,9 @@ export default function PublishPage() {
   const nameInvalid = nombre.trim().length === 0;
   const descInvalid = descripcion.trim().length === 0;
   const priceInvalid = precio === "" || parseInt(precio, 10) <= 0;
-  const stockActInvalid = stockAct === "" || parseInt(stockAct, 10) < 0;
-  const stockMinInvalid = stockMin === "" || parseInt(stockMin, 10) < 0;
+  const stockActInvalid = stockAct === "";
   const estadoInvalid = estadoDescuento === "";
-  const discountInvalid = estadoDescuento === "activar" && descuento === "";
+  const discountInvalid = estadoDescuento === "activado" && descuento === "";
   const urlInvalid = previewUrl === null;
   // Determina si el botón debe estar deshabilitado
   const isButtonDisabled =
@@ -71,10 +85,55 @@ export default function PublishPage() {
     descInvalid ||
     priceInvalid ||
     stockActInvalid ||
-    stockMinInvalid ||
     estadoInvalid ||
     discountInvalid ||
     urlInvalid;
+
+    const handleModifyClick = () => {
+    dispatch(
+      modifyProduct({
+        id_product: productId,
+        product_name: nombre,
+        description: descripcion,
+        price: Number(precio),
+        discount_state: estadoDescuento === "activado" ? "true" : "false",
+        discount: Number(descuento),
+        photo_url: product.photo_url,
+        
+      })
+    )
+    .unwrap()
+    .then((updatedProduct) => {
+      // 1) Actualizo el stock en el servidor
+      return dispatch(modifyStock({ productId, delta: Number(stockAct) }))
+        .unwrap()
+        .then(() => updatedProduct); // paso el producto actualizado a la siguiente promesa
+    })
+    .then((updatedProduct) => {
+      // 2) Despacho la acción que actualiza el store global
+      dispatch(updateProduct(updatedProduct));
+      // 3) Muestro el toast y navego
+      toast.success("Su producto fue modificado con éxito", {
+        autoClose: 2000,
+        theme: "colored",
+      });
+      setTimeout(() => navigate("/my-products"), 400);
+    })
+    .catch((err) => {
+      console.error("Error al modificar:", err);
+      toast.error("Hubo un error al modificar el producto", {
+        autoClose: 2000,
+        theme: "colored",
+      });
+    });
+};
+  if (stockLoading || stockItem === null) {
+    return (
+        <Flex align="center" justify="center" minH="60vh">
+            <Spinner color="purple.400" />
+        </Flex>
+        );
+    }
 
   return (
     <Flex
@@ -82,9 +141,12 @@ export default function PublishPage() {
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
+
       <MainNavbar />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
+        <ToastContainer />
+
         <Box
           p={8}
           borderRadius="lg"
@@ -154,28 +216,28 @@ export default function PublishPage() {
                     Stock actual:
                   </Text>
                   <Input
+                    disabled
                     color="white"
                     type="number"
                     placeholder="Ej. 10"
                     _placeholder={{ color: "whiteAlpha.600" }}
-                    value={stockAct}
-                    onChange={(e) => setStockAct(e.target.value)}
-                    borderColor={isHoveringDisabled && stockActInvalid ? "#EC1877" : "whiteAlpha.800"}
+                    value={stockItem.stock}
+                    borderColor={"whiteAlpha.800"}
                   />
                 </Box>
 
                 <Box flex={1}>
-                  <Text fontSize="sm" mb={1} color={isHoveringDisabled && stockMinInvalid ? "#EC1877" : "whiteAlpha.800"}>
-                    Stock mínimo:
+                  <Text fontSize="sm" mb={1} color={"whiteAlpha.800"}>
+                    Modificar stock ( - / + ):
                   </Text>
                   <Input
                     color="white"
                     type="number"
-                    placeholder="Ej. 2"
+                    placeholder="0"
                     _placeholder={{ color: "whiteAlpha.600" }}
-                    value={stockMin}
-                    onChange={(e) => setStockMin(e.target.value)}
-                    borderColor={isHoveringDisabled && stockMinInvalid ? "#EC1877" : "whiteAlpha.800"}
+                    value={stockAct}
+                    onChange={(e) => setStockAct(e.target.value)}
+                    borderColor={"whiteAlpha.800"}
                   />
                 </Box>
               </HStack>
@@ -183,22 +245,7 @@ export default function PublishPage() {
               <Text fontSize="sm" mb={1} color="whiteAlpha.800">
                 Foto del producto:
               </Text>
-              <Input
-                type="file"
-                accept="image/*"
-                mb={4}
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => setPreviewUrl(reader.result);
-                    reader.readAsDataURL(file);
-                  } else {
-                    setPreviewUrl(null);
-                  }
-                }}
-                borderColor={isHoveringDisabled && nameInvalid ? "#EC1877" : "whiteAlpha.800"}
-              />
+              
               {previewUrl && (
                 <Box textAlign="center" mb={4}>
                   <Image
@@ -225,12 +272,11 @@ export default function PublishPage() {
                 borderRadius="md"
                 p={2}
               >
-                <option value="">Selecciona estado</option>
-                <option value="activar">Activar</option>
-                <option value="desactivar">Desactivar</option>
+                <option value="activado">Activado</option>
+                <option value="desactivado">Desactivado</option>
               </Box>
 
-              {estadoDescuento === "activar" && (
+              {estadoDescuento === "activado" && (
                 <>
                   <Text fontSize="sm" mb={1} color={isHoveringDisabled && discountInvalid ? "#EC1877" : "whiteAlpha.800"}>
                     Descuento (en %):
@@ -257,6 +303,7 @@ export default function PublishPage() {
                   bgColor={isButtonDisabled ? "#D3A5EE" : "#AE5BDD"}
                   w="100%"
                   disabled={isButtonDisabled}
+                  onClick={handleModifyClick}
                 >
                   {isButtonDisabled ? "Completa todos los campos" : "Actualizar producto"}
                 </Button>
