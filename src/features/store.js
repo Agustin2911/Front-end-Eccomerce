@@ -17,6 +17,10 @@ import deleteProductReducer from "../features/fetch/fetchDeleteProduct";
 import stocksReducer from "../features/fetch/fetchStocks";
 import stockReducer from "../features/fetch/fetchProductStock";
 import modifyReducer from "../features/fetch/fetchModifyProduct";
+import ReviewsReducer from "../features/fetch/fetchReviews";
+import createReviewReducer from "../features/fetch/fetchCreateReview";
+import canPostReviewReducer from "../features/fetch/fetchCanPostReview";
+import alreadyReviewedReducer from "../features/fetch/fetchAlreadyReviewed";
 
 export const store = configureStore({
   reducer: {
@@ -38,5 +42,9 @@ export const store = configureStore({
     stocks: stocksReducer,
     stock: stockReducer,
     modify: modifyReducer,
+    reviews: ReviewsReducer,
+    createReview: createReviewReducer,
+    canPostReview: canPostReviewReducer,
+    alreadyReviewed: alreadyReviewedReducer,
   },
 });

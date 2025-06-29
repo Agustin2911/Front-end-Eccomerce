@@ -18,10 +18,13 @@ import {
 } from "../features/fetch/checkoutSlice";
 import { processPayment } from "../features/fetch/paymentSlice";
 import { toast, ToastContainer, Zoom } from "react-toastify";
+
 function FormPayment() {
   const user = useSelector((state) => state.user);
   const [verify_address, setVerify_address] = useState(false);
   const [total, setTotal] = useState(0);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const navigate = useNavigate();
   const stores = ["Sucursal Centro", "Sucursal Norte", "Sucursal Sur"];
   const cart = useSelector((state) => state.cart.items);
@@ -34,6 +37,164 @@ function FormPayment() {
     Total += Total * 0.21;
     setTotal(Total);
   }, [cart]);
+
+  // Función para validar todos los campos
+  const validateFields = () => {
+    const errors = {};
+
+    // Validar nombre del titular
+    if (!checkout.cardName || checkout.cardName.trim().length === 0) {
+      errors.cardName = true;
+    }
+
+    // Validar número de tarjeta (debe tener 16 dígitos sin espacios)
+    const cardNumberDigits = checkout.cardNumber.replace(/\s/g, '');
+    if (!cardNumberDigits || cardNumberDigits.length !== 16) {
+      errors.cardNumber = true;
+    }
+
+    // Validar fecha de vencimiento (debe tener formato MM/YY)
+    if (!checkout.expiry || checkout.expiry.length !== 5 || !checkout.expiry.includes('/')) {
+      errors.expiry = true;
+    }
+
+    // Validar CVV (debe tener 3 o 4 dígitos)
+    if (!checkout.cvv || checkout.cvv.length < 3) {
+      errors.cvv = true;
+    }
+
+    // Validar tipo de tarjeta
+    if (!checkout.cardType) {
+      errors.cardType = true;
+    }
+
+    // Validar según el tipo de entrega
+    if (checkout.takeawayType === "delivery") {
+      if (!checkout.address || checkout.address.trim().length === 0) {
+        errors.address = true;
+      }
+    } else if (checkout.takeawayType === "local") {
+      if (!checkout.selectedStore) {
+        errors.selectedStore = true;
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Validar en tiempo real después del primer intento de envío
+  useEffect(() => {
+    if (hasAttemptedSubmit) {
+      validateFields();
+    }
+  }, [checkout, hasAttemptedSubmit]);
+
+  // Función para formatear número de tarjeta (solo para display)
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return v;
+    }
+  };
+
+  // Función para obtener el valor sin formato (para enviar al backend)
+  const getUnformattedCardNumber = (formattedValue) => {
+    return formattedValue.replace(/\s/g, '');
+  };
+
+  const getUnformattedExpiry = (formattedValue) => {
+    return formattedValue.replace(/\//g, '');
+  };
+
+  // Función para manejar cambio en número de tarjeta
+  const handleCardNumberChange = (e) => {
+    const formatted = formatCardNumber(e.target.value);
+    if (formatted.length <= 19) {
+      dispatch(setCardNumber(formatted));
+    }
+  };
+
+  const handleExpiryChange = (e) => {
+    let value = e.target.value;
+    const digitsOnly = value.replace(/\D/g, '');
+    const limitedDigits = digitsOnly.substring(0, 4);
+    
+    let formatted = '';
+    
+    if (limitedDigits.length === 0) {
+      formatted = '';
+    } else if (limitedDigits.length === 1) {
+      if (limitedDigits === '0' || limitedDigits === '1') {
+        formatted = limitedDigits;
+      } else {
+        formatted = '0' + limitedDigits;
+      }
+    } else if (limitedDigits.length === 2) {
+      const month = limitedDigits;
+      if (month >= '01' && month <= '12') {
+        formatted = month;
+      } else {
+        const firstDigit = limitedDigits[0];
+        if (firstDigit === '0' || firstDigit === '1') {
+          formatted = firstDigit;
+        } else {
+          formatted = '0' + firstDigit;
+        }
+      }
+    } else if (limitedDigits.length === 3) {
+      const month = limitedDigits.substring(0, 2);
+      const yearFirstDigit = limitedDigits.substring(2, 3);
+      
+      if (month >= '01' && month <= '12') {
+        formatted = month + '/' + yearFirstDigit;
+      } else {
+        const correctedMonth = month >= '01' && month <= '12' ? month : '01';
+        formatted = correctedMonth + '/' + yearFirstDigit;
+      }
+    } else if (limitedDigits.length === 4) {
+      const month = limitedDigits.substring(0, 2);
+      const year = limitedDigits.substring(2, 4);
+      
+      const validMonth = month >= '01' && month <= '12' ? month : '01';
+      const validYear = year >= '00' && year <= '99' ? year : '00';
+      
+      formatted = validMonth + '/' + validYear;
+    }
+    
+    dispatch(setExpiry(formatted));
+  };
+
+  // Función para manejar CVV (solo números)
+  const handleCvvChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 4) {
+      dispatch(setCvv(value));
+    }
+  };
+
+  // Función para manejar nombre del titular (máximo 40 caracteres)
+  const handleCardNameChange = (e) => {
+    const value = e.target.value;
+    if (value.length <= 40) {
+      dispatch(setCardName(value));
+    }
+  };
+
+  // Función para formatear números a 2 decimales
+  const formatPrice = (price) => {
+    return parseFloat(price).toFixed(2);
+  };
 
   async function address_verification() {
     if (checkout.takeawayType === "delivery") {
@@ -58,20 +219,30 @@ function FormPayment() {
   }
 
   async function generate_payment() {
+    setHasAttemptedSubmit(true);
+    
     if (user.token === null) {
-      toast.info("no estas registrado, se te redireccionara al login", {
+      toast.info("No estas registrado, se te redireccionara al login", {
         autoClose: 2500,
       });
       await sleep(3000);
       navigate("/signup");
+      return;
+    }
 
+    // Validar todos los campos
+    const isValid = validateFields();
+    if (!isValid) {
+      toast.error("Por favor, complete todos los campos requeridos correctamente", {
+        autoClose: 2500,
+      });
       return;
     }
 
     const result = await address_verification();
     if (!result) {
       toast.error(
-        "la direccion ingresa no existe ,  verifique lo ingresado o pruebe con otra",
+        "La direccion ingresada no existe, verifique la direccion o pruebe con otra",
         {
           autoClose: 2500,
         }
@@ -79,21 +250,15 @@ function FormPayment() {
       return;
     }
 
-    if (
-      !checkout.cardName ||
-      !checkout.cardType ||
-      !checkout.expiry ||
-      !checkout.cvv
-    ) {
-      toast.error("faltan datos de pago", {
-        autoClose: 2500,
-      });
-
-      return;
-    }
+    // Preparar datos para enviar al backend (sin formato)
+    const paymentData = {
+      ...checkout,
+      cardNumber: getUnformattedCardNumber(checkout.cardNumber),
+      expiry: getUnformattedExpiry(checkout.expiry)
+    };
 
     try {
-      await dispatch(processPayment({ user, checkout, total })).unwrap();
+      await dispatch(processPayment({ user, checkout: paymentData, total })).unwrap();
       toast.success("Pago procesado correctamente.", {
         autoClose: 2500,
         theme: "colored",
@@ -148,7 +313,7 @@ function FormPayment() {
         left: 0;
         width: 0%;
         height: 100%;
-        background-color:#ec1877; /* darken(#0cf, 15%) */
+        background-color:#ec1877;
         transition: all .3s;
         border-radius: 10rem;
         z-index: -1;
@@ -161,21 +326,32 @@ function FormPayment() {
       .pagar-btn:hover::before {
         width: 100%;
       }
-            .btn-outline-primary {
-      color: #d3a5ee;
-      border-color: #d3a5ee;
-    }
+            
+      .btn-outline-primary {
+        color: #d3a5ee;
+        border-color: #d3a5ee;
+      }
 
-    .btn-outline-primary:hover {
-      background-color: #d3a5ee;
-      color: #fff;
-    }
+      .btn-outline-primary:hover {
+        background-color: #d3a5ee;
+        color: #fff;
+      }
 
-    .btn-check:checked + .btn-outline-primary {
-      background-color: #ae5bdd;
-      color: #fff;
-      border-color: #ae5bdd;
-    }
+      .btn-check:checked + .btn-outline-primary {
+        background-color: #ae5bdd;
+        color: #fff;
+        border-color: #ae5bdd;
+      }
+
+      .form-control.is-invalid {
+        border: 2px solid #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+      }
+
+      .form-select.is-invalid {
+        border: 2px solid #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+      }
     `}
       </style>
       <Box
@@ -218,7 +394,8 @@ function FormPayment() {
               Selecciona la sucursal
             </label>
             <select
-              className="form-select"
+              className={`form-select ${validationErrors.selectedStore ? "is-invalid" : ""}`}
+              value={checkout.selectedStore || ""}
               onChange={(e) => dispatch(setSelectedStore(e.target.value))}
             >
               <option value="">Seleccione una sucursal</option>
@@ -228,6 +405,9 @@ function FormPayment() {
                 </option>
               ))}
             </select>
+            {validationErrors.selectedStore && (
+              <small className="text-danger">Debe seleccionar una sucursal</small>
+            )}
           </Box>
         )}
 
@@ -238,11 +418,14 @@ function FormPayment() {
             </label>
             <input
               type="text"
-              className={`form-control ${verify_address ? "is-invalid" : ""}`}
+              className={`form-control ${validationErrors.address || verify_address ? "is-invalid" : ""}`}
               placeholder="Ingrese su dirección"
               value={checkout.address}
               onChange={(e) => dispatch(setAddress(e.target.value))}
             />
+            {validationErrors.address && (
+              <small className="text-danger">La dirección es requerida</small>
+            )}
           </Box>
         )}
 
@@ -252,51 +435,65 @@ function FormPayment() {
           <div className="mb-3 text-start">
             <label className="form-label">Nombre del titular</label>
             <input
-              className="form-control"
+              className={`form-control ${validationErrors.cardName ? "is-invalid" : ""}`}
               value={checkout.cardName}
-              onChange={(e) => dispatch(setCardName(e.target.value))}
+              onChange={handleCardNameChange}
               placeholder="Nombre como aparece en la tarjeta"
+              maxLength={40}
             />
+            <small className="text-muted">{checkout.cardName.length}/40 caracteres</small>
+            {validationErrors.cardName && (
+              <small className="text-danger d-block">El nombre del titular es requerido</small>
+            )}
           </div>
 
           <div className="mb-3 text-start">
             <label className="form-label">Número de tarjeta</label>
             <input
-              className="form-control"
+              className={`form-control ${validationErrors.cardNumber ? "is-invalid" : ""}`}
               value={checkout.cardNumber}
-              onChange={(e) => dispatch(setCardNumber(e.target.value))}
+              onChange={handleCardNumberChange}
               placeholder="XXXX XXXX XXXX XXXX"
               maxLength={19}
             />
+            {validationErrors.cardNumber && (
+              <small className="text-danger">Debe ingresar un número de tarjeta válido (16 dígitos)</small>
+            )}
           </div>
 
           <div className="mb-3 text-start">
             <label className="form-label">Fecha de vencimiento</label>
             <input
-              className="form-control"
+              className={`form-control ${validationErrors.expiry ? "is-invalid" : ""}`}
               value={checkout.expiry}
-              onChange={(e) => dispatch(setExpiry(e.target.value))}
-              placeholder="MM/AA"
+              onChange={handleExpiryChange}
+              placeholder="MM/YY"
               maxLength={5}
             />
+            {validationErrors.expiry && (
+              <small className="text-danger">Debe ingresar una fecha válida (MM/YY)</small>
+            )}
           </div>
 
           <div className="mb-3 text-start">
             <label className="form-label">Código de seguridad (CVV)</label>
             <input
-              className="form-control"
+              className={`form-control ${validationErrors.cvv ? "is-invalid" : ""}`}
               value={checkout.cvv}
-              onChange={(e) => dispatch(setCvv(e.target.value))}
+              onChange={handleCvvChange}
               placeholder="CVV"
               maxLength={4}
             />
+            {validationErrors.cvv && (
+              <small className="text-danger">Debe ingresar un CVV válido (3-4 dígitos)</small>
+            )}
           </div>
 
           <div className="mb-3 text-start">
             <label className="form-label">Tipo de tarjeta</label>
             <div className="d-flex align-items-center gap-2">
               <select
-                className="form-select w-auto"
+                className={`form-select w-auto ${validationErrors.cardType ? "is-invalid" : ""}`}
                 value={checkout.cardType}
                 onChange={(e) => dispatch(setCardType(e.target.value))}
               >
@@ -320,16 +517,20 @@ function FormPayment() {
                 />
               )}
             </div>
+            {validationErrors.cardType && (
+              <small className="text-danger">Debe seleccionar un tipo de tarjeta</small>
+            )}
           </div>
         </Box>
+        
         <Box mt={6} mb={6} className="text-start">
           <h4 className="mb-3">Resumen del pago</h4>
           <ul className="list-group">
-            {cart.map((element) => (
-              <li className="list-group-item d-flex justify-content-between">
+            {cart.map((element, index) => (
+              <li key={index} className="list-group-item d-flex justify-content-between">
                 <span>{element.product_name}</span>
                 <strong>
-                  ${element.price} x {element.amount}
+                  ${formatPrice(element.price)} x {element.amount}
                 </strong>
               </li>
             ))}
@@ -337,18 +538,17 @@ function FormPayment() {
             <li className="list-group-item d-flex justify-content-between">
               <span>Envío</span>
               <strong>
-                {checkout.takeawayType === "delivery" ? "$1.000" : "$0"}
+                {checkout.takeawayType === "delivery" ? "$1000.00" : "$0.00"}
               </strong>
             </li>
             <li className="list-group-item d-flex justify-content-between">
               <span>Impuestos</span>
-              <strong>${total * 0.21}</strong>
+              <strong>${formatPrice(total * 0.21)}</strong>
             </li>
             <li className="list-group-item d-flex justify-content-between">
               <span>Total</span>
               <strong>
-                $
-                {checkout.takeawayType === "delivery" ? "$5.950" : total * 1.21}
+                ${checkout.takeawayType === "delivery" ? formatPrice(total * 1.21 + 1000) : formatPrice(total * 1.21)}
               </strong>
             </li>
           </ul>

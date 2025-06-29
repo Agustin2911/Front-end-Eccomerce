@@ -10,13 +10,10 @@ import {
 import { GoArchive } from "react-icons/go";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Link as ChakraLink, Button, Image, Box } from "@chakra-ui/react";
+import { Link as ChakraLink, Button, Image } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/user/userSlice";
-
-
-
 const MENU_DATA = [
   {
     label: "PCs Armadas",
@@ -222,6 +219,7 @@ export default function MainNavbar() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
+  const [openUserDropdown, setOpenUserDropdown] = useState(false); 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 858);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const cart = useSelector((state) => state.cart);
@@ -249,9 +247,21 @@ export default function MainNavbar() {
         setIsMobileSearchOpen(false);
       }
     };
+
+    const handleClickOutside = (event) => {
+      if (openUserDropdown && !event.target.closest('[data-user-dropdown]')) {
+        setOpenUserDropdown(false);
+      }
+    };
+
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    document.addEventListener('click', handleClickOutside);
+    
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  } , [openUserDropdown]);
 
   const searchBarStyle = {
     position: "fixed",
@@ -286,7 +296,7 @@ export default function MainNavbar() {
     justifyContent: "center",
     alignItems: "center",
     maxWidth: 700,
-    marginLeft: isMobile ? 0 : "-100px",
+    marginLeft: user.id_usuario ? "-80px" : "-110px", // Ajuste dinámico basado en si está logueado
   };
 
   const searchInputStyle = {
@@ -430,33 +440,32 @@ export default function MainNavbar() {
                 <FaSearch />
               </div>
 
-              <Link
-                to={
-                  user.type === "buyer"
-                    ? `/myorders/${user.id_usuario}`
-                    : user.type === "seller"
-                    ? `/publish` // futuro link para seller
-                    : user.type === "admin"
-                    ? `/admin`
-                    : "/signup"
-                }
-                style={iconStyle}
-              >
-                {user.image_path !== null ? (
-                  <Image
-                    src={user.image_path}
-                    h="30px"
-                    w="30px"
-                    borderRadius="50px"
-                  />
-                ) : (
+              {user.id_usuario ? (
+                <div
+                  onClick={() => setOpenUserDropdown(!openUserDropdown)}
+                  style={{ ...iconStyle, position: "relative" }}
+                  data-user-dropdown
+                >
+                  {user.image_path !== null ? (
+                    <Image
+                      src={user.image_path}
+                      h="30px"
+                      w="30px"
+                      borderRadius="50px"
+                    />
+                  ) : (
+                    <FaUser />
+                  )}
+                </div>
+              ) : (
+                <Link to="/signup" style={iconStyle}>
                   <FaUser />
-                )}
-              </Link>
+                </Link>
+              )}
 
               {/* Carrito con badge */}
               
-              {user.type === "admin" || user.type === "buyer" || user.type === null ? (
+              {user.type === "admin" || user.type === "buyer" ? (
                 <div style={{ position: "relative" }}>
                   <Link to="/cart" style={iconStyle}>
                     <FaShoppingCart />
@@ -486,7 +495,7 @@ export default function MainNavbar() {
                 placeholder="¿Qué buscas hoy?"
                 style={{
                   ...searchInputStyle,
-                  marginLeft: user.image_path !== null ? "200px" : "0px",
+                  //marginLeft: user.image_path !== null ? "200px" : "0px",
                 }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -494,47 +503,32 @@ export default function MainNavbar() {
             </form>
 
             <div style={rightIconsContainer}>
-              {user.id_usuario != null && (
-                <ChakraLink
-                  href="/signup"
-                  _hover={{ textDecoration: "none" }}
-                  style={{ textDecoration: "none" }}
-                  textDecoration="none"
-                  color={"#ec1877"}
-                >
-                  <Button
-                    onClick={() => {
-                      dispatch(logout());
-                    }}
+              {user.id_usuario ? (
+                  <div
+                    onClick={() => setOpenUserDropdown(!openUserDropdown)}
+                    style={{ ...iconStyle, position: "relative" }}
+                    data-user-dropdown
                   >
-                    Cerrar Sesión
-                  </Button>
-                </ChakraLink>
-              )}
-              <Link
-                to={
-                  user.type === "buyer"
-                    ? `/myorders/${user.id_usuario}`
-                    : user.type === "seller"
-                    ? `/publish` // futuro link para seller
-                    : user.type === "admin"
-                    ? `/admin`
-                    : "/signup"
-                }
-                style={iconStyle}
-              >
-                {user.image_path !== null ? (
-                  <Image
-                    src={user.image_path}
-                    h="35px"
-                    w="35px"
-                    borderRadius="50px"
-                  />
+                    <div style={iconStyle}>
+                      {user.image_path !== null ? (
+                        <Image
+                          src={user.image_path}
+                          h="35px"
+                          w="35px"
+                          borderRadius="50px"
+                        />
+                      ) : (
+                        <FaUser />
+                      )}
+                    </div>
+                  </div>
                 ) : (
-                  <FaUser />
+                  <Link to="/signup" style={iconStyle}>
+                    <FaUser />
+                  </Link>
                 )}
-              </Link>
-              {user.type === "admin" || user.type === "buyer" || user.type === null ? (
+
+              {user.type === "admin" || user.type === "buyer" ? (
                 <div style={{ position: "relative" }}>
                   <Link to="/cart" style={iconStyle}>
                     <FaShoppingCart />
@@ -717,6 +711,112 @@ export default function MainNavbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Dropdown del usuario */}
+      <AnimatePresence>
+        {openUserDropdown && user.id_usuario && (
+          <motion.div
+            key="user-dropdown"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: "fixed",
+              top: isMobile ? (isMobileSearchOpen ? 120 : 80) : 80,
+              right: isMobile ? 10 : 20,
+              zIndex: 1500,
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              padding: 8,
+              minWidth: isMobile ? 180 : 200, // Ancho más pequeño en mobile
+              maxWidth: isMobile ? 200 : 250,
+              pointerEvents: "auto",
+            }}
+          >
+            <div
+              style={{
+                color: "#F1E6F7",
+                fontSize: isMobile ? 13 : 14,
+                fontWeight: 400,
+                textDecoration: "none",
+                display: "block",
+                padding: isMobile ? "6px 10px" : "8px 12px",
+                borderRadius: 4,
+                cursor: "pointer",
+                transition: "background-color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = "#EC1877";
+                e.target.style.transition = "0.2s ease";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = "#F1E6F7";
+                e.target.style.transition = "0.2s ease";
+              }}
+              onClick={() => {
+                const route = 
+                  user.type === "buyer" ? `/myorders/${user.id_usuario}` :
+                  user.type === "seller" ? `/publish` : 
+                  user.type === "admin" ? `/admin` : "/";
+                navigate(route);
+                setOpenUserDropdown(false);
+                if (isMobile) {
+                  setIsMobileMenuOpen(false);
+                  setIsMobileSearchOpen(false);
+                }
+              }}
+            >
+              {user.type === "buyer" ? "Ver mis pedidos" :
+              user.type === "seller" ? "Publicar productos" :
+              user.type === "admin" ? "Panel de administración" : "Mi cuenta"}
+            </div>
+            
+            <div
+              style={{
+                height: 1,
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                margin: "4px 0",
+              }}
+            />
+            
+            <div
+              style={{
+                color: "#F1E6F7",
+                fontSize: isMobile ? 13 : 14,
+                fontWeight: 400,
+                textDecoration: "none",
+                display: "block",
+                padding: isMobile ? "6px 10px" : "8px 12px",
+                borderRadius: 4,
+                cursor: "pointer",
+                transition: "background-color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = "#EC1877";
+                e.target.style.transition = "0.2s ease";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = "#F1E6F7";
+                e.target.style.transition = "0.2s ease";
+              }}
+              onClick={() => {
+                dispatch(logout());
+                navigate("/");
+                setOpenUserDropdown(false);
+                if (isMobile) {
+                  setIsMobileMenuOpen(false);
+                  setIsMobileSearchOpen(false);
+                }
+              }}
+              >
+                Cerrar sesión
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>  
 
       {/* Menú Mobile */}
       {isMobile && isMobileMenuOpen && (

@@ -13,6 +13,7 @@ import {
   FaTwitter,
   FaLinkedin,
   FaGooglePlusG,
+  FaInstagram,
 } from "react-icons/fa";
 import {Link as RouterLink} from "react-router-dom";
 import BG_A from "../../assets/Grafica.svg";
@@ -141,17 +142,14 @@ export default function Footer() {
           >
             LEGACY POLICY
           </Link>
-              <Link href="#" isExternal aria-label="Facebook">
+              <Link href="https://www.facebook.com/?locale=es_LA" isExternal aria-label="Facebook">
             <Icon as={FaFacebook} boxSize={6}  ml={5} color="#ec1877" />
           </Link>
-          <Link href="#" isExternal aria-label="Twitter">
-            <Icon as={FaTwitter} boxSize={6} color="#ec1877" />
+          <Link href="https://www.instagram.com/?hl=es" isExternal aria-label="Instagram">
+            <Icon as={FaInstagram} boxSize={6} color="#ec1877" />
           </Link>
-          <Link href="#" isExternal aria-label="LinkedIn">
+          <Link href="https://www.linkedin.com" isExternal aria-label="LinkedIn">
             <Icon as={FaLinkedin} boxSize={6} color="#ec1877" />
-          </Link>
-          <Link href="#" isExternal aria-label="Google Plus">
-            <Icon as={FaGooglePlusG} boxSize={6} color="#ec1877" />
           </Link>
         </Flex>
       </Container>

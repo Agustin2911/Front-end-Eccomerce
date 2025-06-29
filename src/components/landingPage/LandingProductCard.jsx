@@ -1,26 +1,30 @@
 // src/components/LandingProductCard.jsx
 
-import React from "react";
-import { Box, Image, Text, Button, Link } from "@chakra-ui/react";
-import { FaShoppingCart } from "react-icons/fa";
-import { Link as RouterLink } from "react-router-dom"; // <-- import React Router
+import React, {useState} from "react";
+import { Box, Image, Text, Button, Link} from "@chakra-ui/react";
+import { FaShoppingCart, FaCheck } from "react-icons/fa";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { addToCart } from "@/features/cart/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 /**
  * LandingProductCard
  * Displays a single product with image, name, price (with discount logic), old price if on sale, and action button.
  *
  * Props:
- *  - image: string URL of product image
- *  - name: string product name
- *  - price: number original price (sin formato)
- *  - id:        product ID (para el enlace)
- *  - discount: number porcentaje a descontar (por ejemplo 20 para 20%)
- *  - discountState: string "true" o "false"; si es "true", muestra badge, precio con descuento y precio anterior tachado
+ *  - product: object with product data
  */
 export default function LandingProductCard({ product }) {
+  const [isAdded, setIsAdded] = useState(false);
   const linkTo = `/product-desc/${product.id_product}`;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  // Obtener información del usuario
+  const user = useSelector(state => state.user);
+  const isLoggedIn = user && user.token;
+
   // Verificamos si discountState es "true"
   const isOnSale = product.discount_state === "true";
   // Calculamos precio con descuento
@@ -31,6 +35,39 @@ export default function LandingProductCard({ product }) {
     : null;
   // Formateamos precio original
   const originalPrice = product.price.toLocaleString("es-AR");
+
+  // Función para verificar si puede realizar acciones de compra
+  const canPurchase = () => {
+    if (!isLoggedIn) return { canPurchase: false, reason: "login" };
+    if (user.type !== 'buyer') return { canPurchase: false, reason: "userType" };
+    return { canPurchase: true };
+  };
+
+  const handleAddToCart = () => {
+    const { canPurchase: canPurchaseResult, reason } = canPurchase();
+    
+    if (!canPurchaseResult) {
+      if (reason === "login") {
+        navigate("/signup");
+        return;
+      }
+      if (reason === "userType") {
+        toast.error("Solo los usuarios compradores pueden hacer esto", {
+          autoClose: 2500
+        });
+        return;
+      }
+    }
+
+    // Si puede comprar, ejecutar la acción
+    dispatch(addToCart({ item: product, extraFlag: false }));
+    setIsAdded(true);
+    
+    // Resetear el estado después de 2 segundos
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
+  };
 
   return (
     <Box
@@ -153,23 +190,30 @@ export default function LandingProductCard({ product }) {
           py={2}
           px={4}
           fontSize="sm"
-          transition="box-shadow 0.2s ease"
+          transition="all 0.3s ease"
           width="100%"
           borderWidth="2px"
-          borderColor="#EC1877"
+          borderColor={isAdded ? "green.500" : "#EC1877"}
           variant="outline"
-          color="#F1E6F7"
+          color={isAdded ? "white" : "#F1E6F7"}
+          bg={isAdded ? "green.500" : "transparent"}
           _hover={{
-            bg: "#EC1877",
+            bg: isAdded ? "green.600" : "#EC1877",
             color: "#F1E6F7",
-            borderColor: "#EC1877",
-            boxShadow: "0 0 8px 2px #EC1877",
+            borderColor: isAdded ? "green.600" : "#EC1877",
+            boxShadow: isAdded ? "0 0 8px 2px green" : "0 0 8px 2px #EC1877",
           }}
-          onClick={() =>
-            dispatch(addToCart({ item: product, extraFlag: false }))
-          }
+          onClick={handleAddToCart}
         >
-          <FaShoppingCart /> Agregar
+          {isAdded ? (
+            <>
+              <FaCheck /> Agregado
+            </>
+          ) : (
+            <>
+              <FaShoppingCart /> Agregar
+            </>
+          )}
         </Button>
       </Box>
     </Box>
