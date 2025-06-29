@@ -3,25 +3,28 @@
 import React, {useState} from "react";
 import { Box, Image, Text, Button, Link} from "@chakra-ui/react";
 import { FaShoppingCart, FaCheck } from "react-icons/fa";
-import { Link as RouterLink } from "react-router-dom"; // <-- import React Router
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { addToCart } from "@/features/cart/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 /**
  * LandingProductCard
  * Displays a single product with image, name, price (with discount logic), old price if on sale, and action button.
  *
  * Props:
- *  - image: string URL of product image
- *  - name: string product name
- *  - price: number original price (sin formato)
- *  - id:        product ID (para el enlace)
- *  - discount: number porcentaje a descontar (por ejemplo 20 para 20%)
- *  - discountState: string "true" o "false"; si es "true", muestra badge, precio con descuento y precio anterior tachado
+ *  - product: object with product data
  */
 export default function LandingProductCard({ product }) {
   const [isAdded, setIsAdded] = useState(false);
   const linkTo = `/product-desc/${product.id_product}`;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  // Obtener información del usuario
+  const user = useSelector(state => state.user);
+  const isLoggedIn = user && user.token;
+
   // Verificamos si discountState es "true"
   const isOnSale = product.discount_state === "true";
   // Calculamos precio con descuento
@@ -33,7 +36,30 @@ export default function LandingProductCard({ product }) {
   // Formateamos precio original
   const originalPrice = product.price.toLocaleString("es-AR");
 
+  // Función para verificar si puede realizar acciones de compra
+  const canPurchase = () => {
+    if (!isLoggedIn) return { canPurchase: false, reason: "login" };
+    if (user.type !== 'buyer') return { canPurchase: false, reason: "userType" };
+    return { canPurchase: true };
+  };
+
   const handleAddToCart = () => {
+    const { canPurchase: canPurchaseResult, reason } = canPurchase();
+    
+    if (!canPurchaseResult) {
+      if (reason === "login") {
+        navigate("/signup");
+        return;
+      }
+      if (reason === "userType") {
+        toast.error("Solo los usuarios compradores pueden hacer esto", {
+          autoClose: 2500
+        });
+        return;
+      }
+    }
+
+    // Si puede comprar, ejecutar la acción
     dispatch(addToCart({ item: product, extraFlag: false }));
     setIsAdded(true);
     
@@ -180,15 +206,15 @@ export default function LandingProductCard({ product }) {
           onClick={handleAddToCart}
         >
           {isAdded ? (
-                  <>
-                    <FaCheck /> Agregado
-                  </>
-                ) : (
-                  <>
-                    <FaShoppingCart /> Agregar
-                  </>
-                )}
-              </Button>
+            <>
+              <FaCheck /> Agregado
+            </>
+          ) : (
+            <>
+              <FaShoppingCart /> Agregar
+            </>
+          )}
+        </Button>
       </Box>
     </Box>
   );
