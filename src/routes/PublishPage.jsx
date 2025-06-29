@@ -15,21 +15,42 @@ import {
   Link,
   Spinner,
 } from "@chakra-ui/react";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
-import { useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchSellerData } from "../features/fetch/fetchSellerData";
+import { fetchUserShops } from "../features/fetch/fetchUserShops";
+import { registerProduct, resetRegister } from "../features/fetch/fetchCreateProduct";
 import { addProduct } from "@/features/fetch/allProductsSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function PublishPage() {
-  const navigate = useNavigate();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
 
   const user = useSelector((state) => state.user);
+  
+  const { data: seller, loading: sellerLoading, error: sellerError } = useSelector(
+    state => state.seller
+  );
+  useEffect(() => {
+    dispatch(fetchSellerData());
+  }, [dispatch]);
+
+
+  const { shopsList, selectedShopId, loading: shopLoading, error: shopError } = useSelector(
+    (state) => state.userShops
+  );
+  useEffect(() => {
+    dispatch(fetchUserShops());
+  }, [dispatch]);
+
+
 
   useEffect(() => {
     if (!user.token || user.type !== "seller") {
@@ -37,178 +58,52 @@ export default function PublishPage() {
     }
   }, [user.token, user.type, navigate]);
 
-  const [sellerShopData, setSellerShopData] = useState(null);
-  const [shopId, setShopId] = useState(null);
-  const [sellerData, setSellerData] = useState(null);
-
-  const { id_user } = useParams();
-
-  useEffect(() => {
-    if (!id_user) return;
-
-    const fetchSellerId = async () => {
-      try {
-        const resSellerId = await fetch(
-          `http://localhost:1273/seller_user/${id_user}`
-        );
-        if (!resSellerId.ok) {
-          throw new Error(`Error shops de seller: ${resSellerId.status}`);
-        }
-        const jsonSellerId = await resSellerId.json();
-        setSellerData(jsonSellerId);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchSellerId();
-  }, [id_user]);
-
-  useEffect(() => {
-    if (!id_user) return;
-
-    const fetchSellerShops = async () => {
-      try {
-        const resSellerShop = await fetch(
-          `http://localhost:1273/seller_user/shops/${id_user}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!resSellerShop.ok) {
-          throw new Error(`Error shops de seller: ${resSellerShop.status}`);
-        }
-        const jsonSellerShop = await resSellerShop.json();
-        setSellerShopData(jsonSellerShop);
-        console.log(jsonSellerShop[0]);
-        if (Array.isArray(jsonSellerShop) && jsonSellerShop.length > 0) {
-          setShopId(jsonSellerShop[0]);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchSellerShops();
-  }, [id_user, user.token]);
-
   const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
   const [subcategoria, setSubcategoria] = useState("");
 
-  const handleRegisterProduct = async () => {
-    if (isButtonDisabled) return;
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [precio, setPrecio] = useState(""); // "" o número entero
+  const [stockAct, setStockAct] = useState(""); // "" o entero ≥ 0
+  const [stockMin, setStockMin] = useState(""); // "" o entero ≥ 0
 
-    // Evitamos doble envío
-    setIsSubmittingProduct(true);
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef();
+  const [categoria, setCategoria] = useState("");
 
-    try {
-      const encodedSubcat = encodeURIComponent(subcategoria.trim());
-      const resSub = await fetch(
-        `http://localhost:1273/sub_categories/name/${encodedSubcat}`
-      );
-      if (!resSub.ok) {
-        throw new Error(
-          `No se pudo obtener ID de subcategoría (${resSub.status})`
-        );
-      }
-      const id_sub_category = await resSub.json();
-      if (id_sub_category == null) {
-        throw new Error(
-          "El endpoint de subcategoría devolvió un valor inválido."
-        );
-      }
 
-      const formData = new FormData();
-      formData.append("product_name", nombre.trim());
-      formData.append("price", precio);
-      formData.append("description", descripcion.trim());
-      formData.append("discount_state", "false");
-      formData.append("discount", 0);
-      formData.append("id_sub_category", id_sub_category);
-      // <-- aquí le pasamos directamente el File
-      formData.append("photo_url", imageFile);
 
-      const response = await fetch("http://localhost:1273/product", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: formData,
-      });
+  const { loading: productLoading, error: productError, success } = useSelector(state => state.registerProduct);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error al registrar el producto:", errorText);
-        toast.error(
-          "Ocurrió un error al crear el producto. Revisa la consola para más detalles.",
-          { autoClose: 2000 }
-        );
+    async function handleRegisterProduct() {
 
-        setIsSubmittingProduct(false);
-        return;
-      }
+        const actionResult = await dispatch(registerProduct({
+            nombre,
+            descripcion,
+            precio,
+            stockAct,
+            stockMin,
+            subcategoria,
+            imageFile
+        }));
 
-      const data = await response.json();
-      console.log("Producto creado con éxito:", data);
+        const prodData = unwrapResult(actionResult);
+        dispatch(addProduct(prodData))
+        
+        
 
-      const stockPayload = {
-        id: data.id_product, // o data.idProduct según tu API
-        stock_entry: stockAct,
-        shop: shopId,
-        stock_warning: stockMin,
-      };
-
-      const stockRes = await fetch("http://localhost:1273/stock", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify(stockPayload),
-      });
-
-      if (!stockRes.ok) {
-        const errText = await stockRes.text();
-        console.error("Error al crear stock:", errText);
-        toast.error("Se creó el producto pero falló el registro de stock.", {
-          autoClose: 2000,
-        });
-      } else {
-        console.log("Stock registrado con éxito");
-      }
-
-      toast.success("¡El producto y su stock se crearon con éxito!", {
-        autoClose: 2000,
-        theme: "colored",
-      });
-
-      dispatch(addProduct(data));
-      setNombre("");
-      setDescripcion("");
-      setPrecio("");
-      setStockAct("");
-      setStockMin("");
-      setImageFile(null);
-      setPreviewUrl(null);
-      setCategoria("");
-      setSubcategoria("");
-    } catch (err) {
-      console.error("Error en fetch crear producto:", err);
-      toast.error(
-        "Hubo un problema de conexión al intentar crear el producto.",
-        {
-          autoClose: 2000,
-        }
-      );
-    } finally {
-      setIsSubmittingProduct(false);
-    }
+        setSubcategoria("");
+        setNombre("");
+        setDescripcion("");
+        setPrecio(""); // "" o número entero
+        setStockAct(""); // "" o entero ≥ 0
+        setStockMin(""); // "" o entero ≥ 0
+        setImageFile(null);
+        setPreviewUrl(null);
+        setCategoria("");
   };
 
-  // 1) Listas de nombres (categorías y subcategorías)
   const categories = [
     "PCs Armadas",
     "Placas de Video",
@@ -271,19 +166,7 @@ export default function PublishPage() {
   ];
 
   // 2) Estados de campos
-  const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [precio, setPrecio] = useState(""); // "" o número entero
-  const [stockAct, setStockAct] = useState(""); // "" o entero ≥ 0
-  const [stockMin, setStockMin] = useState(""); // "" o entero ≥ 0
-
-  const [imageFile, setImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const fileInputRef = useRef();
-  console.log(imageFile);
-  const [categoria, setCategoria] = useState("");
-
-  // Estado para saber si el cursor está encima del botón deshabilitado
+    // Estado para saber si el cursor está encima del botón deshabilitado
   const [isHoveringDisabled, setIsHoveringDisabled] = useState(false);
 
   // 3) Handler para cambio de imagen + preview
@@ -333,7 +216,7 @@ export default function PublishPage() {
     categoryInvalid ||
     subcategoryInvalid;
 
-  if (sellerData === null) {
+  if (seller  === null) {
     return (
       <Flex
         direction="column"
@@ -347,14 +230,14 @@ export default function PublishPage() {
     );
   }
 
-  if (sellerData.state === "false") {
+  if (seller.state === "false") {
     return (
       <Flex
         direction="column"
         minH="100vh"
         background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
       >
-        <MainNavbar id_user={id_user} />
+        <MainNavbar  />
 
         <Box
           flex="1"
@@ -371,14 +254,14 @@ export default function PublishPage() {
       </Flex>
     );
   }
-
-  return sellerShopData ? (
+    console.log(shopsList)
+  return shopsList.length > 0  ? (
     <Flex
       direction="column"
       minH="100vh"
       background="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
     >
-      <MainNavbar id_user={id_user} />
+      <MainNavbar  />
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         <ToastContainer />

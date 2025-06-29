@@ -759,7 +759,7 @@ export default function MainNavbar() {
               onClick={() => {
                 const route = 
                   user.type === "buyer" ? `/myorders/${user.id_usuario}` :
-                  user.type === "seller" ? `/publish/${user.id_usuario}` :
+                  user.type === "seller" ? `/publish` : 
                   user.type === "admin" ? `/admin` : "/";
                 navigate(route);
                 setOpenUserDropdown(false);

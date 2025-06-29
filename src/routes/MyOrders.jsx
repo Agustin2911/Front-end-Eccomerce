@@ -195,7 +195,7 @@ const MyOrders = () => {
                 px={2}
               >
                 <Text fontWeight="medium" color={"#F1E6F7"}>
-                  {item.product_name} × {item.amount}
+                  {item.product_name} × {Math.abs(item.amount)} {/* CAMBIO AQUÍ */}
                 </Text>
                 <Text fontWeight="medium" color={"#F1E6F7"}>
                   {formatPrice(-item.price * item.amount)}
@@ -263,7 +263,7 @@ const MyOrders = () => {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <Text fontSize="2xl">📦</Text>
+            
             <Heading
               size="lg"
               px={6}
@@ -322,7 +322,6 @@ const MyOrders = () => {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <Text fontSize="2xl">💸</Text>
             <Heading
               size="lg"
               px={6}

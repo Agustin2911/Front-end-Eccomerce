@@ -31,7 +31,9 @@ import { addToCart } from "../../features/cart/cartSlice";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { mode } from "@chakra-ui/theme-tools";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ProductSection({
   images,
@@ -48,12 +50,16 @@ export default function ProductSection({
   discount_state,
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
+  const user = useSelector((state) => state.user);
+  
   const [quantity, setQuantity] = useState(1);
+  
   const dec = () => setQuantity((q) => Math.max(q - 1, 1));
   const inc = () => setQuantity((q) => q + 1);
 
-  //    const [selectedImage, setSelectedImage] = useState(0);
+  const isLoggedIn = user && user.token;
 
   const isDiscountActive = discount_state === "true";
   const discountedPrice = isDiscountActive
@@ -68,24 +74,58 @@ export default function ProductSection({
     maximumFractionDigits: 2,
   });
 
-  function handleClick(amount) {
-    dispatch(
-      addToCart({
-        item: {
-          id_product: id,
-          product_name: name,
-          amount: quantity,
-          price: price,
-          photo_url: images,
-          description: description,
-          discount: discount,
-          discount_state: discount_state,
-        },
-        // cualquier otro dato adicional que quieras pasar
-        extraFlag: true,
-      })
-    );
-    console.log(cart);
+  // Función para verificar si puede realizar acciones de compra
+  const canPurchase = () => {
+    if (!isLoggedIn) return { canPurchase: false, reason: "login" };
+    if (user.type !== 'buyer') return { canPurchase: false, reason: "userType" };
+    return { canPurchase: true };
+  };
+
+  // Función para manejar las acciones de compra
+  const handlePurchaseAction = (action) => {
+    const { canPurchase: canPurchaseResult, reason } = canPurchase();
+    
+    if (!canPurchaseResult) {
+      if (reason === "login") {
+        navigate("/signup");
+        return;
+      }
+      if (reason === "userType") {
+        toast.error("Solo los usuarios compradores pueden hacer esto", {
+          autoClose: 2500
+        });
+        return;
+      }
+    }
+
+    // Si puede comprar, ejecutar la acción
+    const productData = {
+      id_product: id,
+      product_name: name,
+      amount: quantity,
+      price: price,
+      photo_url: images,
+      description: description,
+      discount: discount,
+      discount_state: discount_state,
+    };
+
+    dispatch(addToCart({
+      item: productData,
+      extraFlag: action === "buyNow" ? true : false,
+    }));
+
+    if (action === "buyNow") {
+      navigate("/cart");
+    }
+  };
+
+  function handleAddToCart() {
+    handlePurchaseAction("addToCart");
+  }
+
+  function handleBuyNow() {
+    handlePurchaseAction("buyNow");
   }
 
   return (
@@ -251,6 +291,7 @@ export default function ProductSection({
               </IconButton>
             </Flex>
 
+            {/* BOTÓN COMPRAR AHORA ACTUALIZADO */}
             <Button
               bg="#AE5BDD"
               size={{ base: "sm", md: "lg" }}
@@ -262,10 +303,13 @@ export default function ProductSection({
                   w: "98%",
                 },
               }}
+              onClick={handleBuyNow}
             >
               Comprar ahora
             </Button>
+
             <HStack spacing={4} w="100%">
+              {/* BOTÓN AGREGAR AL CARRITO ACTUALIZADO */}
               <Button
                 borderWidth="2px"
                 borderColor="#AE5BDD"
@@ -283,27 +327,7 @@ export default function ProductSection({
                     fontSize: "xs",
                   },
                 }}
-              >
-                <FaTruck /> Calcular envío
-              </Button>
-              <Button
-                borderWidth="2px"
-                borderColor="#AE5BDD"
-                variant="outline"
-                flex="1"
-                _hover={{
-                  bg: "#422A52",
-                  color: "white",
-                  borderColor: "#422A52",
-                }}
-                fontSize={{ base: "sm", md: "sm" }}
-                css={{
-                  "@media screen and (max-width: 321px)": {
-                    maxW: "47%",
-                    fontSize: "xs",
-                  },
-                }}
-                onClick={() => handleClick(quantity)}
+                onClick={handleAddToCart}
               >
                 <FaShoppingCart /> Agregar
               </Button>
@@ -317,7 +341,20 @@ export default function ProductSection({
         id_product={id}
         id_category={id_category}
       />
-      <ProductReviews reviews={reviews} />
+      <ProductReviews reviews={reviews} productId={id} />
+      
+      {/* ToastContainer para mostrar las notificaciones */}
+      <ToastContainer 
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 }

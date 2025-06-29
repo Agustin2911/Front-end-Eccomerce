@@ -6,11 +6,14 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import ProductSection from "../components/productPage/ProductSection";
 import { useState, useEffect } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
+import { fetchReviews } from "@/features/fetch/fetchReviews"; 
 
 export default function ProductPage() {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const { items: reviewsData, loading: reviewsLoading, error: reviewsError } = useSelector((state) => state.reviews);
   console.log("🔍 ShowProductsPage: id_user =", user.id_usuario);
   const { id_product } = useParams();
   useEffect(() => {
@@ -22,7 +25,6 @@ export default function ProductPage() {
   const [stockData, setStockData] = useState({ stock: 0, stock_warning: 0 });
   const [productData, setProductData] = useState(null);
   const [error, setError] = useState(null);
-  const [reviewsData, setReviewsData] = useState([]);
   const [relatedData, setRelatedData] = useState([]);
   const [catSubcatData, setCatSubcatData] = useState("", "", "", "");
 
@@ -73,24 +75,7 @@ export default function ProductPage() {
         const stockJson = await resStock.json();
         setStockData(stockJson);
 
-        let reviewJson = [];
-        try {
-          const resReviews = await fetch(
-            `http://localhost:1273/review/${id_product}`
-          );
-
-          if (resReviews.ok) {
-            reviewJson = await resReviews.json();
-          } else if (resReviews.status === 412) {
-            reviewJson = [];
-          } else {
-            throw new Error(`Error reviews ${resReviews.status}`);
-          }
-        } catch (e) {
-          console.warn("No se pudo obtener reviews. Asumiendo array vacío:", e);
-          reviewJson = [];
-        }
-        setReviewsData(reviewJson);
+        dispatch(fetchReviews(id_product));
 
         if (catSubcatData && catSubcatData[2] !== "") {
           const resRelated = await fetch(
@@ -115,6 +100,7 @@ export default function ProductPage() {
   const subCategoryUpper = catSubcatData?.[1]?.toUpperCase() ?? "ERROR";
   const categoryId = catSubcatData?.[2] ?? "";
   const subCategoryId = catSubcatData?.[3] ?? "";
+
   return (
     <Flex
       direction="column"
