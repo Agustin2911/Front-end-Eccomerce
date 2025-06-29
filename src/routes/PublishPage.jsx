@@ -22,7 +22,6 @@ import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSellerData } from "../features/fetch/fetchSellerData";
-import { fetchUserShops } from "../features/fetch/fetchUserShops";
 import { registerProduct, resetRegister } from "../features/fetch/fetchCreateProduct";
 import { addProduct } from "@/features/fetch/allProductsSlice";
 import { toast, ToastContainer } from "react-toastify";
@@ -46,10 +45,7 @@ export default function PublishPage() {
   const { shopsList, selectedShopId, loading: shopLoading, error: shopError } = useSelector(
     (state) => state.userShops
   );
-  useEffect(() => {
-    dispatch(fetchUserShops());
-  }, [dispatch]);
-
+  
 
 
   useEffect(() => {
@@ -72,9 +68,7 @@ export default function PublishPage() {
   const fileInputRef = useRef();
   const [categoria, setCategoria] = useState("");
 
-
-
-  const { loading: productLoading, error: productError, success } = useSelector(state => state.registerProduct);
+    const { loading: productLoading, error: productError, success } = useSelector(state => state.registerProduct);
 
     async function handleRegisterProduct() {
 
@@ -254,7 +248,7 @@ export default function PublishPage() {
       </Flex>
     );
   }
-    console.log(shopsList)
+  
   return shopsList.length > 0  ? (
     <Flex
       direction="column"
@@ -601,7 +595,7 @@ export default function PublishPage() {
                   disabled={isButtonDisabled}
                   onClick={handleRegisterProduct}
                 >
-                  Registrar producto
+                  {isButtonDisabled ? "Completa todos los campos" : "Publicar producto"}
                 </Button>
               </Box>
             </Box>
