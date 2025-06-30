@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Link as ChakraLink, Button, Image } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { logout } from "../../features/user/userSlice";
+import { logoutUser } from "../../features/user/userSlice";
 const MENU_DATA = [
   {
     label: "PCs Armadas",
@@ -803,8 +803,8 @@ export default function MainNavbar() {
                 e.target.style.transition = "0.2s ease";
               }}
               onClick={() => {
-                dispatch(logout());
-                navigate("/");
+                dispatch(logoutUser());
+                navigate("/signup");
                 setOpenUserDropdown(false);
                 if (isMobile) {
                   setIsMobileMenuOpen(false);

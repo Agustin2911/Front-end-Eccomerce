@@ -22,6 +22,7 @@ function Signup() {
   );
 
   const handleLogin = () => {
+      
     dispatch(authenticateUser({ email, password }));
   };
 

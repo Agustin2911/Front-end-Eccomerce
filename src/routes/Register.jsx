@@ -32,11 +32,12 @@ function Register() {
   const isFormValid = () => {
     const commonFields =
       user_name &&
-      user_email.includes("@") &&
+      user_email &&
       userPassword &&
       userPassword2 &&
-      userPassword === userPassword2 &&
       image;
+    
+    
 
     if (userType === "buyer") {
       if (!commonFields || !user_LastName || !dni) {
@@ -52,6 +53,10 @@ function Register() {
       } else {
         return true;
       }
+    }
+    if (!user_email.includes("@")){
+        toast.error("Debe ingresar un email valido", {autoclose: 2500});
+        return false;
     }
 
     return false;
@@ -73,10 +78,10 @@ function Register() {
         !userPassword2 ||
         !dni
       ) {
-        return alert("Complete todos los campos");
+        return toast.error("Complete todos los campos");
       }
       if (userPassword !== userPassword2)
-        return alert("Contraseñas no coinciden");
+        return toast.error("Las contraseñas no coinciden");
 
       formData.append("firstname", user_name);
       formData.append("name", user_name);
@@ -96,10 +101,10 @@ function Register() {
         !StoreDescription ||
         !cuit
       ) {
-        return alert("Complete todos los campos");
+        return toast.error("Complete todos los campos");
       }
       if (userPassword !== userPassword2)
-        return alert("Contraseñas no coinciden");
+        return toast.error("Las contraseñas no coinciden");
 
       formData.append("firstname", user_name);
       formData.append("email", user_email);

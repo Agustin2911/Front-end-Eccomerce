@@ -5,7 +5,7 @@ import { deleteProductFetch, resetDeleteProduct } from "../features/fetch/fetchD
 import MainNavbar from "../components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import Loader from "../components/landingPage/Loader";
-import { fetchSellerProducts } from "../features/fetch/FetchSellerProducts";
+import { fetchSellerProducts, resetList } from "../features/fetch/FetchSellerProducts";
 import { deleteProduct } from "../features/fetch/allProductsSlice";
 import { ToastContainer } from "react-toastify";
 import { fetchAllStocks } from "../features/fetch/fetchStocks";
@@ -40,6 +40,7 @@ export default function MyProductsPage() {
       navigate("/signup", { replace: true });
       return;
     }
+    dispatch(resetList());
     dispatch(fetchSellerProducts());
     dispatch(fetchAllStocks()); 
   }, [dispatch, navigate, token, type]);

@@ -1,5 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login } from "../user/userSlice";
+import { toast } from "react-toastify";
+
+// 1. Extraemos el estado inicial en una constante para poder reusarlo
+const initialState = {
+  userType: "buyer",
+  loading: false,
+  error: null,
+  result: null,
+};
 
 export const registerUser = createAsyncThunk(
   "register/send",
@@ -16,12 +25,15 @@ export const registerUser = createAsyncThunk(
       });
 
       if (!response.ok) {
+        toast.error(
+          "Error de parte del servidor a la hora de registrar usuario",
+          { autoclose: 2000 }
+        );
         const errorText = await response.text();
         return rejectWithValue(errorText);
       }
 
       const result = await response.json();
-
       if (result.access_token) {
         dispatch(
           login({
@@ -43,21 +55,16 @@ export const registerUser = createAsyncThunk(
 
 const registerSlice = createSlice({
   name: "register",
-  initialState: {
-    userType: "buyer",
-    loading: false,
-    error: null,
-    result: null,
-  },
+  initialState,
   reducers: {
     setUserType(state, action) {
       state.userType = action.payload;
     },
     resetRegister(state) {
-      state.userType = "buyer";
-      state.loading = false;
-      state.error = null;
-      state.result = null;
+      state.userType = initialState.userType;
+      state.loading = initialState.loading;
+      state.error = initialState.error;
+      state.result = initialState.result;
     },
   },
   extraReducers: (builder) => {
@@ -74,9 +81,12 @@ const registerSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Error desconocido";
-      });
+      })
+      // 2. Aquí añadimos el case para resetRegister devolviendo el estado inicial
+      .addCase(resetRegister, () => initialState);
   },
 });
 
 export const { setUserType, resetRegister } = registerSlice.actions;
 export default registerSlice.reducer;
+
