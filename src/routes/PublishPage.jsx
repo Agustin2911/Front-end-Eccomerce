@@ -25,6 +25,8 @@ import { fetchSellerData } from "../features/fetch/fetchSellerData";
 import { registerProduct, resetRegister } from "../features/fetch/fetchCreateProduct";
 import { addProduct } from "@/features/fetch/allProductsSlice";
 import { toast, ToastContainer } from "react-toastify";
+import { fetchUserShops } from "../features/fetch/fetchUserShops";
+
 
 export default function PublishPage() {
 
@@ -37,14 +39,20 @@ export default function PublishPage() {
   const { data: seller, loading: sellerLoading, error: sellerError } = useSelector(
     state => state.seller
   );
+  const { shopsList, selectedShopId, loading: shopLoading, error: shopError } = useSelector(
+    (state) => state.userShops
+  );
   useEffect(() => {
     dispatch(fetchSellerData());
   }, [dispatch]);
 
 
-  const { shopsList, selectedShopId, loading: shopLoading, error: shopError } = useSelector(
-    (state) => state.userShops
-  );
+useEffect(() => {
+
+  if (user.token && user.id_usuario) {
+    dispatch(fetchUserShops());
+  }
+}, [dispatch, user.token, user.id_usuario]);
   
 
 
@@ -630,7 +638,7 @@ export default function PublishPage() {
           }}
         >
           <Heading as="h1" size="lg" mb={6} textAlign="center" color="#AE5BDD">
-            Debe registrar al menos una tienda para publicar un producto
+            Debe registrar una tienda para publicar un producto
           </Heading>
           <Flex>
             <Box w="100%" pr={6}>

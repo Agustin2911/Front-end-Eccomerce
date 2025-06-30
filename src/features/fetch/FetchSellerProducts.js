@@ -14,7 +14,7 @@ export const fetchSellerProducts = createAsyncThunk(
 
     try {
       const res = await fetch(
-        `http://localhost:1273/seller_user/my-products/${sellerId}`,
+        `http://localhost:1273/seller_user/my-products/${id_usuario}`,
         {
           method: "GET",
           headers: {
@@ -45,7 +45,14 @@ const sellerProductsSlice = createSlice({
     sellerLoading: false,
     sellerError: null,
   },
-  reducers: {},
+ reducers: {
+    // <-- aquí agregamos el reset
+    resetList(state) {
+      state.sellerList = [];
+      state.sellerLoading = false;
+      state.sellerError = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSellerProducts.pending, (state) => {
@@ -63,5 +70,5 @@ const sellerProductsSlice = createSlice({
       });
   },
 });
-
+export const { resetList } = sellerProductsSlice.actions;
 export default sellerProductsSlice.reducer;

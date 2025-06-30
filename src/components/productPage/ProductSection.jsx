@@ -112,7 +112,7 @@ export default function ProductSection({
 
     dispatch(addToCart({
       item: productData,
-      extraFlag: action === "buyNow" ? true : false,
+      extraFlag: action === "buyNow" ? false : true,
     }));
 
     if (action === "buyNow") {
