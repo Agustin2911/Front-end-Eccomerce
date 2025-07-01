@@ -8,98 +8,116 @@ import { useState, useEffect } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { fetchReviews } from "@/features/fetch/fetchReviews"; 
+import { fetchReviews } from "@/features/fetch/fetchReviews";
+import { fetchProductStock } from "@/features/fetch/fetchProductStock";
+import { 
+  fetchProductById, 
+  fetchProductCategorySubcategory, 
+  fetchRelatedProducts,
+  clearProduct 
+} from "@/features/fetch/fetchProductById";
 
 export default function ProductPage() {
   const dispatch = useDispatch();
+  const { id_product } = useParams();
+  
+  // Selectores Redux
   const user = useSelector((state) => state.user);
   const { items: reviewsData, loading: reviewsLoading, error: reviewsError } = useSelector((state) => state.reviews);
-  console.log("🔍 ShowProductsPage: id_user =", user.id_usuario);
-  const { id_product } = useParams();
+  const { item: stockData, loading: stockLoading, error: stockError } = useSelector((state) => state.stock);
+  const { 
+    product: productData, 
+    categorySubcategory: catSubcatData, 
+    relatedProducts: relatedData,
+    loading: productLoading,
+    error: productError 
+  } = useSelector((state) => state.productById);
+
+  console.log("🔍 ProductPage Debug:");
+  console.log("- id_product:", id_product);
+  console.log("- productData:", productData);
+  console.log("- stockData:", stockData);
+  console.log("- stockLoading:", stockLoading);
+  console.log("- stockError:", stockError);
+
+  // Scroll al inicio cuando cambia el producto
   useEffect(() => {
     if (id_product) {
       window.scrollTo(0, 0);
     }
   }, [id_product]);
 
-  const [stockData, setStockData] = useState({ stock: 0, stock_warning: 0 });
-  const [productData, setProductData] = useState(null);
-  const [error, setError] = useState(null);
-  const [relatedData, setRelatedData] = useState([]);
-  const [catSubcatData, setCatSubcatData] = useState("", "", "", "");
-
+  // Fetch principal cuando cambia el producto
   useEffect(() => {
-    if (!id_product) return;
-
-    const fetchCatSubcat = async () => {
-      try {
-        const resCatSubcat = await fetch(
-          `http://localhost:1273/product/category-subCategory/${id_product}`
-        );
-        if (!resCatSubcat.ok) {
-          throw new Error(
-            `Error categoría y subcategoría: ${resCatSubcat.status}`
-          );
-        }
-        const jsonCatSubcat = await resCatSubcat.json();
-        setCatSubcatData(jsonCatSubcat);
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      }
-    };
-
-    fetchCatSubcat();
-  }, [id_product]);
-
-  useEffect(() => {
-    if (!id_product) return;
-
-    async function fetchAll() {
-      try {
-        const res = await fetch(
-          `http://localhost:1273/product/productById/${id_product}`
-        );
-        if (!res.ok) {
-          throw new Error(`Error ${res.status}: ${res.statusText}`);
-        }
-        const data = await res.json();
-        setProductData(data);
-
-        const resStock = await fetch(
-          `http://localhost:1273/stock/${id_product}`
-        );
-        if (!resStock.ok) {
-          throw new Error(`Error stock ${resStock.status}`);
-        }
-        const stockJson = await resStock.json();
-        setStockData(stockJson);
-
-        dispatch(fetchReviews(id_product));
-
-        if (catSubcatData && catSubcatData[2] !== "") {
-          const resRelated = await fetch(
-            `http://localhost:1273/product/byCategoryid/${catSubcatData[2]}`
-          );
-          setRelatedData(await resRelated.json());
-        } else {
-          setRelatedData([]);
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError(err.message);
-      }
+    if (id_product) {
+      console.log("🚀 Starting fetches for product:", id_product);
+      
+      // Dispatch de todas las acciones necesarias
+      dispatch(fetchProductById(id_product));
+      dispatch(fetchProductCategorySubcategory(id_product));
+      dispatch(fetchProductStock(id_product));
+      dispatch(fetchReviews(id_product));
     }
-    fetchAll();
-  }, [catSubcatData, id_product]);
+  }, [dispatch, id_product]);
 
-  if (!productData) {
-    return <div>Cargando producto...</div>;
+  // Fetch de productos relacionados cuando se obtiene la categoría
+  useEffect(() => {
+    if (catSubcatData && catSubcatData[2] && catSubcatData[2] !== "") {
+      console.log("🚀 Fetching related products for category:", catSubcatData[2]);
+      dispatch(fetchRelatedProducts(catSubcatData[2]));
+    }
+  }, [dispatch, catSubcatData]);
+
+  // Estados de carga
+  if (productLoading && !productData) {
+    return (
+      <Flex
+        direction="column"
+        minH="100vh"
+        backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+        align="center"
+        justify="center"
+      >
+        <div>Cargando producto...</div>
+      </Flex>
+    );
   }
-  const categoryUpper = catSubcatData?.[0]?.toUpperCase() ?? "ERROR";
-  const subCategoryUpper = catSubcatData?.[1]?.toUpperCase() ?? "ERROR";
-  const categoryId = catSubcatData?.[2] ?? "";
-  const subCategoryId = catSubcatData?.[3] ?? "";
+
+  // Manejo de errores del producto principal
+  if (productError && !productData) {
+    return (
+      <Flex
+        direction="column"
+        minH="100vh"
+        backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+        align="center"
+        justify="center"
+      >
+        <div>Error al cargar producto: {productError}</div>
+      </Flex>
+    );
+  }
+
+  // Si no hay datos del producto
+  if (!productData) {
+    return (
+      <Flex
+        direction="column"
+        minH="100vh"
+        backgroundImage="linear-gradient(180deg, #180B1F 0%, #24142F 50%, #0A0410 100%)"
+        align="center"
+        justify="center"
+      >
+        <div>No se encontró el producto</div>
+      </Flex>
+    );
+  }
+
+  // Datos para breadcrumb con fallbacks seguros
+  const categoryUpper = catSubcatData?.[0]?.toUpperCase() || "CATEGORIA";
+  const subCategoryUpper = catSubcatData?.[1]?.toUpperCase() || "SUBCATEGORIA";
+  const categoryId = catSubcatData?.[2] || "";
+  const subCategoryId = catSubcatData?.[3] || "";
 
   return (
     <Flex
@@ -110,8 +128,8 @@ export default function ProductPage() {
       {/* Navbar */}
       <MainNavbar />
       <ToastContainer />
-      {/* Contenido principal */}
 
+      {/* Contenido principal */}
       <Box flex="1" pt="20px" px={{ base: 0, md: 12 }} mt="20px">
         <Box
           as="main"
@@ -149,7 +167,7 @@ export default function ProductPage() {
                 <Breadcrumb.Link
                   as={RouterLink}
                   to={
-                    categoryId != "" ? `/products/category/${categoryId}` : "#"
+                    categoryId !== "" ? `/products/category/${categoryId}` : "#"
                   }
                   fontSize="sm"
                   color="#F1E6F7"
@@ -166,7 +184,7 @@ export default function ProductPage() {
                 <Breadcrumb.Link
                   as={RouterLink}
                   to={
-                    subCategoryId != ""
+                    subCategoryId !== ""
                       ? `/products/subCategory/${subCategoryId}`
                       : "#"
                   }
@@ -189,7 +207,7 @@ export default function ProductPage() {
                   overflowWrap="break-word"
                   maxW="100%"
                 >
-                  {productData.product_name}
+                  {productData.product_name || "Producto"}
                 </Breadcrumb.CurrentLink>
               </Breadcrumb.Item>
             </Breadcrumb.List>
@@ -198,19 +216,19 @@ export default function ProductPage() {
           {/* DIV ENORME: aquí va toda la info de producto */}
           <Box id="product-container" bg="white" borderWidth="0px" p={6}>
             <ProductSection
-              reviews={reviewsData}
+              reviews={reviewsData || []}
               name={productData.product_name}
               images={productData.photo_url}
               description={productData.description}
               price={productData.price}
-              related={relatedData}
-              stock={stockData.stock}
-              stockWarning={stockData.stock_warning}
+              related={relatedData || []}
+              stock={stockData?.stock}
+              stockWarning={stockData?.stock_warning}
               id={productData.id_product}
-              id_category={catSubcatData[2]}
+              id_category={categoryId}
               discount={productData.discount}
               discount_state={productData.discount_state}
-            ></ProductSection>
+            />
           </Box>
         </Box>
       </Box>

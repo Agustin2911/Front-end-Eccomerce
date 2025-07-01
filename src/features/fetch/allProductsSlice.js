@@ -29,6 +29,8 @@ const productsSlice = createSlice({
   initialState: {
     items: [],
     filtered: [],
+    currentCategory: null,
+    currentSubcategory: null,
     loading: false,
     error: null,
   },
@@ -36,12 +38,16 @@ const productsSlice = createSlice({
     clearProducts: (state) => {
       state.items = [];
       state.filtered = [];
+      state.currentCategory = null;
+      state.currentSubcategory = null;
       state.loading = false;
       state.error = null;
     },
 
     filterByCategory: (state, action) => {
       const categoryId = action.payload;
+      state.currentCategory = categoryId;
+      state.currentSubcategory = null; // Limpiar subcategoría
       state.filtered = state.items.filter((product) =>
         product.sub_categoryProductList.some(
           (subcat) => subcat.sub_category.category.id_category === categoryId
@@ -51,6 +57,8 @@ const productsSlice = createSlice({
 
     filterBySubcategory: (state, action) => {
       const subcategoryId = action.payload;
+      state.currentSubcategory = subcategoryId;
+      state.currentCategory = null; // Limpiar categoría
       state.filtered = state.items.filter((product) =>
         product.sub_categoryProductList.some(
           (subcat) => subcat.sub_category.id_sub_category === subcategoryId
@@ -67,7 +75,10 @@ const productsSlice = createSlice({
         state.items[index] = updatedProduct;
       }
     },
+
     showAllProducts: (state) => {
+      state.currentCategory = null;
+      state.currentSubcategory = null;
       state.filtered = state.items;
     },
 
@@ -80,23 +91,82 @@ const productsSlice = createSlice({
       const idToDelete = action.payload;
       state.items = state.items.filter((p) => p.id_product !== idToDelete);
     },
+
+    // FUNCIÓN CORREGIDA - Aplica filtros solo a productos ya filtrados por categoría/subcategoría
     applyFilters: (state, action) => {
       const { order, minPrice, maxPrice } = action.payload;
-      let filtered = [...state.items];
+      
+      console.log("Aplicando filtros:", { order, minPrice, maxPrice }); // Debug
+      
+      // Empezar con productos filtrados por categoría/subcategoría
+      let baseProducts = [];
+      
+      if (state.currentSubcategory) {
+        baseProducts = state.items.filter((product) =>
+          product.sub_categoryProductList.some(
+            (subcat) => subcat.sub_category.id_sub_category === state.currentSubcategory
+          )
+        );
+      } else if (state.currentCategory) {
+        baseProducts = state.items.filter((product) =>
+          product.sub_categoryProductList.some(
+            (subcat) => subcat.sub_category.category.id_category === state.currentCategory
+          )
+        );
+      } else {
+        baseProducts = state.items;
+      }
+      
+      // Aplicar filtros de precio sobre la base filtrada
+      let filteredProducts = [...baseProducts]; // Crear copia para no mutar
+      
+      if (minPrice && minPrice !== "") {
+        filteredProducts = filteredProducts.filter((p) => p.price >= parseFloat(minPrice));
+      }
+      if (maxPrice && maxPrice !== "") {
+        filteredProducts = filteredProducts.filter((p) => p.price <= parseFloat(maxPrice));
+      }
+      
+      // ORDENAMIENTO CORREGIDO
+      if (order) {
+        console.log("Ordenando por:", order); // Debug
+        if (order === "asc") {
+          filteredProducts.sort((a, b) => {
+            const priceA = parseFloat(a.price);
+            const priceB = parseFloat(b.price);
+            return priceA - priceB; // Menor a mayor
+          });
+        } else if (order === "desc") {
+          filteredProducts.sort((a, b) => {
+            const priceA = parseFloat(a.price);
+            const priceB = parseFloat(b.price);
+            return priceB - priceA; // Mayor a menor
+          });
+        }
+      }
 
-      if (minPrice) {
-        filtered = filtered.filter((p) => p.price >= parseFloat(minPrice));
-      }
-      if (maxPrice) {
-        filtered = filtered.filter((p) => p.price <= parseFloat(maxPrice));
-      }
-      if (order?.[0] === "asc") {
-        filtered.sort((a, b) => a.price - b.price);
-      } else if (order?.[0] === "desc") {
-        filtered.sort((a, b) => b.price - a.price);
-      }
+      console.log("Productos después del filtro:", filteredProducts.length); // Debug
+      state.filtered = filteredProducts;
+    },
 
-      state.filtered = filtered;
+    // NUEVA FUNCIÓN - Para limpiar solo filtros de precio/orden, manteniendo categoría/subcategoría
+    clearPriceFilters: (state) => {
+      // Volver a aplicar solo el filtro de categoría/subcategoría
+      if (state.currentSubcategory) {
+        state.filtered = state.items.filter((product) =>
+          product.sub_categoryProductList.some(
+            (subcat) => subcat.sub_category.id_sub_category === state.currentSubcategory
+          )
+        );
+      } else if (state.currentCategory) {
+        state.filtered = state.items.filter((product) =>
+          product.sub_categoryProductList.some(
+            (subcat) => subcat.sub_category.category.id_category === state.currentCategory
+          )
+        );
+      } else {
+        state.filtered = state.items;
+      }
     },
   },
 
@@ -128,6 +198,7 @@ export const {
   deleteProduct,
   showAllProducts,
   applyFilters,
+  clearPriceFilters,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

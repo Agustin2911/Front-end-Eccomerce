@@ -12,13 +12,14 @@ import {
   createListCollection,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { applyFilters } from "@/features/fetch/allProductsSlice";
+import { applyFilters, clearPriceFilters } from "@/features/fetch/allProductsSlice";
 import { useDispatch } from "react-redux";
+
 // Opciones de orden
 const orderOptions = createListCollection({
   items: [
-    { label: "de menor a mayor", value: "asc" },
-    { label: "de mayor a menor", value: "desc" },
+    { label: "De menor a mayor", value: "asc" },
+    { label: "De mayor a menor", value: "desc" },
   ],
 });
 
@@ -32,6 +33,15 @@ function Filters() {
   const onApplyFilters = ({ order, minPrice, maxPrice }) => {
     dispatch(applyFilters({ order, minPrice, maxPrice }));
   };
+
+  // NUEVA FUNCIÓN - Para limpiar filtros
+  const onClearFilters = () => {
+    setOrder(null);
+    setMinPrice("");
+    setMaxPrice("");
+    dispatch(clearPriceFilters());
+  };
+
   return (
     <Box
       p={6}
@@ -53,8 +63,16 @@ function Filters() {
 
           <Select.Root
             collection={orderOptions}
-            selectedOption={order}
-            onValueChange={({ value, label }) => setOrder({ value, label })}
+            value={order ? [order.value] : []}
+            onValueChange={(details) => {
+              const selectedValue = details.value[0];
+              if (selectedValue) {
+                const selectedOption = orderOptions.items.find(item => item.value === selectedValue);
+                setOrder(selectedOption);
+              } else {
+                setOrder(null);
+              }
+            }}
           >
             <Select.HiddenSelect />
             <Select.Control>
@@ -107,22 +125,34 @@ function Filters() {
           </Box>
         </Box>
 
-        {/* Botón aplicar */}
+        {/* Botón aplicar filtros - CORREGIDO */}
         <Button
           bg="#d3a5ee"
           width={{ base: "250px", md: "400px" }}
           borderRadius="10px"
-          color="#f1e6f7"
+          color="white"
           _hover={{ bg: "#ec1877" }}
           onClick={() =>
             onApplyFilters({
-              order: order?.value || "",
+              order: order?.value || null, // CAMBIO AQUÍ: null en lugar de ""
               minPrice,
               maxPrice,
             })
           }
         >
           Aplicar filtros
+        </Button>
+
+        {/* NUEVO BOTÓN - Limpiar filtros */}
+        <Button
+          bg="gray.400"
+          width={{ base: "250px", md: "400px" }}
+          borderRadius="10px"
+          color="white"
+          _hover={{ bg: "gray.500" }}
+          onClick={onClearFilters}
+        >
+          Limpiar filtros
         </Button>
       </VStack>
     </Box>
