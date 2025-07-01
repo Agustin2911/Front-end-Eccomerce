@@ -154,7 +154,26 @@ export default function ProductSection({
         borderBottom="1px solid"
         borderColor="gray.200"
       >
-        <Box borderBottom="1px solid" borderColor="gray.200" overflowX="auto">
+        <Box borderBottom="1px solid" borderColor="gray.200" overflowX="auto" position="relative">
+          {/* OFERTA badge */}
+          {isDiscountActive && (
+            <Box
+              position="absolute"
+              top="4"
+              left="4"
+              bg="#EC1877"
+              color="#F1E6F7"
+              fontSize="sm"
+              fontWeight="bold"
+              px="3"
+              py="2"
+              zIndex="1"
+              borderRadius="md"
+            >
+              OFERTA
+            </Box>
+          )}
+
           <Image
             src={images}
             alt="Imagen principal"

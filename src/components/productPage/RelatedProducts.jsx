@@ -76,6 +76,7 @@ export default function RelatedProducts({ products, id_product, id_category }) {
           const url = `/product-desc/${prod.id_product}`;
           const priceFormatted = (prod.price).toLocaleString("es-AR");
           const isAdded = addedItems[prod.id_product];
+          const isOnSale = prod.discount_state === "true";
           
           return (
             <Box
@@ -86,7 +87,27 @@ export default function RelatedProducts({ products, id_product, id_category }) {
               display="flex"
               flexDir="column"
               justifyContent="space-between"
+              position="relative"
             >
+              {/* OFERTA badge */}
+              {isOnSale && (
+                <Box
+                  position="absolute"
+                  top="2"
+                  left="2"
+                  bg="#EC1877"
+                  color="#F1E6F7"
+                  fontSize="xs"
+                  fontWeight="bold"
+                  px="2"
+                  py="1"
+                  zIndex="1"
+                  borderRadius="sm"
+                >
+                  OFERTA
+                </Box>
+              )}
+
               <Link as={RouterLink} to={url} _hover={{ textDecoration: "none" }}> 
                 <Image
                   src={prod.photo_url}
@@ -105,10 +126,10 @@ export default function RelatedProducts({ products, id_product, id_category }) {
                 </Text>
               </Link>
               <VStack align="center" spacing={0.5}>
-                {prod.discount_state === "true" ? (
+                {isOnSale ? (
                   <>
                     <Text fontSize="lg" fontWeight="bold" color="#EC1877" lineHeight="0" mt="20px">
-                      {discounted}
+                      ${discounted}
                     </Text>
                     <Text
                       fontSize="sm"
@@ -116,12 +137,12 @@ export default function RelatedProducts({ products, id_product, id_category }) {
                       textDecoration="line-through"
                       lineHeight="0"
                     >
-                      {priceFormatted}
+                      ${priceFormatted}
                     </Text>
                   </>
                 ) : (
                   <Text fontSize="lg" fontWeight="bold" color="#EC1877" lineHeight="0" mt="20px">
-                    {priceFormatted}
+                    ${priceFormatted}
                   </Text>
                 )}
               </VStack>
