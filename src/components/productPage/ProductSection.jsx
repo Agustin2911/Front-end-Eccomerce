@@ -49,6 +49,11 @@ export default function ProductSection({
   discount,
   discount_state,
 }) {
+  console.log("🏭 ProductSection Debug:");
+  console.log("- stock prop:", stock);
+  console.log("- stockWarning prop:", stockWarning);
+  console.log("- typeof stock:", typeof stock);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
@@ -56,8 +61,11 @@ export default function ProductSection({
   
   const [quantity, setQuantity] = useState(1);
   
+  // CORREGIDO: Asegurar que stock sea un número válido antes de usarlo
+  const validStock = typeof stock === 'number' && !isNaN(stock) ? stock : 999;
+  
   const dec = () => setQuantity((q) => Math.max(q - 1, 1));
-  const inc = () => setQuantity((q) => q + 1);
+  const inc = () => setQuantity((q) => Math.min(q + 1, validStock)); // Usar validStock
 
   const isLoggedIn = user && user.token;
 
@@ -279,19 +287,28 @@ export default function ProductSection({
               >
                 <FaMinus />
               </IconButton>
-              <Input value={quantity} readOnly w="60px" textAlign="center" />
+              {/* CORREGIDO: Asegurar que quantity sea siempre un número válido */}
+              <Input 
+                value={quantity || 1} 
+                readOnly 
+                w="60px" 
+                textAlign="center" 
+              />
               <IconButton
                 aria-label="Aumentar cantidad"
                 color="#AE5BDD"
                 variant="unstyled"
                 onClick={inc}
                 _hover={{ color: "#422A52" }}
+                // Deshabilitar visualmente si llegó al límite
+                opacity={quantity >= validStock ? 0.5 : 1}
+                cursor={quantity >= validStock ? "not-allowed" : "pointer"}
               >
                 <FaPlus />
               </IconButton>
             </Flex>
 
-            {/* BOTÓN COMPRAR AHORA ACTUALIZADO */}
+            {/* BOTÓN COMPRAR AHORA */}
             <Button
               bg="#AE5BDD"
               size={{ base: "sm", md: "lg" }}
@@ -309,7 +326,7 @@ export default function ProductSection({
             </Button>
 
             <HStack spacing={4} w="100%">
-              {/* BOTÓN AGREGAR AL CARRITO ACTUALIZADO */}
+              {/* BOTÓN AGREGAR AL CARRITO */}
               <Button
                 borderWidth="2px"
                 borderColor="#AE5BDD"

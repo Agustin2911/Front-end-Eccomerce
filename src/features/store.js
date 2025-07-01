@@ -21,6 +21,7 @@ import ReviewsReducer from "../features/fetch/fetchReviews";
 import createReviewReducer from "../features/fetch/fetchCreateReview";
 import canPostReviewReducer from "../features/fetch/fetchCanPostReview";
 import alreadyReviewedReducer from "../features/fetch/fetchAlreadyReviewed";
+import productByIdReducer from "../features/fetch/fetchProductById";
 
 export const store = configureStore({
   reducer: {
@@ -46,5 +47,6 @@ export const store = configureStore({
     createReview: createReviewReducer,
     canPostReview: canPostReviewReducer,
     alreadyReviewed: alreadyReviewedReducer,
+    productById: productByIdReducer,
   },
 });

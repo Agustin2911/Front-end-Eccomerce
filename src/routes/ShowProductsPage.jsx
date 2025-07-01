@@ -7,6 +7,8 @@ import MainNavbar from "src/components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import ShowProducts from "../components/showProductsPage/ShowProducts";
 import Filters from "../components/showProductsPage/Filters";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'; // AGREGAR ESTA LÍNEA
 
 export default function ShowProductsPage() {
   const { categoryId, subCategoryId } = useParams();
@@ -87,8 +89,6 @@ export default function ShowProductsPage() {
     breadcrumbLink = "/products";
   }
 
-  // Handler de filtros (igual que antes)
-
   return (
     <Box bg={"#170d20"}>
       <MainNavbar />
@@ -104,7 +104,7 @@ export default function ShowProductsPage() {
                 fontSize="xl"
                 color={"white"}
                 textDecoration={"none"}
-                _hover={{ textDecoration: "underline" }}
+                _hover={{ textDecoration: "none" }}
               >
                 Inicio
               </Breadcrumb.Link>
@@ -117,7 +117,7 @@ export default function ShowProductsPage() {
                 fontSize="xl"
                 color={"white"}
                 textDecoration={"none"}
-                _hover={{ textDecoration: "underline" }}
+                _hover={{ textDecoration: "none" }}
               >
                 {breadcrumbLabel}
               </Breadcrumb.Link>
@@ -133,6 +133,20 @@ export default function ShowProductsPage() {
       </Box>
 
       <Footer />
+      
+      {/* AGREGAR ESTO - ToastContainer */}
+      <ToastContainer 
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </Box>
   );
 }

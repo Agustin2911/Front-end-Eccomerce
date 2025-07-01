@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router-dom";
 import Footer from "../components/allPages/Footer";
 import {
   Box,
@@ -22,6 +22,11 @@ const MyOrders = () => {
   const { idUser } = useParams();
   const [showHistorial, setShowHistorial] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  // PROTECCIÓN DE RUTA - Obtener token y tipo de usuario
+  const { token, type, id_usuario } = useSelector((state) => state.user);
+  
   const { delivered, inProgress, loading, error } = useSelector(
     (state) => state.orders
   );
@@ -30,6 +35,20 @@ const MyOrders = () => {
   const borderColor = "gray.900";
   const textColor = "purple.600";
   const headerBg = "gray.50";
+
+  // PROTECCIÓN DE RUTA - Verificar autenticación y tipo de usuario
+  useEffect(() => {
+    if (!token || type !== "buyer") {
+      navigate("/signup", { replace: true });
+      return;
+    }
+    
+    // Verificar que el usuario solo pueda ver sus propios pedidos
+    if (idUser !== id_usuario.toString()) {
+      navigate("/signup", { replace: true });
+      return;
+    }
+  }, [token, type, id_usuario, idUser, navigate]);
 
   const calcularTotalGastado = () => {
     const sumarPedidos = (listaPedidos) =>
@@ -79,8 +98,11 @@ const MyOrders = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchOrdersByUser(idUser));
-  }, [dispatch, idUser]);
+    // Solo hacer fetch si el usuario está autenticado y autorizado
+    if (token && type === "buyer" && idUser === id_usuario.toString()) {
+      dispatch(fetchOrdersByUser(idUser));
+    }
+  }, [dispatch, idUser, token, type, id_usuario]);
 
   const getEstadoProps = (estado) => {
     const props = {
@@ -195,7 +217,7 @@ const MyOrders = () => {
                 px={2}
               >
                 <Text fontWeight="medium" color={"#F1E6F7"}>
-                  {item.product_name} × {Math.abs(item.amount)} {/* CAMBIO AQUÍ */}
+                  {item.product_name} × {Math.abs(item.amount)}
                 </Text>
                 <Text fontWeight="medium" color={"#F1E6F7"}>
                   {formatPrice(-item.price * item.amount)}
@@ -220,7 +242,10 @@ const MyOrders = () => {
     );
   };
 
-  // Si no hay token, mostrar mensaje de login
+  // PROTECCIÓN DE RUTA - No renderizar nada si no está autenticado
+  if (!token || type !== "buyer") {
+    return null; // O un loader mientras redirige
+  }
 
   return (
     <Box bg={"#170D20"}>
@@ -263,7 +288,6 @@ const MyOrders = () => {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            
             <Heading
               size="lg"
               px={6}

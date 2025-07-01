@@ -38,6 +38,46 @@ function FormPayment() {
     setTotal(Total);
   }, [cart]);
 
+  // Función para obtener el máximo de dígitos del CVV según el tipo de tarjeta
+  const getCvvMaxLength = () => {
+    return checkout.cardType === 'Amex' ? 4 : 3;
+  };
+
+  // Función para validar fecha de vencimiento con detalles específicos
+  const validateExpiryDate = (expiryString) => {
+    if (!expiryString || expiryString.length !== 5 || !expiryString.includes('/')) {
+      return { isValid: false, invalidMonth: true, invalidYear: true };
+    }
+
+    const [monthStr, yearStr] = expiryString.split('/');
+    const month = parseInt(monthStr, 10);
+    const year = parseInt('20' + yearStr, 10);
+
+    // Obtener fecha actual del sistema
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+
+    let invalidMonth = false;
+    let invalidYear = false;
+
+    // Validar mes (01-12)
+    if (month < 1 || month > 12) {
+      invalidMonth = true;
+    }
+
+    // Validar año (no puede ser menor al actual, y si es el año actual, el mes debe ser mayor al actual)
+    if (year < currentYear) {
+      invalidYear = true;
+    } else if (year === currentYear && month <= currentMonth) {
+      invalidYear = true;
+    }
+
+    const isValid = !invalidMonth && !invalidYear;
+
+    return { isValid, invalidMonth, invalidYear };
+  };
+
   // Función para validar todos los campos
   const validateFields = () => {
     const errors = {};
@@ -53,13 +93,19 @@ function FormPayment() {
       errors.cardNumber = true;
     }
 
-    // Validar fecha de vencimiento (debe tener formato MM/YY)
-    if (!checkout.expiry || checkout.expiry.length !== 5 || !checkout.expiry.includes('/')) {
+    // Validar fecha de vencimiento con validación detallada
+    const expiryValidation = validateExpiryDate(checkout.expiry);
+    if (!expiryValidation.isValid) {
       errors.expiry = true;
+      errors.expiryDetails = {
+        invalidMonth: expiryValidation.invalidMonth,
+        invalidYear: expiryValidation.invalidYear
+      };
     }
 
-    // Validar CVV (debe tener 3 o 4 dígitos)
-    if (!checkout.cvv || checkout.cvv.length < 3) {
+    // Validar CVV con longitud dinámica según el tipo de tarjeta
+    const expectedCvvLength = getCvvMaxLength();
+    if (!checkout.cvv || checkout.cvv.length !== expectedCvvLength) {
       errors.cvv = true;
     }
 
@@ -125,6 +171,7 @@ function FormPayment() {
     }
   };
 
+  // Función mejorada para manejar cambio en fecha de vencimiento
   const handleExpiryChange = (e) => {
     let value = e.target.value;
     const digitsOnly = value.replace(/\D/g, '');
@@ -175,10 +222,12 @@ function FormPayment() {
     dispatch(setExpiry(formatted));
   };
 
-  // Función para manejar CVV (solo números)
+  // Función modificada para manejar CVV con límite dinámico
   const handleCvvChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 4) {
+    const value = e.target.value.replace(/\D/g, ''); // Solo números
+    const maxLength = getCvvMaxLength();
+    
+    if (value.length <= maxLength) {
       dispatch(setCvv(value));
     }
   };
@@ -194,6 +243,33 @@ function FormPayment() {
   // Función para formatear números a 2 decimales
   const formatPrice = (price) => {
     return parseFloat(price).toFixed(2);
+  };
+
+  // Función para obtener mensaje de error específico para fecha
+  const getExpiryErrorMessage = () => {
+    if (!checkout.expiry || checkout.expiry.length !== 5) {
+      return "Debe ingresar una fecha válida (MM/YY)";
+    }
+    
+    const details = validationErrors.expiryDetails;
+    if (details) {
+      if (details.invalidMonth && details.invalidYear) {
+        return "El mes debe estar entre 01-12 y el año debe ser posterior al actual";
+      } else if (details.invalidMonth) {
+        return "El mes debe estar entre 01 y 12";
+      } else if (details.invalidYear) {
+        return "La fecha de vencimiento debe ser posterior al mes actual";
+      }
+    }
+    
+    return "";
+  };
+
+  // Función para obtener mensaje de error específico para CVV
+  const getCvvErrorMessage = () => {
+    const expectedLength = getCvvMaxLength();
+    const cardTypeName = checkout.cardType === 'Amex' ? 'American Express' : checkout.cardType;
+    return `Debe ingresar un CVV válido de ${expectedLength} dígitos para ${cardTypeName}`;
   };
 
   async function address_verification() {
@@ -222,7 +298,7 @@ function FormPayment() {
     setHasAttemptedSubmit(true);
     
     if (user.token === null) {
-      toast.info("No estas registrado, se te redireccionara al login", {
+      toast.info("no estas registrado, se te redireccionara al login", {
         autoClose: 2500,
       });
       await sleep(3000);
@@ -242,7 +318,7 @@ function FormPayment() {
     const result = await address_verification();
     if (!result) {
       toast.error(
-        "La direccion ingresada no existe, verifique la direccion o pruebe con otra",
+        "la direccion ingresa no existe, verifique lo ingresado o pruebe con otra",
         {
           autoClose: 2500,
         }
@@ -471,21 +547,23 @@ function FormPayment() {
               maxLength={5}
             />
             {validationErrors.expiry && (
-              <small className="text-danger">Debe ingresar una fecha válida (MM/YY)</small>
+              <small className="text-danger">{getExpiryErrorMessage()}</small>
             )}
           </div>
 
           <div className="mb-3 text-start">
-            <label className="form-label">Código de seguridad (CVV)</label>
+            <label className="form-label">
+              Código de seguridad ({checkout.cardType === 'Amex' ? 'CID' : 'CVV'})
+            </label>
             <input
               className={`form-control ${validationErrors.cvv ? "is-invalid" : ""}`}
               value={checkout.cvv}
               onChange={handleCvvChange}
-              placeholder="CVV"
-              maxLength={4}
+              placeholder={checkout.cardType === 'Amex' ? 'XXXX' : 'XXX'}
+              maxLength={getCvvMaxLength()}
             />
             {validationErrors.cvv && (
-              <small className="text-danger">Debe ingresar un CVV válido (3-4 dígitos)</small>
+              <small className="text-danger">{getCvvErrorMessage()}</small>
             )}
           </div>
 

@@ -81,7 +81,7 @@ function Signup() {
         <input
           className="form-control"
           type="password"
-          placeholder="Constraseña"
+          placeholder="Contraseña"
           value={password}
           onChange={(e) => dispatch(setPassword(e.target.value))}
           style={{
