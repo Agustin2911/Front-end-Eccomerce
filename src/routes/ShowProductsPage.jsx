@@ -1,18 +1,42 @@
 // src/ShowProductsPage.jsx
 
-import React, { useState } from "react";
-import { useParams, Link as RouterLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, Link as RouterLink, useSearchParams } from "react-router-dom";
 import { Box, Stack, Breadcrumb, Text, Link } from "@chakra-ui/react";
 import MainNavbar from "src/components/allPages/MainNavbar";
 import Footer from "../components/allPages/Footer";
 import ShowProducts from "../components/showProductsPage/ShowProducts";
 import Filters from "../components/showProductsPage/Filters";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'; // AGREGAR ESTA LÍNEA
+import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch } from "react-redux";
+import { 
+  filterByCategory, 
+  filterBySubcategory, 
+  showAllProducts,
+  searchProducts 
+} from "../features/fetch/allProductsSlice";
 
 export default function ShowProductsPage() {
   const { categoryId, subCategoryId } = useParams();
+  const [searchParams] = useSearchParams(); // NUEVO: Para leer search params
+  const searchTerm = searchParams.get('search'); // NUEVO: Obtener término de búsqueda
   const [productos, setProductos] = useState([]);
+  const dispatch = useDispatch();
+
+  // NUEVO: Efecto para manejar búsqueda y filtros
+  useEffect(() => {
+    if (searchTerm) {
+      console.log("🔍 Buscando productos con término:", searchTerm);
+      dispatch(searchProducts(searchTerm));
+    } else if (subCategoryId) {
+      dispatch(filterBySubcategory(parseInt(subCategoryId)));
+    } else if (categoryId) {
+      dispatch(filterByCategory(parseInt(categoryId)));
+    } else {
+      dispatch(showAllProducts());
+    }
+  }, [dispatch, categoryId, subCategoryId, searchTerm]);
 
   // --------------- Diccionarios en este mismo componente ---------------
   const CATEGORY_NAMES = {
@@ -77,7 +101,12 @@ export default function ShowProductsPage() {
   // Determinar texto para el breadcrumb
   let breadcrumbLabel;
   let breadcrumbLink;
-  if (subCategoryId) {
+  
+  if (searchTerm) {
+    // NUEVO: Breadcrumb para búsqueda
+    breadcrumbLabel = `Resultados para: "${searchTerm}"`;
+    breadcrumbLink = `/products?search=${encodeURIComponent(searchTerm)}`;
+  } else if (subCategoryId) {
     breadcrumbLabel =
       SUBCATEGORY_NAMES[subCategoryId] || `Subcategoría ${subCategoryId}`;
     breadcrumbLink = `/products/subCategory/${subCategoryId}`;
@@ -104,7 +133,7 @@ export default function ShowProductsPage() {
                 fontSize="xl"
                 color={"white"}
                 textDecoration={"none"}
-                _hover={{ textDecoration: "none" }}
+                _hover={{ textDecoration: "underline" }}
               >
                 Inicio
               </Breadcrumb.Link>
@@ -117,7 +146,7 @@ export default function ShowProductsPage() {
                 fontSize="xl"
                 color={"white"}
                 textDecoration={"none"}
-                _hover={{ textDecoration: "none" }}
+                _hover={{ textDecoration: "underline" }}
               >
                 {breadcrumbLabel}
               </Breadcrumb.Link>
@@ -134,7 +163,7 @@ export default function ShowProductsPage() {
 
       <Footer />
       
-      {/* AGREGAR ESTO - ToastContainer */}
+      {/* ToastContainer */}
       <ToastContainer 
         position="top-right"
         autoClose={2500}

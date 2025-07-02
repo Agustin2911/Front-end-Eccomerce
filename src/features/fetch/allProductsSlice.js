@@ -31,6 +31,7 @@ const productsSlice = createSlice({
     filtered: [],
     currentCategory: null,
     currentSubcategory: null,
+    currentSearchTerm: null, // NUEVO: Para manejar búsquedas
     loading: false,
     error: null,
   },
@@ -40,6 +41,7 @@ const productsSlice = createSlice({
       state.filtered = [];
       state.currentCategory = null;
       state.currentSubcategory = null;
+      state.currentSearchTerm = null; // NUEVO
       state.loading = false;
       state.error = null;
     },
@@ -48,6 +50,7 @@ const productsSlice = createSlice({
       const categoryId = action.payload;
       state.currentCategory = categoryId;
       state.currentSubcategory = null; // Limpiar subcategoría
+      state.currentSearchTerm = null; // NUEVO: Limpiar búsqueda
       state.filtered = state.items.filter((product) =>
         product.sub_categoryProductList.some(
           (subcat) => subcat.sub_category.category.id_category === categoryId
@@ -59,11 +62,31 @@ const productsSlice = createSlice({
       const subcategoryId = action.payload;
       state.currentSubcategory = subcategoryId;
       state.currentCategory = null; // Limpiar categoría
+      state.currentSearchTerm = null; // NUEVO: Limpiar búsqueda
       state.filtered = state.items.filter((product) =>
         product.sub_categoryProductList.some(
           (subcat) => subcat.sub_category.id_sub_category === subcategoryId
         )
       );
+    },
+
+    // NUEVA FUNCIÓN: Para buscar productos
+    searchProducts: (state, action) => {
+      const searchTerm = action.payload.toLowerCase();
+      console.log("🔍 Buscando productos con término:", searchTerm);
+      
+      state.currentSearchTerm = searchTerm;
+      state.currentCategory = null; // Limpiar categoría
+      state.currentSubcategory = null; // Limpiar subcategoría
+      
+      state.filtered = state.items.filter(product => {
+        return (
+          product.product_name.toLowerCase().includes(searchTerm) ||
+          product.description.toLowerCase().includes(searchTerm)
+        );
+      });
+      
+      console.log("🔍 Productos encontrados:", state.filtered.length);
     },
 
     updateProduct: (state, action) => {
@@ -79,6 +102,7 @@ const productsSlice = createSlice({
     showAllProducts: (state) => {
       state.currentCategory = null;
       state.currentSubcategory = null;
+      state.currentSearchTerm = null; // NUEVO: Limpiar búsqueda
       state.filtered = state.items;
     },
 
@@ -92,16 +116,24 @@ const productsSlice = createSlice({
       state.items = state.items.filter((p) => p.id_product !== idToDelete);
     },
 
-    // FUNCIÓN CORREGIDA - Aplica filtros solo a productos ya filtrados por categoría/subcategoría
+    // FUNCIÓN ACTUALIZADA - Aplica filtros considerando categoría/subcategoría/búsqueda
     applyFilters: (state, action) => {
       const { order, minPrice, maxPrice } = action.payload;
       
       console.log("Aplicando filtros:", { order, minPrice, maxPrice }); // Debug
       
-      // Empezar con productos filtrados por categoría/subcategoría
+      // Empezar con productos filtrados por categoría/subcategoría/búsqueda
       let baseProducts = [];
       
-      if (state.currentSubcategory) {
+      if (state.currentSearchTerm) {
+        // NUEVO: Si hay búsqueda activa, usar productos de búsqueda
+        baseProducts = state.items.filter(product => {
+          return (
+            product.product_name.toLowerCase().includes(state.currentSearchTerm) ||
+            product.description.toLowerCase().includes(state.currentSearchTerm)
+          );
+        });
+      } else if (state.currentSubcategory) {
         baseProducts = state.items.filter((product) =>
           product.sub_categoryProductList.some(
             (subcat) => subcat.sub_category.id_sub_category === state.currentSubcategory
@@ -149,10 +181,18 @@ const productsSlice = createSlice({
       state.filtered = filteredProducts;
     },
 
-    // NUEVA FUNCIÓN - Para limpiar solo filtros de precio/orden, manteniendo categoría/subcategoría
+    // FUNCIÓN ACTUALIZADA - Para limpiar solo filtros de precio/orden, manteniendo categoría/subcategoría/búsqueda
     clearPriceFilters: (state) => {
-      // Volver a aplicar solo el filtro de categoría/subcategoría
-      if (state.currentSubcategory) {
+      // Volver a aplicar solo el filtro actual (categoría/subcategoría/búsqueda)
+      if (state.currentSearchTerm) {
+        // NUEVO: Si hay búsqueda activa, restaurar productos de búsqueda
+        state.filtered = state.items.filter(product => {
+          return (
+            product.product_name.toLowerCase().includes(state.currentSearchTerm) ||
+            product.description.toLowerCase().includes(state.currentSearchTerm)
+          );
+        });
+      } else if (state.currentSubcategory) {
         state.filtered = state.items.filter((product) =>
           product.sub_categoryProductList.some(
             (subcat) => subcat.sub_category.id_sub_category === state.currentSubcategory
@@ -193,6 +233,7 @@ export const {
   clearProducts,
   filterByCategory,
   filterBySubcategory,
+  searchProducts, // NUEVO: Export de la función de búsqueda
   updateProduct,
   addProduct,
   deleteProduct,
