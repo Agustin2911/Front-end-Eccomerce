@@ -41,7 +41,7 @@ export const { login, logout } = userSlice.actions;
 export const logoutUser = () => (dispatch) => {
   dispatch(logout());
   dispatch(resetRegister());
-  dispatch(resetCreateShop);
+  dispatch(resetCreateShop());
 };
 
 export default userSlice.reducer;

@@ -48,6 +48,8 @@ export default function PublishPage() {
 
 
 useEffect(() => {
+  
+
 
   if (user.token && user.id_usuario) {
     dispatch(fetchUserShops());

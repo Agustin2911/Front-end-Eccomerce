@@ -22,7 +22,7 @@ export default function ShowProducts() {
     loading,
     error,
   } = useSelector((state) => state.allProducts);
- console.log(products);
+
   useEffect(() => {
     if (items.length === 0) {
       dispatch(fetchProducts());

@@ -13,6 +13,9 @@ import {
   authenticateUser,
   resetAuth,
 } from "../features/fetch/authSlice";
+import { fetchUserMail } from "@/features/fetch/fetchUserMail";
+
+
 function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,19 +24,61 @@ function Signup() {
     (state) => state.auth
   );
 
-  const handleLogin = () => {
+   
+  const { mail, loadingMail, errorMail } = useSelector((s) => s.userMail);
+
+
+
       
-    dispatch(authenticateUser({ email, password }));
-  };
+// 1) VALIDACIÓN RÁPIDA EN EL CLIENTE ──────────────────────
+const isBlank = (str) => !str || !str.trim();
+
+const handleCheck = async () => {
+  /* 1a ─ Campos vacíos */
+  if (isBlank(email)) {
+    toast.error("Por favor ingrese un mail válido", { autoClose: 2500 });
+    return;
+  }
+  if (isBlank(password)) {
+    toast.error("Por favor ingrese una contraseña", { autoClose: 2500 });
+    return;
+  }
+
+  /* 2 ─ Verificar si el mail existe ────────────────────── */
+  try {
+    await dispatch(fetchUserMail(email)).unwrap();   // ← si no existe, salta al catch
+  } catch (err) {
+    toast.error(
+      err === "No match for provided mail"
+        ? "El mail ingresado es incorrecto. Por favor ingrese un mail válido"
+        : "El mail ingresado es incorrecto. Por favor ingrese un mail valido",
+      { autoClose: 2500 }
+    );
+    return;                                          // paramos aquí; no probamos contraseña
+  }
+
+  /* 3 ─ Mail OK ► probar contraseña ───────────────────── */
+  try {
+    await dispatch(authenticateUser({ email, password })).unwrap();
+    // el redireccionamiento se hará en tu useEffect cuando result === "success"
+  } catch (err) {
+    toast.error(
+      err === "Invalid password"
+        ? "La contraseña ingresada es incorrecta. Por favor ingrese una contraseña válida"
+        :  "La contraseña ingresada es incorrecta. Por favor ingrese una contraseña válida",
+      { autoClose: 2500 }
+    );
+  }
+};
 
   useEffect(() => {
-    if (error !== null) {
+    if (!mail && !password && errorMail!=null) {
       toast.error("el mail ingresado o la contraseña no son validas", {
         autoClose: 3000,
       });
       dispatch(setError());
     }
-  }, [error]);
+  }, [mail, password, dispatch]);
 
   useEffect(() => {
     if (result === "success") {
@@ -41,6 +86,10 @@ function Signup() {
       navigate("/");
     }
   }, [result, dispatch, navigate]);
+
+
+  if (loadingMail) return <Spinner />;
+  if (errorMail)   return <Error msg={error} />;
 
   return (
     <Box
@@ -95,7 +144,7 @@ function Signup() {
 
         <button
           className=" w-100"
-          onClick={handleLogin}
+          onClick={() => handleCheck(email)}
           disabled={loading}
           style={{
             width: "100%",

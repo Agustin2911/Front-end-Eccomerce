@@ -10,6 +10,7 @@ import { modifyProduct, modifyStock } from "../features/fetch/fetchModifyProduct
 import { toast, ToastContainer } from "react-toastify";
 import { updateProduct } from "@/features/fetch/allProductsSlice";
 
+
 export default function ModifyProductPage() {
 
     
@@ -225,7 +226,6 @@ export default function ModifyProductPage() {
                     borderColor={"whiteAlpha.800"}
                   />
                 </Box>
-
                 <Box flex={1}>
                   <Text fontSize="sm" mb={1} color={"whiteAlpha.800"}>
                     Modificar stock ( - / + ):
@@ -234,10 +234,14 @@ export default function ModifyProductPage() {
                     color="white"
                     type="number"
                     placeholder="0"
+                    min={stockItem.stock* -1}
                     _placeholder={{ color: "whiteAlpha.600" }}
                     value={stockAct}
-                    onChange={(e) => setStockAct(e.target.value)}
-                    borderColor={"whiteAlpha.800"}
+                    onChange={(e) =>  {
+                        const val = Number(e.target.value);
+                        setStockAct(isNaN(val) ? "" : Math.max(val, stockItem.stock * -1));
+                        }}                   
+      borderColor={"whiteAlpha.800"}
                   />
                 </Box>
               </HStack>

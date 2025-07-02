@@ -43,6 +43,9 @@ export default function PublishPage() {
 
   const handleRegister = async () => {
     dispatch(createShop({ city: ciudad, street }));
+    if (error === null){
+        setTimeout(navigate("/publish"), 500);
+    }
   }
 
   return (
