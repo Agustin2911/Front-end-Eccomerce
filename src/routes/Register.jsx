@@ -31,13 +31,7 @@ function Register() {
 
   const isFormValid = () => {
     const commonFields =
-      user_name &&
-      user_email &&
-      userPassword &&
-      userPassword2 &&
-      image;
-    
-    
+      user_name && user_email && userPassword && userPassword2 && image;
 
     if (userType === "buyer") {
       if (!commonFields || !user_LastName || !dni) {
@@ -54,9 +48,9 @@ function Register() {
         return true;
       }
     }
-    if (!user_email.includes("@")){
-        toast.error("Debe ingresar un email valido", {autoclose: 2500});
-        return false;
+    if (!user_email.includes("@")) {
+      toast.error("Debe ingresar un email valido", { autoclose: 2500 });
+      return false;
     }
 
     return false;
@@ -235,6 +229,7 @@ function Register() {
                 className="form-control"
                 placeholder="DNI"
                 value={dni}
+                maxLength={8}
                 onChange={(e) => setDni(e.target.value)}
               />
             </div>
@@ -259,6 +254,7 @@ function Register() {
                   className="form-control"
                   placeholder="CUIT"
                   value={cuit}
+                  maxLength={11}
                   onChange={(e) => setCuit(e.target.value)}
                 />
               </div>

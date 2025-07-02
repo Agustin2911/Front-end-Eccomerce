@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {resetRegister} from "../fetch/registerSlice";
+import { resetRegister } from "../fetch/registerSlice";
 import { useDispatch } from "react-redux";
-
+import { resetCreateShop } from "../fetch/fetchCreateShop";
 
 const initialState = {
   isLoggedIn: false,
@@ -12,8 +12,6 @@ const initialState = {
 };
 
 const userSlice = createSlice({
-  
-
   name: "user",
   initialState,
   reducers: {
@@ -34,7 +32,6 @@ const userSlice = createSlice({
       state.image_path = null;
       state.type = null;
       state.token = null;
-
     },
   },
 });
@@ -44,6 +41,7 @@ export const { login, logout } = userSlice.actions;
 export const logoutUser = () => (dispatch) => {
   dispatch(logout());
   dispatch(resetRegister());
+  dispatch(resetCreateShop);
 };
 
 export default userSlice.reducer;
