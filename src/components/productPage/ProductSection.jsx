@@ -176,7 +176,7 @@ export default function ProductSection({
 
           <Image
             src={images}
-            alt="Imagen principal"
+            alt={name}
             w="full"
             maxH={{ md: "400px", xl: "900px" }}
             css={{

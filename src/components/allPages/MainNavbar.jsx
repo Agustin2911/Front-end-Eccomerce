@@ -465,7 +465,7 @@ export default function MainNavbar() {
 
               {/* Carrito con badge */}
               
-              {user.type === "admin" || user.type === "buyer" ? (
+              { user.type === "buyer" ? (
                 <div style={{ position: "relative" }}>
                   <Link to="/cart" style={iconStyle}>
                     <FaShoppingCart />
